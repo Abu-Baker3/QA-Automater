@@ -25,8 +25,7 @@ RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 worker
 COPY --from=builder /app/workers/scan/dist ./dist
 COPY --from=builder /app/workers/scan/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages/shared/dist ./node_modules/@qa-automater/shared/dist
-COPY --from=builder /app/packages/types/dist ./node_modules/@qa-automater/types/dist
+COPY --from=builder /app/packages ./packages
 USER worker
 EXPOSE 8081
 ENV PORT=8081

@@ -24,6 +24,7 @@ RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 worker
 COPY --from=builder /app/workers/ai/dist ./dist
 COPY --from=builder /app/workers/ai/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
 USER worker
 EXPOSE 8082
 ENV PORT=8082

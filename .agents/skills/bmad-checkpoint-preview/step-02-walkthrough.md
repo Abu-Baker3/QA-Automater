@@ -1,3 +1,4 @@
+
 # Step 2: Walkthrough
 
 Display: `Orientation → [Walkthrough] → Detail Pass → Testing`
