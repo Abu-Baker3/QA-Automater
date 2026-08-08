@@ -1,19 +1,18 @@
 # syntax=docker/dockerfile:1
-# docker build -f workers/export/Dockerfile .
 
 FROM node:20-alpine AS base
 RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 WORKDIR /app
 
-FROM base AS builder
+FROM base AS deps
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* ./
 COPY workers/export/package.json ./workers/export/
-COPY packages/types/package.json ./packages/types/
-COPY packages/shared/package.json ./packages/shared/
-COPY packages/config/package.json ./packages/config/
-RUN pnpm install --frozen-lockfile || pnpm install
 COPY packages ./packages
-COPY workers/export ./workers/export
+RUN pnpm install --frozen-lockfile || pnpm install
+
+FROM base AS builder
+COPY --from=deps /app ./
+COPY . .
 RUN pnpm --filter @qa-automater/types build && pnpm --filter @qa-automater/shared build
 RUN pnpm --filter @qa-automater/export-worker build
 

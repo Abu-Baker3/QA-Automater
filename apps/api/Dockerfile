@@ -7,15 +7,11 @@ WORKDIR /app
 FROM base AS deps
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* ./
 COPY apps/api/package.json ./apps/api/
-COPY packages/types/package.json ./packages/types/
-COPY packages/shared/package.json ./packages/shared/
-COPY packages/database/package.json ./packages/database/
-COPY packages/config/package.json ./packages/config/
-COPY packages/database/prisma ./packages/database/prisma
+COPY packages ./packages
 RUN pnpm install --frozen-lockfile || pnpm install
 
 FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app ./
 COPY . .
 RUN pnpm --filter @qa-automater/types build
 RUN pnpm --filter @qa-automater/shared build
