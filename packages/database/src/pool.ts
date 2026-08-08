@@ -66,8 +66,6 @@ export function createDatabasePool(config?: Partial<DatabasePoolConfig>): Pool {
     max: resolved.maxConnections,
     idleTimeoutMillis: resolved.idleTimeoutMs,
     connectionTimeoutMillis: resolved.connectionTimeoutMs,
-    // PgBouncer transaction pooling: avoid server-side prepared statements
-    options: '-c statement_timeout=60000',
   };
 
   return new PgPool(poolConfig);
