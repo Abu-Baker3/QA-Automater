@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Direct connection for migrations (bypasses PgBouncer)
+  url      = env("DATABASE_MIGRATE_URL")
+}
+
+/// Tracks applied schema versions (complements Prisma migrate history).
+model SchemaMeta {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version   String   @db.VarChar(50)
+  appliedAt DateTime @default(now()) @map("applied_at") @db.Timestamptz(6)
+
+  @@map("_schema_meta")
+}

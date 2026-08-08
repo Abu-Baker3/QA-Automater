@@ -1,0 +1,8 @@
+node_modules
+dist
+.next
+coverage
+pnpm-lock.yaml
+_bmad-output
+_bmad
+.agents
