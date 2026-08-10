@@ -106,9 +106,18 @@ export class QueueService {
     customRedisOpts?: RedisOptions,
   ) {
     const queue = this.getQueue<T>(queueName, customRedisOpts);
+    
+    // Automatically inject active trace context if data is an object
+    const payload =
+      data && typeof data === 'object'
+        ? (injectTraceContext(data as Record<string, unknown>) as unknown as T)
+        : data;
+
+    incrementCounter('bullmq', 'jobs_enqueued_total', 1, { queue: String(queueName), jobName });
+
     return (queue.add as unknown as (name: string, data: T, opts?: JobsOptions) => Promise<unknown>)(
       jobName,
-      data,
+      payload,
       {
         attempts: 3,
         backoff: {
@@ -130,11 +139,45 @@ export class QueueService {
   }
 }
 
+import { injectTraceContext, withExtractedTraceContext, withSpan, incrementCounter, recordHistogram } from '../telemetry';
+
 export function createWorker<T = unknown, R = unknown>(
   queueName: QueueName | string,
   processor: Processor<T, R>,
   customRedisOpts?: RedisOptions,
 ): Worker<T, R> {
   const connection = getRedisConnectionConfig(customRedisOpts) as ConnectionOptions;
-  return new Worker<T, R>(queueName, processor, { connection });
+
+  const tracedProcessor: Processor<T, R> = async (job, token) => {
+    const startTime = Date.now();
+    const carrier = (job.data && typeof job.data === 'object' ? job.data : {}) as Record<string, unknown>;
+
+    return withExtractedTraceContext(carrier, async () => {
+      return withSpan(
+        `worker-${queueName}`,
+        `process-job:${job.name || String(queueName)}`,
+        async (span) => {
+          span.setAttribute('job.id', job.id ?? 'unknown');
+          span.setAttribute('job.name', job.name ?? 'unknown');
+          span.setAttribute('queue.name', String(queueName));
+
+          try {
+            const result = await processor(job, token);
+            const duration = Date.now() - startTime;
+            recordHistogram('bullmq', 'job_duration_ms', duration, { queue: String(queueName), status: 'success' });
+            incrementCounter('bullmq', 'jobs_processed_total', 1, { queue: String(queueName), status: 'success' });
+            return result;
+          } catch (err) {
+            const duration = Date.now() - startTime;
+            recordHistogram('bullmq', 'job_duration_ms', duration, { queue: String(queueName), status: 'failure' });
+            incrementCounter('bullmq', 'jobs_processed_total', 1, { queue: String(queueName), status: 'failure' });
+            throw err;
+          }
+        },
+      );
+    });
+  };
+
+  return new Worker<T, R>(queueName, tracedProcessor, { connection });
 }
+

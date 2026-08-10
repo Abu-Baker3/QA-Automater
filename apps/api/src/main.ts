@@ -1,4 +1,8 @@
 import 'reflect-metadata';
+import { initTelemetry } from '@qa-automater/shared';
+
+initTelemetry('qa-api');
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -10,3 +14,4 @@ async function bootstrap() {
 }
 
 bootstrap();
+

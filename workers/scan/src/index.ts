@@ -1,4 +1,6 @@
-import { startHealthServer } from '@qa-automater/shared';
+import { startHealthServer, initTelemetry } from '@qa-automater/shared';
+
+initTelemetry('qa-worker-scan');
 
 const VERSION = '0.1.0';
 
