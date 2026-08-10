@@ -16,3 +16,46 @@ model SchemaMeta {
 
   @@map("_schema_meta")
 }
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model User {
+  id            String               @id @default(uuid()) @db.Uuid
+  clerkId       String               @unique @map("clerk_id") @db.VarChar(255)
+  email         String               @unique @db.VarChar(255)
+  firstName     String?              @map("first_name") @db.VarChar(100)
+  lastName      String?              @map("last_name") @db.VarChar(100)
+  createdAt     DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  memberships   OrganizationMember[]
+
+  @@map("users")
+}
+
+model Organization {
+  id          String               @id @default(uuid()) @db.Uuid
+  name        String               @db.VarChar(255)
+  slug        String               @unique @db.VarChar(100)
+  createdAt   DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  members     OrganizationMember[]
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  userId         String       @map("user_id") @db.Uuid
+  role           Role         @default(MEMBER)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@map("organization_members")
+}
+
