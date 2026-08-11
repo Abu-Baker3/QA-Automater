@@ -15,11 +15,14 @@ describe('RlsInterceptor', () => {
 
     const interceptor = new RlsInterceptor(mockDbService);
 
+    const requestObj = {
+      headers: { 'x-organization-id': 'org_test_999' },
+      orgId: undefined as string | undefined,
+    };
+
     const mockContext = {
       switchToHttp: () => ({
-        getRequest: () => ({
-          headers: { 'x-organization-id': 'org_test_999' },
-        }),
+        getRequest: () => requestObj,
       }),
     } as unknown as ExecutionContext;
 
@@ -29,6 +32,7 @@ describe('RlsInterceptor', () => {
 
     const observable = await interceptor.intercept(mockContext, mockCallHandler);
     expect(mockDbService.withClient).toHaveBeenCalled();
+    expect(requestObj.orgId).toBe('org_test_999');
     expect(observable).toBeDefined();
   });
 });

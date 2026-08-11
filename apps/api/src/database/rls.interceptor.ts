@@ -19,6 +19,8 @@ export class RlsInterceptor implements NestInterceptor {
       request.user?.orgId ||
       null;
 
+    request.orgId = orgId;
+
     await this.dbService.withClient(async (client: unknown) => {
       await setOrgContext(client as { query: (sql: string, params?: unknown[]) => Promise<unknown> }, orgId);
     });
