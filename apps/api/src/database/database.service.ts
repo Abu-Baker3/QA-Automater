@@ -35,9 +35,11 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     return checkDatabaseHealth(this.pool);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async withClient<T>(fn: (client: any) => Promise<T>): Promise<T> {
     return withClient(this.pool, fn);
   }
+
 
   async onModuleDestroy(): Promise<void> {
     await this.pool.end();
