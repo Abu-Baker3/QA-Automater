@@ -4,7 +4,9 @@ import {
   createDatabasePool,
   loadDatabaseConfig,
   verifyPgvector,
+  withClient,
 } from '@qa-automater/database';
+
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
@@ -33,7 +35,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     return checkDatabaseHealth(this.pool);
   }
 
+  async withClient<T>(fn: (client: any) => Promise<T>): Promise<T> {
+    return withClient(this.pool, fn);
+  }
+
   async onModuleDestroy(): Promise<void> {
     await this.pool.end();
   }
 }
+
+
