@@ -1,7 +1,9 @@
 import {
   Controller,
+  Get,
   Post,
   Body,
+  Query,
   Headers,
   UseGuards,
   HttpCode,
@@ -65,5 +67,26 @@ export class IntegrationsController {
       status: 'valid',
       token,
     };
+  }
+
+  @Get('repositories')
+  @Roles('ADMIN')
+  @HttpCode(HttpStatus.OK)
+  async listRepositories(
+    @Query('page') pageStr?: string,
+    @Query('per_page') perPageStr?: string,
+    @Query('search') search?: string,
+    @Headers('x-org-id') headerOrgId?: string,
+  ) {
+    const orgId = headerOrgId || 'default_org';
+    const page = pageStr ? parseInt(pageStr, 10) : 1;
+    const perPage = perPageStr ? parseInt(perPageStr, 10) : 20;
+
+    return this.githubIntegrationService.listAccessibleRepositories(
+      orgId,
+      page,
+      perPage,
+      search,
+    );
   }
 }

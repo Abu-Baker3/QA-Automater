@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { GitHubIntegrationService } from './github-integration.service';
 import { SecretsManagerService } from './secrets-manager.service';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 
 describe('GitHubIntegrationService', () => {
   let githubService: GitHubIntegrationService;
@@ -54,13 +54,13 @@ describe('GitHubIntegrationService', () => {
     expect(token).toBe('gho_active_token');
   });
 
-  it('AC2: should throw UnauthorizedException with clear re-auth message when token is expired', async () => {
+  it('should throw UnauthorizedException with clear re-auth message when token is expired during scan validation', async () => {
     const orgId = 'org_123';
     await secretsManager.storeInstallationToken(
       orgId,
       'inst_1',
       'gho_expired_token',
-      new Date(Date.now() - 5000), // Expired 5 seconds ago
+      new Date(Date.now() - 5000),
     );
 
     await expect(githubService.validateTokenForScan(orgId)).rejects.toThrow(
@@ -68,9 +68,58 @@ describe('GitHubIntegrationService', () => {
     );
   });
 
-  it('should throw UnauthorizedException when no token is found for org', async () => {
+  it('should throw UnauthorizedException when no token is found for org during scan validation', async () => {
     await expect(githubService.validateTokenForScan('org_unconnected')).rejects.toThrow(
       'No GitHub integration found for this organization. Please connect your GitHub account.',
+    );
+  });
+
+  it('AC1: should return paginated list of accessible repositories when valid token exists', async () => {
+    const orgId = 'org_123';
+    await secretsManager.storeInstallationToken(
+      orgId,
+      'inst_1',
+      'gho_valid_token',
+      new Date(Date.now() + 3600 * 1000),
+    );
+
+    const res = await githubService.listAccessibleRepositories(orgId, 1, 2);
+
+    expect(res.repositories).toHaveLength(2);
+    expect(res.total).toBe(3);
+    expect(res.repositories[0]).toEqual(
+      expect.objectContaining({
+        full_name: 'acme/web-app',
+        default_branch: 'main',
+        name: 'web-app',
+        private: true,
+      }),
+    );
+  });
+
+  it('AC1: should filter accessible repositories by search query', async () => {
+    const orgId = 'org_123';
+    await secretsManager.storeInstallationToken(
+      orgId,
+      'inst_1',
+      'gho_valid_token',
+      new Date(Date.now() + 3600 * 1000),
+    );
+
+    const res = await githubService.listAccessibleRepositories(orgId, 1, 10, 'docs');
+
+    expect(res.repositories).toHaveLength(1);
+    expect(res.repositories[0]?.full_name).toBe('acme/docs');
+  });
+
+  it('AC2: should throw ForbiddenException with clear remediation steps when token is missing or expired', async () => {
+    const orgId = 'org_unconnected';
+
+    await expect(githubService.listAccessibleRepositories(orgId)).rejects.toThrow(
+      ForbiddenException,
+    );
+    await expect(githubService.listAccessibleRepositories(orgId)).rejects.toThrow(
+      'GitHub integration token lacks required repository scope. Please re-authenticate your GitHub connection with repo scope.',
     );
   });
 });

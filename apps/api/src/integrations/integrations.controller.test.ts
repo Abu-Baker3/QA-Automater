@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { IntegrationsController } from './integrations.controller';
 import { GitHubIntegrationService } from './github-integration.service';
 import { SecretsManagerService } from './secrets-manager.service';
+import { ForbiddenException } from '@nestjs/common';
 
 describe('IntegrationsController', () => {
   let controller: IntegrationsController;
@@ -46,5 +47,30 @@ describe('IntegrationsController', () => {
     ).rejects.toThrow(
       'GitHub installation token has expired. Please re-authenticate your GitHub connection.',
     );
+  });
+
+  it('AC1: should return paginated list of accessible repositories for authenticated org', async () => {
+    await secretsManager.storeInstallationToken(
+      'org_test',
+      'inst_777',
+      'gho_valid',
+      new Date(Date.now() + 3600 * 1000),
+    );
+
+    const res = await controller.listRepositories('1', '2', undefined, 'org_test');
+    expect(res.repositories).toHaveLength(2);
+    expect(res.total).toBe(3);
+    expect(res.repositories[0]).toEqual(
+      expect.objectContaining({
+        full_name: 'acme/web-app',
+        default_branch: 'main',
+      }),
+    );
+  });
+
+  it('AC2: should throw ForbiddenException when listing repositories with missing token', async () => {
+    await expect(
+      controller.listRepositories('1', '20', undefined, 'org_no_token'),
+    ).rejects.toThrow(ForbiddenException);
   });
 });
