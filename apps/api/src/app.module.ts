@@ -7,6 +7,7 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { QueueModule } from './queue/queue.module';
 import { RepositoriesModule } from './repositories/repositories.module';
 import { StorageModule } from './storage/storage.module';
+import { TestsModule } from './tests/tests.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { StorageModule } from './storage/storage.module';
     AuthModule,
     OrganizationsModule,
     RepositoriesModule,
+    TestsModule,
   ],
   controllers: [AppController, HealthController],
 })

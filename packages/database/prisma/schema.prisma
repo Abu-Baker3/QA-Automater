@@ -35,6 +35,13 @@ model User {
   @@map("users")
 }
 
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+  EXPIRED
+}
+
 model Organization {
   id          String               @id @default(uuid()) @db.Uuid
   name        String               @db.VarChar(255)
@@ -42,6 +49,7 @@ model Organization {
   createdAt   DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
   members     OrganizationMember[]
+  invites     OrganizationInvite[]
 
   @@map("organizations")
 }
@@ -57,5 +65,20 @@ model OrganizationMember {
 
   @@unique([organizationId, userId])
   @@map("organization_members")
+}
+
+model OrganizationInvite {
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  email          String       @db.VarChar(255)
+  role           Role         @default(MEMBER)
+  token          String       @unique @db.VarChar(255)
+  status         InviteStatus @default(PENDING)
+  invitedBy      String       @map("invited_by") @db.Uuid
+  expiresAt      DateTime     @map("expires_at") @db.Timestamptz(6)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("organization_invites")
 }
 
