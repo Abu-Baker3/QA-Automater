@@ -1,7 +1,9 @@
 import {
   Controller,
   Post,
+  Delete,
   Body,
+  Param,
   Headers,
   UseGuards,
   HttpCode,
@@ -44,5 +46,16 @@ export class RepositoriesController {
     };
 
     return this.repositoriesService.registerRepository(orgId, registerDto);
+  }
+
+  @Delete(':id')
+  @Roles('ADMIN')
+  @HttpCode(HttpStatus.OK)
+  async disconnectRepository(
+    @Param('id') id: string,
+    @Headers('x-org-id') headerOrgId?: string,
+  ) {
+    const orgId = headerOrgId || 'default_org';
+    return this.repositoriesService.disconnectRepository(orgId, id);
   }
 }
