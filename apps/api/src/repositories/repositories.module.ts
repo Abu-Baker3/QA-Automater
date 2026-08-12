@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from '../auth/auth.module';
 import { RepositoriesController } from './repositories.controller';
+import { RepositoriesService } from './repositories.service';
+import { QueueModule } from '../queue/queue.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [QueueModule],
   controllers: [RepositoriesController],
+  providers: [RepositoriesService],
+  exports: [RepositoriesService],
 })
 export class RepositoriesModule {}
