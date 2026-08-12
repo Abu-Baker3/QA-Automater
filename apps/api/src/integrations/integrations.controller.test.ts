@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { IntegrationsController } from './integrations.controller';
 import { GitHubIntegrationService } from './github-integration.service';
 import { SecretsManagerService } from './secrets-manager.service';
-import { UnauthorizedException } from '@nestjs/common';
 
 describe('IntegrationsController', () => {
   let controller: IntegrationsController;
