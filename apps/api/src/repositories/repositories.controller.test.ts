@@ -14,7 +14,9 @@ describe('RepositoriesController', () => {
   beforeEach(() => {
     queueService = new QueueService();
     secretsManager = new SecretsManagerService();
-    vi.spyOn(queueService, 'enqueueJob').mockResolvedValue({ job: { id: 'job_999' } } as unknown as { job: Record<string, unknown> });
+    vi.spyOn(queueService, 'enqueueJob').mockResolvedValue({
+      job: { id: 'job_999' },
+    } as unknown as { job: Record<string, unknown> });
     service = new RepositoriesService(queueService, secretsManager);
     controller = new RepositoriesController(service);
   });
@@ -31,16 +33,10 @@ describe('RepositoriesController', () => {
   });
 
   it('AC2: should throw ConflictException if registering duplicate repository under same org', async () => {
-    await controller.registerRepository(
-      { full_name: 'acme/web-app', branch: 'main' },
-      'org_123',
-    );
+    await controller.registerRepository({ full_name: 'acme/web-app', branch: 'main' }, 'org_123');
 
     await expect(
-      controller.registerRepository(
-        { full_name: 'acme/web-app', branch: 'main' },
-        'org_123',
-      ),
+      controller.registerRepository({ full_name: 'acme/web-app', branch: 'main' }, 'org_123'),
     ).rejects.toThrow(ConflictException);
   });
 
@@ -59,8 +55,8 @@ describe('RepositoriesController', () => {
   });
 
   it('disconnectRepository should throw NotFoundException (404) for nonexistent repository', async () => {
-    await expect(
-      controller.disconnectRepository('repo_missing', 'org_123'),
-    ).rejects.toThrow(NotFoundException);
+    await expect(controller.disconnectRepository('repo_missing', 'org_123')).rejects.toThrow(
+      NotFoundException,
+    );
   });
 });

@@ -34,9 +34,7 @@ export function initTelemetry(serviceNameOrConfig: string | TelemetryConfig): No
       : serviceNameOrConfig;
 
   const isDisabled =
-    config.disabled ||
-    process.env.OTEL_SDK_DISABLED === 'true' ||
-    process.env.NODE_ENV === 'test';
+    config.disabled || process.env.OTEL_SDK_DISABLED === 'true' || process.env.NODE_ENV === 'test';
 
   if (isDisabled) {
     return null;
@@ -93,7 +91,9 @@ const plainObjectGetter: TextMapGetter<Record<string, unknown>> = {
 /**
  * Injects the active trace context into a carrier object (e.g. BullMQ job payload)
  */
-export function injectTraceContext<T extends Record<string, unknown>>(data: T): T & { traceparent?: string; tracestate?: string } {
+export function injectTraceContext<T extends Record<string, unknown>>(
+  data: T,
+): T & { traceparent?: string; tracestate?: string } {
   const carrier: Record<string, unknown> = { ...data };
   propagation.inject(context.active(), carrier, plainObjectSetter);
   return carrier as T & { traceparent?: string; tracestate?: string };
@@ -102,10 +102,7 @@ export function injectTraceContext<T extends Record<string, unknown>>(data: T): 
 /**
  * Extracts trace context from a carrier object and executes the callback within that trace context.
  */
-export function withExtractedTraceContext<R>(
-  carrier: Record<string, unknown>,
-  fn: () => R,
-): R {
+export function withExtractedTraceContext<R>(carrier: Record<string, unknown>, fn: () => R): R {
   const extractedContext = propagation.extract(context.active(), carrier, plainObjectGetter);
   return context.with(extractedContext, fn);
 }
@@ -120,22 +117,26 @@ export async function withSpan<T>(
   options?: { kind?: SpanKind; attributes?: Record<string, string | number | boolean> },
 ): Promise<T> {
   const tracer = trace.getTracer(tracerName);
-  return tracer.startActiveSpan(spanName, { kind: options?.kind ?? SpanKind.INTERNAL, attributes: options?.attributes }, async (span) => {
-    try {
-      const result = await fn(span);
-      span.setStatus({ code: SpanStatusCode.OK });
-      return result;
-    } catch (error) {
-      span.setStatus({
-        code: SpanStatusCode.ERROR,
-        message: error instanceof Error ? error.message : String(error),
-      });
-      span.recordException(error instanceof Error ? error : new Error(String(error)));
-      throw error;
-    } finally {
-      span.end();
-    }
-  });
+  return tracer.startActiveSpan(
+    spanName,
+    { kind: options?.kind ?? SpanKind.INTERNAL, attributes: options?.attributes },
+    async (span) => {
+      try {
+        const result = await fn(span);
+        span.setStatus({ code: SpanStatusCode.OK });
+        return result;
+      } catch (error) {
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error instanceof Error ? error.message : String(error),
+        });
+        span.recordException(error instanceof Error ? error : new Error(String(error)));
+        throw error;
+      } finally {
+        span.end();
+      }
+    },
+  );
 }
 
 /**

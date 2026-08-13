@@ -46,7 +46,15 @@ export class RepositoryCloner {
     }
 
     const branch = opts.branch || 'main';
-    await execFileAsync('git', ['clone', '--depth', '1', '--branch', branch, authCloneUrl, opts.targetDir]);
+    await execFileAsync('git', [
+      'clone',
+      '--depth',
+      '1',
+      '--branch',
+      branch,
+      authCloneUrl,
+      opts.targetDir,
+    ]);
   }
 
   /**

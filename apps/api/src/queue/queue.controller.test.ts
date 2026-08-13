@@ -11,7 +11,9 @@ describe('QueueController', () => {
 
   beforeEach(() => {
     mockSharedQueue = new SharedQueueService();
-    vi.spyOn(mockSharedQueue, 'enqueueJob').mockResolvedValue({ job: { id: 'job_999' } } as unknown as { job: Record<string, unknown> });
+    vi.spyOn(mockSharedQueue, 'enqueueJob').mockResolvedValue({
+      job: { id: 'job_999' },
+    } as unknown as { job: Record<string, unknown> });
     service = new QueueService(mockSharedQueue);
     controller = new QueueController(service);
   });

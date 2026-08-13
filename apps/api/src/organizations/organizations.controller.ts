@@ -24,10 +24,7 @@ export class OrganizationsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(
-    @Req() req: { user?: { userId: string } },
-    @Body() dto: CreateOrganizationDto,
-  ) {
+  async create(@Req() req: { user?: { userId: string } }, @Body() dto: CreateOrganizationDto) {
     const userId = req.user?.userId || 'user_anon';
     return this.orgsService.createOrganization(userId, dto.name, dto.slug);
   }
@@ -54,10 +51,7 @@ export class OrganizationsController {
 
   @Post('invites/accept')
   @HttpCode(HttpStatus.OK)
-  async acceptInvite(
-    @Req() req: { user?: { userId: string } },
-    @Body() dto: AcceptInviteDto,
-  ) {
+  async acceptInvite(@Req() req: { user?: { userId: string } }, @Body() dto: AcceptInviteDto) {
     const userId = req.user?.userId || 'invitee_user';
     return this.orgsService.acceptInvite(userId, dto.token);
   }

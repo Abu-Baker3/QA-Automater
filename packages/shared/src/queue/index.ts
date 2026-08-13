@@ -47,7 +47,8 @@ export function getRedisConnectionConfig(customOpts?: RedisOptions): StandaloneR
 
   return {
     host: customOpts?.host || process.env.REDIS_HOST || 'localhost',
-    port: customOpts?.port || (process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379),
+    port:
+      customOpts?.port || (process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379),
     password: customOpts?.password || process.env.REDIS_PASSWORD || undefined,
     maxRetriesPerRequest: customOpts?.maxRetriesPerRequest ?? null,
     ...(useTls ? { tls: {} } : {}),
@@ -106,7 +107,7 @@ export class QueueService {
     customRedisOpts?: RedisOptions,
   ) {
     const queue = this.getQueue<T>(queueName, customRedisOpts);
-    
+
     // Automatically inject active trace context if data is an object
     const payload =
       data && typeof data === 'object'
@@ -115,20 +116,18 @@ export class QueueService {
 
     incrementCounter('bullmq', 'jobs_enqueued_total', 1, { queue: String(queueName), jobName });
 
-    return (queue.add as unknown as (name: string, data: T, opts?: JobsOptions) => Promise<unknown>)(
-      jobName,
-      payload,
-      {
-        attempts: 3,
-        backoff: {
-          type: 'exponential',
-          delay: 1000,
-        },
-        removeOnComplete: 100,
-        removeOnFail: 500,
-        ...opts,
+    return (
+      queue.add as unknown as (name: string, data: T, opts?: JobsOptions) => Promise<unknown>
+    )(jobName, payload, {
+      attempts: 3,
+      backoff: {
+        type: 'exponential',
+        delay: 1000,
       },
-    );
+      removeOnComplete: 100,
+      removeOnFail: 500,
+      ...opts,
+    });
   }
 
   async closeAll(): Promise<void> {
@@ -139,7 +138,13 @@ export class QueueService {
   }
 }
 
-import { injectTraceContext, withExtractedTraceContext, withSpan, incrementCounter, recordHistogram } from '../telemetry';
+import {
+  injectTraceContext,
+  withExtractedTraceContext,
+  withSpan,
+  incrementCounter,
+  recordHistogram,
+} from '../telemetry';
 
 export function createWorker<T = unknown, R = unknown>(
   queueName: QueueName | string,
@@ -150,7 +155,10 @@ export function createWorker<T = unknown, R = unknown>(
 
   const tracedProcessor: Processor<T, R> = async (job, token) => {
     const startTime = Date.now();
-    const carrier = (job.data && typeof job.data === 'object' ? job.data : {}) as Record<string, unknown>;
+    const carrier = (job.data && typeof job.data === 'object' ? job.data : {}) as Record<
+      string,
+      unknown
+    >;
 
     return withExtractedTraceContext(carrier, async () => {
       return withSpan(
@@ -164,13 +172,25 @@ export function createWorker<T = unknown, R = unknown>(
           try {
             const result = await processor(job, token);
             const duration = Date.now() - startTime;
-            recordHistogram('bullmq', 'job_duration_ms', duration, { queue: String(queueName), status: 'success' });
-            incrementCounter('bullmq', 'jobs_processed_total', 1, { queue: String(queueName), status: 'success' });
+            recordHistogram('bullmq', 'job_duration_ms', duration, {
+              queue: String(queueName),
+              status: 'success',
+            });
+            incrementCounter('bullmq', 'jobs_processed_total', 1, {
+              queue: String(queueName),
+              status: 'success',
+            });
             return result;
           } catch (err) {
             const duration = Date.now() - startTime;
-            recordHistogram('bullmq', 'job_duration_ms', duration, { queue: String(queueName), status: 'failure' });
-            incrementCounter('bullmq', 'jobs_processed_total', 1, { queue: String(queueName), status: 'failure' });
+            recordHistogram('bullmq', 'job_duration_ms', duration, {
+              queue: String(queueName),
+              status: 'failure',
+            });
+            incrementCounter('bullmq', 'jobs_processed_total', 1, {
+              queue: String(queueName),
+              status: 'failure',
+            });
             throw err;
           }
         },
@@ -180,4 +200,3 @@ export function createWorker<T = unknown, R = unknown>(
 
   return new Worker<T, R>(queueName, tracedProcessor, { connection });
 }
-

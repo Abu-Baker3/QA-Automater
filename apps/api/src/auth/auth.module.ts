@@ -9,4 +9,3 @@ import { WebhooksController } from './webhooks.controller';
   exports: [ClerkAuthGuard, RolesGuard],
 })
 export class AuthModule {}
-

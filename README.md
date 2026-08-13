@@ -56,27 +56,27 @@ pnpm dev
 
 ### Service URLs (local)
 
-| Service       | URL                   | Port |
-|---------------|-----------------------|------|
-| Web           | http://localhost:3001 | 3001 |
-| API           | http://localhost:3000 | 3000 |
+| Service       | URL                          | Port |
+| ------------- | ---------------------------- | ---- |
+| Web           | http://localhost:3001        | 3001 |
+| API           | http://localhost:3000        | 3000 |
 | Scan worker   | http://localhost:8081/health | 8081 |
 | AI worker     | http://localhost:8082/health | 8082 |
 | Export worker | http://localhost:8083/health | 8083 |
 
 ## Scripts
 
-| Command          | Description                          |
-|------------------|--------------------------------------|
-| `pnpm build`     | Build all packages, apps, workers    |
-| `pnpm dev`       | Start all services in watch mode     |
-| `pnpm lint`      | ESLint across monorepo               |
-| `pnpm typecheck` | TypeScript check all packages        |
-| `pnpm test`      | Run unit tests (Vitest)              |
-| `pnpm format`    | Prettier format                      |
-| `pnpm db:up`     | Start Postgres + PgBouncer + Redis   |
-| `pnpm db:migrate`| Apply Prisma migrations (direct URL) |
-| `pnpm db:verify` | Migrate + verify pgvector via pool   |
+| Command           | Description                          |
+| ----------------- | ------------------------------------ |
+| `pnpm build`      | Build all packages, apps, workers    |
+| `pnpm dev`        | Start all services in watch mode     |
+| `pnpm lint`       | ESLint across monorepo               |
+| `pnpm typecheck`  | TypeScript check all packages        |
+| `pnpm test`       | Run unit tests (Vitest)              |
+| `pnpm format`     | Prettier format                      |
+| `pnpm db:up`      | Start Postgres + PgBouncer + Redis   |
+| `pnpm db:migrate` | Apply Prisma migrations (direct URL) |
+| `pnpm db:verify`  | Migrate + verify pgvector via pool   |
 
 ## Database (E1.2)
 
@@ -109,18 +109,18 @@ See [`packages/database/docs/migrations.md`](packages/database/docs/migrations.m
 
 Configure these **GitHub Secrets**:
 
-| Secret           | Description                    |
-|------------------|--------------------------------|
-| `AWS_ROLE_ARN`   | IAM role for GitHub OIDC       |
+| Secret         | Description              |
+| -------------- | ------------------------ |
+| `AWS_ROLE_ARN` | IAM role for GitHub OIDC |
 
 Configure these **GitHub Variables**:
 
-| Variable              | Description                          |
-|-----------------------|--------------------------------------|
-| `AWS_REGION`          | e.g. `us-east-1`                     |
-| `ECS_CLUSTER_NAME`    | ECS cluster name                     |
-| `ECS_SERVICE_PREFIX`  | e.g. `qa-automater`                  |
-| `API_HEALTH_URL`      | Public API URL for post-deploy check |
+| Variable             | Description                          |
+| -------------------- | ------------------------------------ |
+| `AWS_REGION`         | e.g. `us-east-1`                     |
+| `ECS_CLUSTER_NAME`   | ECS cluster name                     |
+| `ECS_SERVICE_PREFIX` | e.g. `qa-automater`                  |
+| `API_HEALTH_URL`     | Public API URL for post-deploy check |
 
 Create ECR repositories:
 

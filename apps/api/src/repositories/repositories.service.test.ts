@@ -12,7 +12,9 @@ describe('RepositoriesService', () => {
   beforeEach(() => {
     queueService = new QueueService();
     secretsManager = new SecretsManagerService();
-    vi.spyOn(queueService, 'enqueueJob').mockResolvedValue({ job: { id: 'job_123' } } as unknown as { job: Record<string, unknown> });
+    vi.spyOn(queueService, 'enqueueJob').mockResolvedValue({
+      job: { id: 'job_123' },
+    } as unknown as { job: Record<string, unknown> });
     service = new RepositoriesService(queueService, secretsManager);
   });
 
@@ -104,8 +106,8 @@ describe('RepositoriesService', () => {
   });
 
   it('disconnectRepository should throw NotFoundException (404) if repository does not exist', async () => {
-    await expect(
-      service.disconnectRepository('org_abc', 'repo_nonexistent'),
-    ).rejects.toThrow(NotFoundException);
+    await expect(service.disconnectRepository('org_abc', 'repo_nonexistent')).rejects.toThrow(
+      NotFoundException,
+    );
   });
 });

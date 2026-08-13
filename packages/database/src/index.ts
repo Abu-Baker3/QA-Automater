@@ -8,4 +8,3 @@ export {
 } from './pool';
 export type { DatabasePoolConfig } from './pool';
 export * from './rls';
-

@@ -19,10 +19,7 @@ export interface ApiErrorResponse {
 }
 
 export type WebSocketEventType =
-  | 'scan.progress'
-  | 'scan.complete'
-  | 'generation.status'
-  | 'generation.review_required';
+  'scan.progress' | 'scan.complete' | 'generation.status' | 'generation.review_required';
 
 export interface ScanProgressPayload {
   scan_id: string;
@@ -43,4 +40,3 @@ export interface WebSocketMessage<T = unknown> {
   data: T;
   timestamp: string;
 }
-

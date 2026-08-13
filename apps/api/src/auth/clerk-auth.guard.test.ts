@@ -35,4 +35,3 @@ describe('ClerkAuthGuard', () => {
     expect((request.user as unknown as { userId: string }).userId).toBe('user_dev_fallback');
   });
 });
-

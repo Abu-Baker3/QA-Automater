@@ -6,13 +6,18 @@ WORKDIR /app
 
 FROM base AS deps
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* ./
+COPY apps/api/package.json ./apps/api/
 COPY apps/web/package.json ./apps/web/
+COPY workers/scan/package.json ./workers/scan/
+COPY workers/ai/package.json ./workers/ai/
+COPY workers/export/package.json ./workers/export/
 COPY packages ./packages
-RUN pnpm install --frozen-lockfile || pnpm install
+RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
 COPY --from=deps /app ./
 COPY . .
+RUN pnpm --filter @qa-automater/types build
 RUN pnpm --filter @qa-automater/ui build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DOCKER_BUILD=true

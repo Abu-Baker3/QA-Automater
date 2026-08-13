@@ -1,4 +1,10 @@
-import { startHealthServer, initTelemetry, createWorker, QueueName, EventPublisher } from '@qa-automater/shared';
+import {
+  startHealthServer,
+  initTelemetry,
+  createWorker,
+  QueueName,
+  EventPublisher,
+} from '@qa-automater/shared';
 import { RepositoryCloner } from './repository-cloner';
 
 initTelemetry('qa-worker-scan');
@@ -32,7 +38,9 @@ function main() {
 
   const worker = createWorker<ScanJobPayload>(QueueName.SCAN, async (job) => {
     const scanId = job.data.scan_id || job.data.job_id || String(job.id);
-    console.log(`[scan-worker] Processing job ${job.id}: ${job.name} for repo ${job.data.full_name}`);
+    console.log(
+      `[scan-worker] Processing job ${job.id}: ${job.name} for repo ${job.data.full_name}`,
+    );
     const cloneUrl = job.data.clone_url || `https://github.com/${job.data.full_name}.git`;
 
     // 1. Emit CLONING progress event
@@ -92,7 +100,6 @@ function main() {
       });
     }
   });
-
 
   console.log(`[scan-worker] Worker listening on queue '${QueueName.SCAN}'`);
 }

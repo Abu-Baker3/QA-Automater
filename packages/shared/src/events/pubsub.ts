@@ -11,7 +11,11 @@ export class EventPublisher {
     this.redis = createRedisClient(customOpts);
   }
 
-  async publish<T = unknown>(event: WebSocketEventType, data: T, channel = SCAN_EVENTS_CHANNEL): Promise<number> {
+  async publish<T = unknown>(
+    event: WebSocketEventType,
+    data: T,
+    channel = SCAN_EVENTS_CHANNEL,
+  ): Promise<number> {
     const payload: WebSocketMessage<T> = {
       event,
       data,
@@ -47,13 +51,18 @@ export class EventSubscriber {
           try {
             listener(payload);
           } catch (err) {
-            console.error(`[EventSubscriber] Error executing listener for channel ${channel}:`, err);
+            console.error(
+              `[EventSubscriber] Error executing listener for channel ${channel}:`,
+              err,
+            );
           }
         }
       } catch (err) {
-        console.error(`[EventSubscriber] Failed to parse Redis event from channel ${channel}:`, err);
+        console.error(
+          `[EventSubscriber] Failed to parse Redis event from channel ${channel}:`,
+          err,
+        );
       }
-
     });
   }
 

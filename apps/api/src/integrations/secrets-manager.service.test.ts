@@ -43,12 +43,7 @@ describe('SecretsManagerService', () => {
 
   it('should revoke token when requested', async () => {
     const orgId = 'org_789';
-    await service.storeInstallationToken(
-      orgId,
-      'inst_1',
-      'tok_1',
-      new Date(Date.now() + 10000),
-    );
+    await service.storeInstallationToken(orgId, 'inst_1', 'tok_1', new Date(Date.now() + 10000));
 
     await service.revokeInstallationToken(orgId);
 

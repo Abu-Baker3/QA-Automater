@@ -11,7 +11,11 @@ import {
 import { Injectable, Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { EventPublisher, EventSubscriber, SCAN_EVENTS_CHANNEL } from '@qa-automater/shared';
-import type { ScanProgressPayload, ScanCompletePayload, WebSocketMessage } from '@qa-automater/types';
+import type {
+  ScanProgressPayload,
+  ScanCompletePayload,
+  WebSocketMessage,
+} from '@qa-automater/types';
 
 @WebSocketGateway({
   namespace: '/v1/ws',
@@ -97,7 +101,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
    */
   private handleRedisEvent(msg: WebSocketMessage) {
     if (!this.server || !msg || typeof msg !== 'object') return;
-
 
     if (msg.event === 'scan.progress') {
       const data = msg.data as ScanProgressPayload;

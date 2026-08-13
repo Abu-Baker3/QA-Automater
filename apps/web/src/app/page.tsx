@@ -23,7 +23,6 @@ import {
   Bot,
 } from 'lucide-react';
 
-
 type Tab = 'overview' | 'locators' | 'studio' | 'export' | 'settings';
 
 interface LocatorItem {
@@ -451,7 +450,13 @@ test.describe('Automated Acceptance Test', () => {
                 }}
               >
                 <div className="glass-panel glass-panel-hover" style={{ padding: '20px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
                     <span style={{ fontSize: '0.85rem' }}>Scanned Components</span>
                     <Layers style={{ width: '20px', height: '20px', color: '#818CF8' }} />
                   </div>
@@ -462,7 +467,13 @@ test.describe('Automated Acceptance Test', () => {
                 </div>
 
                 <div className="glass-panel glass-panel-hover" style={{ padding: '20px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
                     <span style={{ fontSize: '0.85rem' }}>Indexed AST Locators</span>
                     <Code2 style={{ width: '20px', height: '20px', color: '#C084FC' }} />
                   </div>
@@ -473,7 +484,13 @@ test.describe('Automated Acceptance Test', () => {
                 </div>
 
                 <div className="glass-panel glass-panel-hover" style={{ padding: '20px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
                     <span style={{ fontSize: '0.85rem' }}>Playwright Tests</span>
                     <FileCode style={{ width: '20px', height: '20px', color: '#34D399' }} />
                   </div>
@@ -484,7 +501,13 @@ test.describe('Automated Acceptance Test', () => {
                 </div>
 
                 <div className="glass-panel glass-panel-hover" style={{ padding: '20px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
                     <span style={{ fontSize: '0.85rem' }}>Automated Coverage</span>
                     <Zap style={{ width: '20px', height: '20px', color: '#F59E0B' }} />
                   </div>
@@ -506,7 +529,9 @@ test.describe('Automated Acceptance Test', () => {
                       marginBottom: '16px',
                     }}
                   >
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Active Frontend Repositories</h3>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>
+                      Active Frontend Repositories
+                    </h3>
                     <button
                       style={{
                         background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
@@ -540,11 +565,35 @@ test.describe('Automated Acceptance Test', () => {
                       }}
                     >
                       <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div
+                          style={{
+                            fontWeight: 600,
+                            fontSize: '0.95rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                        >
                           acme-inc / frontend-app
-                          <span style={{ fontSize: '0.7rem', background: 'rgba(16, 185, 129, 0.2)', color: '#34D399', padding: '2px 8px', borderRadius: '12px' }}>Active</span>
+                          <span
+                            style={{
+                              fontSize: '0.7rem',
+                              background: 'rgba(16, 185, 129, 0.2)',
+                              color: '#34D399',
+                              padding: '2px 8px',
+                              borderRadius: '12px',
+                            }}
+                          >
+                            Active
+                          </span>
                         </div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '0.8rem',
+                            color: 'var(--text-muted)',
+                            marginTop: '4px',
+                          }}
+                        >
                           React 18 + Next.js App Router · 142 AST Components scanned
                         </div>
                       </div>
@@ -579,11 +628,35 @@ test.describe('Automated Acceptance Test', () => {
                       }}
                     >
                       <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div
+                          style={{
+                            fontWeight: 600,
+                            fontSize: '0.95rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                        >
                           acme-inc / admin-portal
-                          <span style={{ fontSize: '0.7rem', background: 'rgba(99, 102, 241, 0.2)', color: '#818CF8', padding: '2px 8px', borderRadius: '12px' }}>Indexed</span>
+                          <span
+                            style={{
+                              fontSize: '0.7rem',
+                              background: 'rgba(99, 102, 241, 0.2)',
+                              color: '#818CF8',
+                              padding: '2px 8px',
+                              borderRadius: '12px',
+                            }}
+                          >
+                            Indexed
+                          </span>
                         </div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '0.8rem',
+                            color: 'var(--text-muted)',
+                            marginTop: '4px',
+                          }}
+                        >
                           Vue 3 + Vite · 88 AST Components scanned
                         </div>
                       </div>
@@ -607,29 +680,64 @@ test.describe('Automated Acceptance Test', () => {
 
                 {/* Queue Activity Feed */}
                 <div className="glass-panel" style={{ padding: '24px' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '16px' }}>BullMQ Queue Stream</h3>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '16px' }}>
+                    BullMQ Queue Stream
+                  </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <CheckCircle2 style={{ width: '16px', height: '16px', color: '#10B981', marginTop: '2px' }} />
+                      <CheckCircle2
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          color: '#10B981',
+                          marginTop: '2px',
+                        }}
+                      />
                       <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>AST Scan Job Completed</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>48 locators extracted in 3.4s</div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>
+                          AST Scan Job Completed
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          48 locators extracted in 3.4s
+                        </div>
                       </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <CheckCircle2 style={{ width: '16px', height: '16px', color: '#10B981', marginTop: '2px' }} />
+                      <CheckCircle2
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          color: '#10B981',
+                          marginTop: '2px',
+                        }}
+                      />
                       <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>AI Playwright Codegen</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>`login.spec.ts` generated & validated</div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>
+                          AI Playwright Codegen
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          `login.spec.ts` generated & validated
+                        </div>
                       </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <RefreshCw style={{ width: '16px', height: '16px', color: '#818CF8', marginTop: '2px' }} />
+                      <RefreshCw
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          color: '#818CF8',
+                          marginTop: '2px',
+                        }}
+                      />
                       <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>pgvector Re-indexing</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Embedding vector space updated</div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>
+                          pgvector Re-indexing
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          Embedding vector space updated
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -641,9 +749,13 @@ test.describe('Automated Acceptance Test', () => {
           {/* TAB 2: AST LOCATORS KB */}
           {activeTab === 'locators' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
                 <div>
-                  <h1 style={{ fontSize: '1.75rem', fontWeight: 700 }}>AST UI Locator Knowledge Base</h1>
+                  <h1 style={{ fontSize: '1.75rem', fontWeight: 700 }}>
+                    AST UI Locator Knowledge Base
+                  </h1>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
                     Extracted React/Vue component tree locators indexed with pgvector embeddings
                   </p>
@@ -683,9 +795,22 @@ test.describe('Automated Acceptance Test', () => {
 
               {/* Locators Table */}
               <div className="glass-panel" style={{ overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                <table
+                  style={{
+                    width: '100%',
+                    borderCollapse: 'collapse',
+                    textAlign: 'left',
+                    fontSize: '0.85rem',
+                  }}
+                >
                   <thead>
-                    <tr style={{ background: 'rgba(30, 41, 59, 0.8)', borderBottom: '1px solid var(--border-card)', color: 'var(--text-muted)' }}>
+                    <tr
+                      style={{
+                        background: 'rgba(30, 41, 59, 0.8)',
+                        borderBottom: '1px solid var(--border-card)',
+                        color: 'var(--text-muted)',
+                      }}
+                    >
                       <th style={{ padding: '14px 20px' }}>Component File</th>
                       <th style={{ padding: '14px 20px' }}>UI Element Name</th>
                       <th style={{ padding: '14px 20px' }}>AST Selector</th>
@@ -697,21 +822,51 @@ test.describe('Automated Acceptance Test', () => {
                   <tbody>
                     {filteredLocators.map((loc) => (
                       <tr key={loc.id} style={{ borderBottom: '1px solid var(--border-card)' }}>
-                        <td style={{ padding: '14px 20px', fontFamily: 'JetBrains Mono', color: '#818CF8' }}>
+                        <td
+                          style={{
+                            padding: '14px 20px',
+                            fontFamily: 'JetBrains Mono',
+                            color: '#818CF8',
+                          }}
+                        >
                           {loc.component}
                         </td>
                         <td style={{ padding: '14px 20px', fontWeight: 600 }}>{loc.name}</td>
-                        <td style={{ padding: '14px 20px', fontFamily: 'JetBrains Mono', color: '#34D399' }}>
+                        <td
+                          style={{
+                            padding: '14px 20px',
+                            fontFamily: 'JetBrains Mono',
+                            color: '#34D399',
+                          }}
+                        >
                           {loc.selector}
                         </td>
                         <td style={{ padding: '14px 20px' }}>
-                          <span style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#C084FC', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>
+                          <span
+                            style={{
+                              background: 'rgba(139, 92, 246, 0.2)',
+                              color: '#C084FC',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              fontSize: '0.75rem',
+                            }}
+                          >
                             {loc.type}
                           </span>
                         </td>
-                        <td style={{ padding: '14px 20px', color: '#10B981', fontWeight: 600 }}>{loc.confidence}</td>
+                        <td style={{ padding: '14px 20px', color: '#10B981', fontWeight: 600 }}>
+                          {loc.confidence}
+                        </td>
                         <td style={{ padding: '14px 20px' }}>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#34D399', fontSize: '0.75rem' }}>
+                          <span
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              color: '#34D399',
+                              fontSize: '0.75rem',
+                            }}
+                          >
                             <CheckCircle2 style={{ width: '14px', height: '14px' }} /> Indexed
                           </span>
                         </td>
@@ -727,17 +882,29 @@ test.describe('Automated Acceptance Test', () => {
           {activeTab === 'studio' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <h1
+                  style={{
+                    fontSize: '1.75rem',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                  }}
+                >
                   <Sparkles style={{ color: '#C084FC' }} />
                   AI Playwright Test Studio
                 </h1>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
-                  Coached test creation mapping user stories to AST locators via LLM RAG orchestration
+                  Coached test creation mapping user stories to AST locators via LLM RAG
+                  orchestration
                 </p>
               </div>
 
               {/* Story Input Bar */}
-              <div className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div
+                className="glass-panel"
+                style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}
+              >
                 <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>
                   User Acceptance Story / Requirement:
                 </label>
@@ -758,9 +925,14 @@ test.describe('Automated Acceptance Test', () => {
                   }}
                 />
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    Target Component: <span style={{ color: '#818CF8', fontFamily: 'JetBrains Mono' }}>src/components/auth/LoginForm.tsx</span>
+                    Target Component:{' '}
+                    <span style={{ color: '#818CF8', fontFamily: 'JetBrains Mono' }}>
+                      src/components/auth/LoginForm.tsx
+                    </span>
                   </div>
 
                   <button
@@ -783,7 +955,13 @@ test.describe('Automated Acceptance Test', () => {
                   >
                     {isGenerating ? (
                       <>
-                        <RefreshCw style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
+                        <RefreshCw
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            animation: 'spin 1s linear infinite',
+                          }}
+                        />
                         RAG Mapping ({genProgress}%)...
                       </>
                     ) : (
@@ -797,33 +975,120 @@ test.describe('Automated Acceptance Test', () => {
               </div>
 
               {/* Split Editor Preview */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', height: '440px' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '20px',
+                  height: '440px',
+                }}
+              >
                 {/* Left Panel: Locator Mapping */}
-                <div className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                  className="glass-panel"
+                  style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      marginBottom: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
                     <Layers style={{ width: '16px', height: '16px', color: '#818CF8' }} />
                     RAG Locator Mapping Matrix
                   </h3>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, overflowY: 'auto' }}>
-                    <div style={{ background: 'rgba(30, 41, 59, 0.5)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-card)' }}>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Step 1: Navigate to /login</div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#34D399', marginTop: '4px' }}>page.goto(&apos;/login&apos;)</div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                      flex: 1,
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(30, 41, 59, 0.5)',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid var(--border-card)',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        Step 1: Navigate to /login
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          color: '#34D399',
+                          marginTop: '4px',
+                        }}
+                      >
+                        page.goto(&apos;/login&apos;)
+                      </div>
                     </div>
 
-                    <div style={{ background: 'rgba(30, 41, 59, 0.5)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-card)' }}>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Step 2: Enter Email & Password</div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#818CF8', marginTop: '4px', fontFamily: 'JetBrains Mono' }}>
+                    <div
+                      style={{
+                        background: 'rgba(30, 41, 59, 0.5)',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid var(--border-card)',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        Step 2: Enter Email & Password
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          color: '#818CF8',
+                          marginTop: '4px',
+                          fontFamily: 'JetBrains Mono',
+                        }}
+                      >
                         [data-testid=&quot;input-email&quot;]
                       </div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#818CF8', marginTop: '2px', fontFamily: 'JetBrains Mono' }}>
+                      <div
+                        style={{
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          color: '#818CF8',
+                          marginTop: '2px',
+                          fontFamily: 'JetBrains Mono',
+                        }}
+                      >
                         [data-testid=&quot;input-password&quot;]
                       </div>
                     </div>
 
-                    <div style={{ background: 'rgba(30, 41, 59, 0.5)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-card)' }}>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Step 3: Click Submit Button</div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#C084FC', marginTop: '4px', fontFamily: 'JetBrains Mono' }}>
+                    <div
+                      style={{
+                        background: 'rgba(30, 41, 59, 0.5)',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid var(--border-card)',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        Step 3: Click Submit Button
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          color: '#C084FC',
+                          marginTop: '4px',
+                          fontFamily: 'JetBrains Mono',
+                        }}
+                      >
                         button[type=&quot;submit&quot;]
                       </div>
                     </div>
@@ -831,9 +1096,26 @@ test.describe('Automated Acceptance Test', () => {
                 </div>
 
                 {/* Right Panel: Playwright TypeScript Code Output */}
-                <div className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#34D399', fontFamily: 'JetBrains Mono' }}>
+                <div
+                  className="glass-panel"
+                  style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        color: '#34D399',
+                        fontFamily: 'JetBrains Mono',
+                      }}
+                    >
                       tests/e2e/login.spec.ts
                     </span>
                     <button
@@ -882,20 +1164,35 @@ test.describe('Automated Acceptance Test', () => {
           {activeTab === 'export' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: 700 }}>Export & GitHub PR Pipeline</h1>
+                <h1 style={{ fontSize: '1.75rem', fontWeight: 700 }}>
+                  Export & GitHub PR Pipeline
+                </h1>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
-                  Export Playwright test suites via downloadable ZIP bundle or automated GitHub Pull Request
+                  Export Playwright test suites via downloadable ZIP bundle or automated GitHub Pull
+                  Request
                 </p>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                  className="glass-panel"
+                  style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '1.1rem',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
                     <Download style={{ width: '18px', height: '18px', color: '#818CF8' }} />
                     Download ZIP Test Artifact Package
                   </h3>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Bundles all generated Playwright TypeScript test files, `playwright.config.ts`, and GitHub Actions CI runner workflows into a ready-to-run ZIP archive.
+                    Bundles all generated Playwright TypeScript test files, `playwright.config.ts`,
+                    and GitHub Actions CI runner workflows into a ready-to-run ZIP archive.
                   </p>
                   <button
                     style={{
@@ -913,17 +1210,30 @@ test.describe('Automated Acceptance Test', () => {
                       gap: '8px',
                     }}
                   >
-                    <Download style={{ width: '16px', height: '16px' }} /> Download Playwright Suite ZIP
+                    <Download style={{ width: '16px', height: '16px' }} /> Download Playwright Suite
+                    ZIP
                   </button>
                 </div>
 
-                <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                  className="glass-panel"
+                  style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '1.1rem',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
                     <GitPullRequest style={{ width: '18px', height: '18px', color: '#C084FC' }} />
                     Automated GitHub Pull Request Export
                   </h3>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Automatically creates a feature branch (`qa-automater/playwright-tests`) and opens a Pull Request directly against target repo `acme-inc/frontend-app`.
+                    Automatically creates a feature branch (`qa-automater/playwright-tests`) and
+                    opens a Pull Request directly against target repo `acme-inc/frontend-app`.
                   </p>
                   <button
                     style={{
@@ -941,7 +1251,8 @@ test.describe('Automated Acceptance Test', () => {
                       gap: '8px',
                     }}
                   >
-                    <GitPullRequest style={{ width: '16px', height: '16px' }} /> Create GitHub Pull Request
+                    <GitPullRequest style={{ width: '16px', height: '16px' }} /> Create GitHub Pull
+                    Request
                   </button>
                 </div>
               </div>
@@ -952,15 +1263,31 @@ test.describe('Automated Acceptance Test', () => {
           {activeTab === 'settings' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: 700 }}>Infrastructure & Operations Baseline</h1>
+                <h1 style={{ fontSize: '1.75rem', fontWeight: 700 }}>
+                  Infrastructure & Operations Baseline
+                </h1>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
-                  Platform foundation telemetry, Docker containers, and OpenTelemetry distributed tracing
+                  Platform foundation telemetry, Docker containers, and OpenTelemetry distributed
+                  tracing
                 </p>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '16px',
+                }}
+              >
                 <div className="glass-panel" style={{ padding: '20px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      marginBottom: '12px',
+                    }}
+                  >
                     <Database style={{ color: '#34D399' }} />
                     <h4 style={{ fontWeight: 600 }}>PostgreSQL 16 + pgvector</h4>
                   </div>
@@ -972,7 +1299,14 @@ test.describe('Automated Acceptance Test', () => {
                 </div>
 
                 <div className="glass-panel" style={{ padding: '20px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      marginBottom: '12px',
+                    }}
+                  >
                     <Server style={{ color: '#818CF8' }} />
                     <h4 style={{ fontWeight: 600 }}>Redis & BullMQ Queues</h4>
                   </div>
@@ -984,7 +1318,14 @@ test.describe('Automated Acceptance Test', () => {
                 </div>
 
                 <div className="glass-panel" style={{ padding: '20px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      marginBottom: '12px',
+                    }}
+                  >
                     <Terminal style={{ color: '#C084FC' }} />
                     <h4 style={{ fontWeight: 600 }}>OpenTelemetry (E1.5)</h4>
                   </div>

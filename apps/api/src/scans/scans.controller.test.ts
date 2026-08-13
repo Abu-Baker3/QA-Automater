@@ -60,8 +60,6 @@ describe('ScansController', () => {
   });
 
   it('GET /scans/:id should throw NotFoundException for unknown scan ID', async () => {
-    await expect(controller.getScan('scan_missing', 'org_test')).rejects.toThrow(
-      NotFoundException,
-    );
+    await expect(controller.getScan('scan_missing', 'org_test')).rejects.toThrow(NotFoundException);
   });
 });

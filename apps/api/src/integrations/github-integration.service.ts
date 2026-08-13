@@ -44,7 +44,8 @@ export class GitHubIntegrationService {
   getConnectUrl(orgId: string): ConnectGitHubResponse {
     const appId = process.env.GITHUB_APP_NAME || 'qa-automater-app';
     const redirectUri = encodeURIComponent(
-      process.env.GITHUB_CALLBACK_URL || 'https://api.qaautomater.com/v1/integrations/github/callback',
+      process.env.GITHUB_CALLBACK_URL ||
+        'https://api.qaautomater.com/v1/integrations/github/callback',
     );
     const state = Buffer.from(JSON.stringify({ orgId, timestamp: Date.now() })).toString('base64');
 
@@ -62,7 +63,9 @@ export class GitHubIntegrationService {
     installationId?: string,
   ): Promise<OAuthCallbackResult> {
     if (!code && !installationId) {
-      throw new BadRequestException('Invalid callback: missing authorization code or installation_id');
+      throw new BadRequestException(
+        'Invalid callback: missing authorization code or installation_id',
+      );
     }
 
     const effectiveInstallationId = installationId || `inst_${Date.now()}`;
@@ -159,7 +162,8 @@ export class GitHubIntegrationService {
     if (search) {
       const query = search.toLowerCase();
       filtered = mockRepositories.filter(
-        (repo) => repo.name.toLowerCase().includes(query) || repo.full_name.toLowerCase().includes(query),
+        (repo) =>
+          repo.name.toLowerCase().includes(query) || repo.full_name.toLowerCase().includes(query),
       );
     }
 

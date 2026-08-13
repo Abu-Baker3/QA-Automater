@@ -43,24 +43,14 @@ export class IntegrationsController {
   @Post('callback')
   @Roles('ADMIN')
   @HttpCode(HttpStatus.OK)
-  async handleCallback(
-    @Body() dto: CallbackDto,
-    @Headers('x-org-id') headerOrgId?: string,
-  ) {
+  async handleCallback(@Body() dto: CallbackDto, @Headers('x-org-id') headerOrgId?: string) {
     const orgId = dto.orgId || headerOrgId || 'default_org';
-    return this.githubIntegrationService.handleCallback(
-      orgId,
-      dto.code || '',
-      dto.installationId,
-    );
+    return this.githubIntegrationService.handleCallback(orgId, dto.code || '', dto.installationId);
   }
 
   @Post('validate-scan')
   @HttpCode(HttpStatus.OK)
-  async validateScanToken(
-    @Body() dto: ValidateScanDto,
-    @Headers('x-org-id') headerOrgId?: string,
-  ) {
+  async validateScanToken(@Body() dto: ValidateScanDto, @Headers('x-org-id') headerOrgId?: string) {
     const orgId = dto.orgId || headerOrgId || 'default_org';
     const token = await this.githubIntegrationService.validateTokenForScan(orgId);
     return {
@@ -82,11 +72,6 @@ export class IntegrationsController {
     const page = pageStr ? parseInt(pageStr, 10) : 1;
     const perPage = perPageStr ? parseInt(perPageStr, 10) : 20;
 
-    return this.githubIntegrationService.listAccessibleRepositories(
-      orgId,
-      page,
-      perPage,
-      search,
-    );
+    return this.githubIntegrationService.listAccessibleRepositories(orgId, page, perPage, search);
   }
 }

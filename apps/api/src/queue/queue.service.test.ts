@@ -9,7 +9,9 @@ describe('QueueService in API app', () => {
 
   beforeEach(() => {
     mockSharedQueue = new SharedQueueService();
-    vi.spyOn(mockSharedQueue, 'enqueueJob').mockResolvedValue({ job: { id: 'job_123' } } as unknown as { job: Record<string, unknown> });
+    vi.spyOn(mockSharedQueue, 'enqueueJob').mockResolvedValue({
+      job: { id: 'job_123' },
+    } as unknown as { job: Record<string, unknown> });
     queueService = new QueueService(mockSharedQueue);
   });
 

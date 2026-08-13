@@ -50,8 +50,14 @@ export class OrganizationsService {
     customSlug?: string,
   ): Promise<OrganizationRecord> {
     const slug = customSlug
-      ? customSlug.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-')
-      : name.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-');
+      ? customSlug
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9-]/g, '-')
+      : name
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9-]/g, '-');
 
     const existing = Array.from(this.organizations.values()).find((org) => org.slug === slug);
     if (existing) {
@@ -106,7 +112,10 @@ export class OrganizationsService {
     }
 
     const existingPending = Array.from(this.invites.values()).find(
-      (inv) => inv.organizationId === orgId && inv.email.toLowerCase() === email.toLowerCase() && inv.status === 'PENDING',
+      (inv) =>
+        inv.organizationId === orgId &&
+        inv.email.toLowerCase() === email.toLowerCase() &&
+        inv.status === 'PENDING',
     );
     if (existingPending) {
       throw new ConflictException(`Pending invitation already exists for email "${email}"`);

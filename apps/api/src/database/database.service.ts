@@ -7,7 +7,6 @@ import {
   withClient,
 } from '@qa-automater/database';
 
-
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private readonly pool: ReturnType<typeof createDatabasePool>;
@@ -40,10 +39,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     return withClient(this.pool, fn);
   }
 
-
   async onModuleDestroy(): Promise<void> {
     await this.pool.end();
   }
 }
-
-

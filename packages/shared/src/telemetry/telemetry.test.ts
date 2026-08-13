@@ -52,6 +52,8 @@ describe('OpenTelemetry Baseline Utility', () => {
 
   it('should increment metrics counter and record histogram without throwing', () => {
     expect(() => incrementCounter('test-meter', 'test_counter', 1, { env: 'test' })).not.toThrow();
-    expect(() => recordHistogram('test-meter', 'test_histogram', 42, { env: 'test' })).not.toThrow();
+    expect(() =>
+      recordHistogram('test-meter', 'test_histogram', 42, { env: 'test' }),
+    ).not.toThrow();
   });
 });

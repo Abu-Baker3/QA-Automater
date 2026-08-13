@@ -13,10 +13,7 @@ export function startHealthServer(options: HealthServerOptions): void {
 
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     if (req.url === '/health' && req.method === 'GET') {
-      const body: HealthCheckResponse = createHealthResponse(
-        options.service,
-        options.version,
-      );
+      const body: HealthCheckResponse = createHealthResponse(options.service, options.version);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(body));
       return;

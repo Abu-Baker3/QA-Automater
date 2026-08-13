@@ -36,9 +36,9 @@ describe('GitHubIntegrationService', () => {
   });
 
   it('should throw BadRequestException if callback has neither code nor installationId', async () => {
-    await expect(
-      githubService.handleCallback('org_123', '', ''),
-    ).rejects.toThrow(BadRequestException);
+    await expect(githubService.handleCallback('org_123', '', '')).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('should validate token successfully when token is active', async () => {

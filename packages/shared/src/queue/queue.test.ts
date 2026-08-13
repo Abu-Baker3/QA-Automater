@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  getRedisConnectionConfig,
-  QueueName,
-  QueueService,
-} from './index';
+import { getRedisConnectionConfig, QueueName, QueueService } from './index';
 
 describe('Redis & BullMQ Queue Integration (AC-1)', () => {
   it('parses REDIS_URL correctly when provided', () => {

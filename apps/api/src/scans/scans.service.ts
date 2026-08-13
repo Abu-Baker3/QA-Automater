@@ -31,9 +31,7 @@ export interface CreateScanDto {
 export class ScansService {
   private readonly scansStore = new Map<string, ScanRecord>();
 
-  constructor(
-    @Optional() @Inject(EventsGateway) private readonly eventsGateway?: EventsGateway,
-  ) {}
+  constructor(@Optional() @Inject(EventsGateway) private readonly eventsGateway?: EventsGateway) {}
 
   /**
    * Calculate progress percentage based on scan phase and files processed.

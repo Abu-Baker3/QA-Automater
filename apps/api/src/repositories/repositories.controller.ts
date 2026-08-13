@@ -35,7 +35,10 @@ export class RepositoriesController {
     @Headers('x-org-id') headerOrgId?: string,
   ) {
     const orgId = headerOrgId || 'default_org';
-    const fullName = dto.full_name || dto.name || (dto.repoUrl ? dto.repoUrl.replace(/^https?:\/\/github\.com\//, '') : 'unnamed/repo');
+    const fullName =
+      dto.full_name ||
+      dto.name ||
+      (dto.repoUrl ? dto.repoUrl.replace(/^https?:\/\/github\.com\//, '') : 'unnamed/repo');
     const branch = dto.branch || 'main';
     const provider = dto.provider || 'github';
 
@@ -51,10 +54,7 @@ export class RepositoriesController {
   @Delete(':id')
   @Roles('ADMIN')
   @HttpCode(HttpStatus.OK)
-  async disconnectRepository(
-    @Param('id') id: string,
-    @Headers('x-org-id') headerOrgId?: string,
-  ) {
+  async disconnectRepository(@Param('id') id: string, @Headers('x-org-id') headerOrgId?: string) {
     const orgId = headerOrgId || 'default_org';
     return this.repositoriesService.disconnectRepository(orgId, id);
   }

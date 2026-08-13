@@ -71,7 +71,10 @@ export function createDatabasePool(config?: Partial<DatabasePoolConfig>): Pool {
   return new PgPool(poolConfig);
 }
 
-export async function withClient<T>(pool: Pool, fn: (client: PoolClient) => Promise<T>): Promise<T> {
+export async function withClient<T>(
+  pool: Pool,
+  fn: (client: PoolClient) => Promise<T>,
+): Promise<T> {
   const client = await pool.connect();
   try {
     return await fn(client);

@@ -42,9 +42,7 @@ describe('IntegrationsController', () => {
       new Date(Date.now() - 10000), // Expired
     );
 
-    await expect(
-      controller.validateScanToken({}, 'org_test'),
-    ).rejects.toThrow(
+    await expect(controller.validateScanToken({}, 'org_test')).rejects.toThrow(
       'GitHub installation token has expired. Please re-authenticate your GitHub connection.',
     );
   });
@@ -69,8 +67,8 @@ describe('IntegrationsController', () => {
   });
 
   it('AC2: should throw ForbiddenException when listing repositories with missing token', async () => {
-    await expect(
-      controller.listRepositories('1', '20', undefined, 'org_no_token'),
-    ).rejects.toThrow(ForbiddenException);
+    await expect(controller.listRepositories('1', '20', undefined, 'org_no_token')).rejects.toThrow(
+      ForbiddenException,
+    );
   });
 });

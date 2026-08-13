@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { verifyToken } from '@clerk/backend';
 
 @Injectable()
@@ -28,7 +23,12 @@ export class ClerkAuthGuard implements CanActivate {
         request.user = { userId: payload.sub, orgId, role, claims: payload };
       } else {
         // Dev fallback mode when CLERK_SECRET_KEY is not provided
-        request.user = { userId: 'user_dev_fallback', orgId: null, role: 'ADMIN', claims: { sub: 'user_dev_fallback' } };
+        request.user = {
+          userId: 'user_dev_fallback',
+          orgId: null,
+          role: 'ADMIN',
+          claims: { sub: 'user_dev_fallback' },
+        };
       }
       return true;
     } catch (err: unknown) {

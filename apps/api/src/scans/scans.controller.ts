@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Headers,
-  UseGuards,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, Param, Headers, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { ScansService } from './scans.service';
@@ -18,10 +10,7 @@ export class ScansController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async getScan(
-    @Param('id') scanId: string,
-    @Headers('x-org-id') headerOrgId?: string,
-  ) {
+  async getScan(@Param('id') scanId: string, @Headers('x-org-id') headerOrgId?: string) {
     const orgId = headerOrgId || 'default_org';
     return this.scansService.getScan(orgId, scanId);
   }

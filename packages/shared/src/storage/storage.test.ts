@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  buildArtifactStorageKey,
-  parseArtifactStorageKey,
-  S3StorageService,
-} from './index';
+import { buildArtifactStorageKey, parseArtifactStorageKey, S3StorageService } from './index';
 
 describe('S3 Storage Key Prefix Rules (AC-2)', () => {
   it('correctly formats storage keys with org_id/repo_id/ prefix', () => {
@@ -12,11 +8,7 @@ describe('S3 Storage Key Prefix Rules (AC-2)', () => {
   });
 
   it('sanitizes leading slashes and path traversal attempts', () => {
-    const key = buildArtifactStorageKey(
-      '/org-123/',
-      '/repo-456/',
-      '../nested/./path/artifact.zip',
-    );
+    const key = buildArtifactStorageKey('/org-123/', '/repo-456/', '../nested/./path/artifact.zip');
     expect(key).toBe('org-123/repo-456/nested/path/artifact.zip');
   });
 

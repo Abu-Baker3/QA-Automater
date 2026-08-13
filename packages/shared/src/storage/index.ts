@@ -101,8 +101,7 @@ export class S3StorageService {
     const region = config?.region || process.env.S3_REGION || process.env.AWS_REGION || 'us-east-1';
     const endpoint = config?.endpoint || process.env.S3_ENDPOINT;
     const forcePathStyle =
-      config?.forcePathStyle ??
-      (process.env.S3_FORCE_PATH_STYLE === 'true' || Boolean(endpoint));
+      config?.forcePathStyle ?? (process.env.S3_FORCE_PATH_STYLE === 'true' || Boolean(endpoint));
 
     this.client = new S3Client({
       region,

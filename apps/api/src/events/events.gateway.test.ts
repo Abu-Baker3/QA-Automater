@@ -4,7 +4,6 @@ import type { Socket, Server } from 'socket.io';
 import type { WebSocketMessage } from '@qa-automater/types';
 
 const mockPublish = vi.fn().mockResolvedValue(1);
-const mockSubscribe = vi.fn().mockResolvedValue('OK');
 let mockMessageCallback: ((msg: WebSocketMessage) => void) | null = null;
 
 vi.mock('@qa-automater/shared', async () => {

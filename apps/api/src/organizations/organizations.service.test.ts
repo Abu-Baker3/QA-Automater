@@ -55,13 +55,15 @@ describe('OrganizationsService', () => {
   });
 
   it('should throw NotFoundException when accepting non-existent or invalid token', async () => {
-    await expect(service.acceptInvite('user_123', 'invalid_token')).rejects.toThrow(NotFoundException);
+    await expect(service.acceptInvite('user_123', 'invalid_token')).rejects.toThrow(
+      NotFoundException,
+    );
   });
 
   it('should throw BadRequestException when inviting invalid email', async () => {
     const org = await service.createOrganization('admin_123', 'Acme QA', 'acme-qa');
-    await expect(service.inviteMember(org.id, 'admin_123', 'invalidemail', 'MEMBER')).rejects.toThrow(
-      BadRequestException,
-    );
+    await expect(
+      service.inviteMember(org.id, 'admin_123', 'invalidemail', 'MEMBER'),
+    ).rejects.toThrow(BadRequestException);
   });
 });

@@ -22,10 +22,7 @@ export class QueueController {
   @Post('scan')
   @Roles('ADMIN')
   @HttpCode(HttpStatus.ACCEPTED)
-  async enqueueScan(
-    @Body() dto: EnqueueScanJobDto,
-    @Headers('x-org-id') headerOrgId?: string,
-  ) {
+  async enqueueScan(@Body() dto: EnqueueScanJobDto, @Headers('x-org-id') headerOrgId?: string) {
     const orgId = dto.org_id || headerOrgId || 'default_org';
     return this.queueService.enqueueScanJob({
       ...dto,

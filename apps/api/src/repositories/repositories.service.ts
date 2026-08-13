@@ -118,7 +118,9 @@ export class RepositoriesService {
     }
 
     if (!targetKey || !targetRecord) {
-      throw new NotFoundException(`Repository with ID '${repositoryId}' was not found for this organization.`);
+      throw new NotFoundException(
+        `Repository with ID '${repositoryId}' was not found for this organization.`,
+      );
     }
 
     // Cascade delete repository record
