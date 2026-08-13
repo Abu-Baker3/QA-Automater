@@ -17,3 +17,30 @@ export interface ApiErrorResponse {
   status: number;
   detail?: string;
 }
+
+export type WebSocketEventType =
+  | 'scan.progress'
+  | 'scan.complete'
+  | 'generation.status'
+  | 'generation.review_required';
+
+export interface ScanProgressPayload {
+  scan_id: string;
+  phase: string;
+  percent: number;
+  files_done?: number;
+  files_total?: number;
+}
+
+export interface ScanCompletePayload {
+  scan_id: string;
+  element_count: number;
+  framework?: string;
+}
+
+export interface WebSocketMessage<T = unknown> {
+  event: WebSocketEventType;
+  data: T;
+  timestamp: string;
+}
+

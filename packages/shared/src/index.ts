@@ -31,4 +31,5 @@ export type { HealthServerOptions } from './health-server';
 export * from './storage';
 export * from './queue';
 export * from './telemetry';
+export * from './events/pubsub';
 
