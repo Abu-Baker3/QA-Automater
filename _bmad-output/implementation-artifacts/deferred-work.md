@@ -14,4 +14,6 @@
 
 - **Export Worker Autoscaling** — `infrastructure/terraform/ecs/main.tf` — deferred, fixed capacity (desired_count = 1) is sufficient for MVP export workload
 
+## Deferred from: code review of E4.5-enforce-concurrent-scan-limits-per-tenant.md (2026-08-14)
 
+- **In-memory `scansStore` for tenant concurrency & daily quota tracking** — `apps/api/src/scans/scans.service.ts` — deferred, in-memory tracking is sufficient for MVP single-instance API; multi-node distributed Redis tracking deferred for production cluster scaling.
