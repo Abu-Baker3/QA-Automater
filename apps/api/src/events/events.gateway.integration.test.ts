@@ -99,7 +99,13 @@ describe('EventsGateway Integration & E4.4 WebSocket Event Emission', () => {
     if (mockMessageCallback) {
       mockMessageCallback({
         event: 'scan.progress',
-        data: { scan_id: 'scan_444', phase: 'PARSING', percent: 50, files_done: 50, files_total: 100 },
+        data: {
+          scan_id: 'scan_444',
+          phase: 'PARSING',
+          percent: 50,
+          files_done: 50,
+          files_total: 100,
+        },
         timestamp: new Date().toISOString(),
       });
     }
