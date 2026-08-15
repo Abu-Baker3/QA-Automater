@@ -21,3 +21,7 @@
 ## Deferred from: code review of E4.6-idempotent-scan-by-commit-sha.md (2026-08-15)
 
 - **Composite database index `(repository_id, commit_sha, status)` for commit idempotency lookup** — `apps/api/src/scans/scans.service.ts` — deferred, in-memory Map lookup is sufficient for MVP; database index optimization deferred for production scaling.
+
+## Deferred from: code review of E5.1-implement-framework-detector.md (2026-08-15)
+
+- **Recursive workspace `package.json` search for monorepo target apps** — `workers/scan/src/framework-detector.ts` — deferred, root `package.json` inspection is standard for MVP; multi-package root discovery deferred for E5.3.

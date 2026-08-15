@@ -1,5 +1,7 @@
 export type ServiceName = 'web' | 'api' | 'ai-worker' | 'scan-worker' | 'export-worker';
 
+export type FrameworkType = 'NEXTJS' | 'REACT';
+
 export type HealthStatus = 'ok' | 'degraded' | 'error';
 
 export interface HealthCheckResponse {
