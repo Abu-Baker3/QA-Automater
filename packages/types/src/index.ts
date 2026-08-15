@@ -83,4 +83,3 @@ export interface RepositoryParseResult {
   jsx_elements: ExtractedJsxElement[];
   file_results: FileParseResult[];
 }
-

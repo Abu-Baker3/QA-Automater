@@ -101,7 +101,11 @@ export class ReactParser {
         if (ts.isFunctionDeclaration(node) && node.name) {
           const compName = node.name.text;
           const firstChar = compName.charAt(0);
-          if (firstChar && firstChar === firstChar.toUpperCase() && firstChar !== firstChar.toLowerCase()) {
+          if (
+            firstChar &&
+            firstChar === firstChar.toUpperCase() &&
+            firstChar !== firstChar.toLowerCase()
+          ) {
             const isExport =
               node.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) || false;
             activeComponent = {
@@ -119,7 +123,11 @@ export class ReactParser {
             if (ts.isIdentifier(decl.name) && decl.initializer) {
               const compName = decl.name.text;
               const firstChar = compName.charAt(0);
-              if (firstChar && firstChar === firstChar.toUpperCase() && firstChar !== firstChar.toLowerCase()) {
+              if (
+                firstChar &&
+                firstChar === firstChar.toUpperCase() &&
+                firstChar !== firstChar.toLowerCase()
+              ) {
                 if (
                   ts.isArrowFunction(decl.initializer) ||
                   ts.isFunctionExpression(decl.initializer)
@@ -182,9 +190,7 @@ export class ReactParser {
    * Parse multiple files in a repository, aggregating component & JSX element data.
    * Continues scan even if individual files fail to parse (AC2).
    */
-  parseRepositoryFiles(
-    files: Array<{ filePath: string; content: string }>,
-  ): RepositoryParseResult {
+  parseRepositoryFiles(files: Array<{ filePath: string; content: string }>): RepositoryParseResult {
     let parsedCount = 0;
     let failedCount = 0;
     const fileResults: FileParseResult[] = [];
