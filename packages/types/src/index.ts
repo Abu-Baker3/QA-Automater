@@ -172,3 +172,34 @@ export interface UiElementDetailResponse {
   primary_candidate: LocatorCandidate;
   candidates: LocatorCandidate[];
 }
+
+export interface UiElementEmbedding {
+  id: string;
+  element_id: string;
+  content_hash: string;
+  text_payload: string;
+  embedding: number[]; // 1536-dimensional vector
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EmbedBatchElementInput {
+  id: string;
+  tag_name: string;
+  content_hash?: string;
+  text_content?: string;
+  aria_label?: string;
+  data_testid?: string;
+  source_ref?: string;
+}
+
+export interface EmbedBatchRequest {
+  elements: EmbedBatchElementInput[];
+}
+
+export interface EmbedBatchResult {
+  total_elements: number;
+  embedded_count: number;
+  skipped_count: number;
+  embeddings: UiElementEmbedding[];
+}

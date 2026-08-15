@@ -53,3 +53,7 @@
 ## Deferred from: code review of E6.4-persist-ui-elements-with-source-traceability.md (2026-08-15)
 
 - **Source code snippet preview window fetching in element detail API** — `apps/api/src/elements/elements.controller.ts` — deferred, `source_ref: "{file}:{line}"` string returned for MVP; AST snippet preview window rendering deferred for E7 UI KB.
+
+## Deferred from: code review of E7.1-generate-and-store-ui-element-embeddings.md (2026-08-15)
+
+- **Remote OpenAI / Vertex AI Embedding API HTTP client integration** — `workers/ai/src/embedding-service.ts` — deferred, deterministic 1536-dimensional embedding generator implemented for offline pipeline unit testing; remote OpenAI `text-embedding-3-small` / Gemini API client integration deferred for E7.2 vector search.
