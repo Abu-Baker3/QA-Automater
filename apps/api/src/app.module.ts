@@ -12,6 +12,7 @@ import { ScansModule } from './scans/scans.module';
 import { StorageModule } from './storage/storage.module';
 import { TestsModule } from './tests/tests.module';
 import { ElementsModule } from './elements/elements.module';
+import { StoriesModule } from './stories/stories.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ElementsModule } from './elements/elements.module';
     ScansModule,
     TestsModule,
     ElementsModule,
+    StoriesModule,
   ],
 
   controllers: [AppController, HealthController],

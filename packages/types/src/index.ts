@@ -263,3 +263,35 @@ export interface ElementSearchResponse {
     total_pages: number;
   };
 }
+
+export interface AcceptanceCriterionInput {
+  criterion_id?: string;
+  text: string;
+  given?: string;
+  when?: string;
+  then?: string;
+}
+
+export interface CreateUserStoryDto {
+  title: string;
+  description: string;
+  acceptance_criteria?: AcceptanceCriterionInput[];
+}
+
+export interface UserStoryItem {
+  id: string;
+  user_story_id: string;
+  repository_id: string;
+  org_id: string;
+  title: string;
+  description: string;
+  acceptance_criteria: AcceptanceCriterionInput[];
+  status: 'draft' | 'pending' | 'in-progress' | 'complete';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateUserStoryResponse {
+  user_story_id: string;
+  story: UserStoryItem;
+}

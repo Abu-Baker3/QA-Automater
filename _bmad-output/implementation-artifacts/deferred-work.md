@@ -70,3 +70,8 @@
 
 - **Live NestJS API fetch integration for UI KB Explorer tab (`GET /repositories/:id/pages` and `GET /elements/search`)** — `apps/web/src/app/page.tsx` — deferred, client-side structured mock KB hierarchy (`MOCK_KB_PAGES`) is implemented for fast MVP UI demonstration & testing; live SWR/React Query API endpoint binding deferred for Epic 8 runtime suite.
 
+## Deferred from: code review of E8.1-create-user-story-api.md (2026-08-16)
+
+- **Prisma database persistence for user stories table (`UserStory` model)** — `apps/api/src/stories/stories.service.ts` — deferred, in-memory `storiesStore` Map in `StoriesService` is implemented for fast MVP querying; persistent Prisma relational schema table deferred for E8.2 list and view stories story.
+
+
