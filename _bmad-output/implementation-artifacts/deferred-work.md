@@ -65,3 +65,8 @@
 ## Deferred from: code review of E7.3-implement-ui-kb-search-elements-api.md (2026-08-16)
 
 - **Hybrid pgvector cosine similarity search engine integration** — `apps/api/src/elements/elements.service.ts` — deferred, high-performance keyword & metadata search index implemented for MVP; vector embedding similarity integration (`pgvector` HNSW index query) deferred for E7.4.
+
+## Deferred from: code review of E7.4-build-dashboard-ui-kb-explorer.md (2026-08-16)
+
+- **Live NestJS API fetch integration for UI KB Explorer tab (`GET /repositories/:id/pages` and `GET /elements/search`)** — `apps/web/src/app/page.tsx` — deferred, client-side structured mock KB hierarchy (`MOCK_KB_PAGES`) is implemented for fast MVP UI demonstration & testing; live SWR/React Query API endpoint binding deferred for Epic 8 runtime suite.
+

@@ -21,9 +21,13 @@ import {
   Terminal,
   ChevronRight,
   Bot,
+  FolderTree,
+  FileText,
+  Component,
+  ExternalLink,
 } from 'lucide-react';
 
-type Tab = 'overview' | 'locators' | 'studio' | 'export' | 'settings';
+type Tab = 'overview' | 'locators' | 'explorer' | 'studio' | 'export' | 'settings';
 
 interface LocatorItem {
   id: string;
@@ -83,6 +87,234 @@ const MOCK_LOCATORS: LocatorItem[] = [
   },
 ];
 
+interface KbElementDetail {
+  id: string;
+  tag_name: string;
+  text_content: string;
+  source_file: string;
+  source_line: number;
+  source_ref: string;
+  stability_tier: 'high' | 'medium' | 'low';
+  primary_candidate: {
+    strategy: string;
+    value: string;
+    score: number;
+    playwright_code: string;
+    rank: number;
+    stability_tier: 'high' | 'medium' | 'low';
+  };
+  candidates: Array<{
+    strategy: string;
+    value: string;
+    score: number;
+    playwright_code: string;
+    rank: number;
+    stability_tier: 'high' | 'medium' | 'low';
+  }>;
+}
+
+interface KbComponentNode {
+  id: string;
+  name: string;
+  file_path: string;
+  elements: KbElementDetail[];
+}
+
+interface KbPageNode {
+  id: string;
+  route_path: string;
+  file_path: string;
+  component_name: string;
+  element_count: number;
+  components: KbComponentNode[];
+}
+
+const MOCK_KB_PAGES: KbPageNode[] = [
+  {
+    id: 'page-1',
+    route_path: '/login',
+    file_path: 'app/login/page.tsx',
+    component_name: 'LoginPage',
+    element_count: 5,
+    components: [
+      {
+        id: 'comp-1',
+        name: 'LoginForm',
+        file_path: 'components/auth/LoginForm.tsx',
+        elements: [
+          {
+            id: 'elem-1',
+            tag_name: 'input',
+            text_content: 'Email Address',
+            source_file: 'app/login/page.tsx',
+            source_line: 24,
+            source_ref: 'app/login/page.tsx:24',
+            stability_tier: 'high',
+            primary_candidate: {
+              strategy: 'label',
+              value: 'Email Address',
+              score: 0.92,
+              playwright_code: "page.getByLabel('Email Address')",
+              rank: 1,
+              stability_tier: 'high',
+            },
+            candidates: [
+              {
+                strategy: 'label',
+                value: 'Email Address',
+                score: 0.92,
+                playwright_code: "page.getByLabel('Email Address')",
+                rank: 1,
+                stability_tier: 'high',
+              },
+              {
+                strategy: 'role_name',
+                value: 'textbox:Email Address',
+                score: 0.9,
+                playwright_code: "page.getByRole('textbox', { name: 'Email Address' })",
+                rank: 2,
+                stability_tier: 'high',
+              },
+            ],
+          },
+          {
+            id: 'elem-2',
+            tag_name: 'button',
+            text_content: 'Sign In',
+            source_file: 'app/login/page.tsx',
+            source_line: 42,
+            source_ref: 'app/login/page.tsx:42',
+            stability_tier: 'high',
+            primary_candidate: {
+              strategy: 'testid',
+              value: 'login-submit',
+              score: 0.98,
+              playwright_code: "page.getByTestId('login-submit')",
+              rank: 1,
+              stability_tier: 'high',
+            },
+            candidates: [
+              {
+                strategy: 'testid',
+                value: 'login-submit',
+                score: 0.98,
+                playwright_code: "page.getByTestId('login-submit')",
+                rank: 1,
+                stability_tier: 'high',
+              },
+              {
+                strategy: 'role_name',
+                value: 'button:Sign In',
+                score: 0.9,
+                playwright_code: "page.getByRole('button', { name: 'Sign In' })",
+                rank: 2,
+                stability_tier: 'high',
+              },
+            ],
+          },
+          {
+            id: 'elem-3',
+            tag_name: 'a',
+            text_content: 'Forgot Password?',
+            source_file: 'app/login/page.tsx',
+            source_line: 55,
+            source_ref: 'app/login/page.tsx:55',
+            stability_tier: 'medium',
+            primary_candidate: {
+              strategy: 'text',
+              value: 'Forgot Password?',
+              score: 0.85,
+              playwright_code: "page.getByText('Forgot Password?')",
+              rank: 1,
+              stability_tier: 'medium',
+            },
+            candidates: [
+              {
+                strategy: 'text',
+                value: 'Forgot Password?',
+                score: 0.85,
+                playwright_code: "page.getByText('Forgot Password?')",
+                rank: 1,
+                stability_tier: 'medium',
+              },
+            ],
+          },
+          {
+            id: 'elem-4',
+            tag_name: 'button',
+            text_content: 'Styled Login Helper',
+            source_file: 'app/login/page.tsx',
+            source_line: 78,
+            source_ref: 'app/login/page.tsx:78',
+            stability_tier: 'low',
+            primary_candidate: {
+              strategy: 'css',
+              value: '.css-1a2b3c',
+              score: 0.4,
+              playwright_code: "page.locator('.css-1a2b3c')",
+              rank: 1,
+              stability_tier: 'low',
+            },
+            candidates: [
+              {
+                strategy: 'css',
+                value: '.css-1a2b3c',
+                score: 0.4,
+                playwright_code: "page.locator('.css-1a2b3c')",
+                rank: 1,
+                stability_tier: 'low',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'page-2',
+    route_path: '/dashboard',
+    file_path: 'app/dashboard/page.tsx',
+    component_name: 'DashboardPage',
+    element_count: 24,
+    components: [
+      {
+        id: 'comp-2',
+        name: 'DashboardHeader',
+        file_path: 'components/dashboard/Header.tsx',
+        elements: [
+          {
+            id: 'elem-20',
+            tag_name: 'button',
+            text_content: 'Create New Test',
+            source_file: 'app/dashboard/page.tsx',
+            source_line: 18,
+            source_ref: 'app/dashboard/page.tsx:18',
+            stability_tier: 'high',
+            primary_candidate: {
+              strategy: 'testid',
+              value: 'btn-create-test',
+              score: 0.98,
+              playwright_code: "page.getByTestId('btn-create-test')",
+              rank: 1,
+              stability_tier: 'high',
+            },
+            candidates: [
+              {
+                strategy: 'testid',
+                value: 'btn-create-test',
+                score: 0.98,
+                playwright_code: "page.getByTestId('btn-create-test')",
+                rank: 1,
+                stability_tier: 'high',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+];
+
 const INITIAL_CODE = `import { test, expect } from '@playwright/test';
 
 /**
@@ -113,6 +345,9 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [selectedRepo, setSelectedRepo] = useState('acme-inc/frontend-app');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedPageId, setSelectedPageId] = useState<string>('page-1');
+  const [selectedComponentId, setSelectedComponentId] = useState<string>('comp-1');
+  const [selectedElementId, setSelectedElementId] = useState<string>('elem-2');
   const [userStoryText, setUserStoryText] = useState(
     'Given a user on /login, when they enter valid credentials and click login, then they are redirected to /dashboard.',
   );
@@ -359,6 +594,28 @@ test.describe('Automated Acceptance Test', () => {
           >
             <Layers style={{ width: '18px', height: '18px' }} />
             AST Locators KB
+          </button>
+
+          <button
+            onClick={() => setActiveTab('explorer')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              border: 'none',
+              background: activeTab === 'explorer' ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
+              color: activeTab === 'explorer' ? '#34D399' : 'var(--text-muted)',
+              fontSize: '0.9rem',
+              fontWeight: activeTab === 'explorer' ? 600 : 400,
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.2s',
+            }}
+          >
+            <FolderTree style={{ width: '18px', height: '18px' }} />
+            UI KB Explorer
           </button>
 
           <button
@@ -878,7 +1135,521 @@ test.describe('Automated Acceptance Test', () => {
             </div>
           )}
 
+          {/* TAB: UI KB EXPLORER (E7.4) */}
+          {activeTab === 'explorer' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <h1
+                  style={{
+                    fontSize: '1.75rem',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                  }}
+                >
+                  <FolderTree style={{ color: '#34D399' }} />
+                  UI Knowledge Base Explorer
+                </h1>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
+                  Browse Pages → Components → Elements hierarchy with color-coded locator stability
+                  tiers & source traceability
+                </p>
+              </div>
+
+              {/* 2-Column Explorer Layout */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                {/* Left Column: Pages -> Components -> Elements Tree */}
+                <div
+                  className="glass-panel"
+                  style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      borderBottom: '1px solid var(--border-card)',
+                      paddingBottom: '12px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: '1rem',
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <FolderTree style={{ width: '16px', height: '16px', color: '#818CF8' }} />
+                      Hierarchy Tree
+                    </h3>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      Pages → Components → Elements
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {MOCK_KB_PAGES.map((pageNode) => {
+                      const isPageSelected = selectedPageId === pageNode.id;
+                      return (
+                        <div
+                          key={pageNode.id}
+                          style={{
+                            border: '1px solid var(--border-card)',
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            background: 'rgba(30, 41, 59, 0.4)',
+                          }}
+                        >
+                          {/* Page Node Header */}
+                          <div
+                            onClick={() => {
+                              setSelectedPageId(pageNode.id);
+                              if (pageNode.components.length > 0) {
+                                setSelectedComponentId(pageNode.components[0]!.id);
+                                if (pageNode.components[0]!.elements.length > 0) {
+                                  setSelectedElementId(pageNode.components[0]!.elements[0]!.id);
+                                }
+                              }
+                            }}
+                            style={{
+                              padding: '10px 14px',
+                              background: isPageSelected
+                                ? 'rgba(99, 102, 241, 0.15)'
+                                : 'rgba(30, 41, 59, 0.6)',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <FileText
+                                style={{ width: '16px', height: '16px', color: '#818CF8' }}
+                              />
+                              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                                {pageNode.route_path}
+                              </span>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                ({pageNode.component_name})
+                              </span>
+                            </div>
+                            <span
+                              style={{
+                                fontSize: '0.75rem',
+                                background: 'rgba(255,255,255,0.06)',
+                                padding: '2px 8px',
+                                borderRadius: '12px',
+                              }}
+                            >
+                              {pageNode.element_count} elements
+                            </span>
+                          </div>
+
+                          {/* Components Under Page */}
+                          {isPageSelected && (
+                            <div
+                              style={{
+                                padding: '8px 12px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '8px',
+                              }}
+                            >
+                              {pageNode.components.map((compNode) => {
+                                const isCompSelected = selectedComponentId === compNode.id;
+                                return (
+                                  <div
+                                    key={compNode.id}
+                                    style={{
+                                      paddingLeft: '12px',
+                                      borderLeft: '2px solid rgba(99, 102, 241, 0.3)',
+                                    }}
+                                  >
+                                    <div
+                                      onClick={() => {
+                                        setSelectedComponentId(compNode.id);
+                                        if (compNode.elements.length > 0) {
+                                          setSelectedElementId(compNode.elements[0]!.id);
+                                        }
+                                      }}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        fontSize: '0.85rem',
+                                        fontWeight: 600,
+                                        color: isCompSelected ? '#C084FC' : 'var(--text-muted)',
+                                        cursor: 'pointer',
+                                        marginBottom: '6px',
+                                      }}
+                                    >
+                                      <Component
+                                        style={{ width: '14px', height: '14px', color: '#C084FC' }}
+                                      />
+                                      {compNode.name}
+                                    </div>
+
+                                    {/* Elements Under Component with Stability Tier Badges (AC1) */}
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '4px',
+                                        paddingLeft: '8px',
+                                      }}
+                                    >
+                                      {compNode.elements.map((elem) => {
+                                        const isElemSelected = selectedElementId === elem.id;
+                                        return (
+                                          <div
+                                            key={elem.id}
+                                            onClick={() => setSelectedElementId(elem.id)}
+                                            style={{
+                                              padding: '6px 10px',
+                                              borderRadius: '6px',
+                                              background: isElemSelected
+                                                ? 'rgba(52, 211, 153, 0.15)'
+                                                : 'rgba(255,255,255,0.02)',
+                                              border: isElemSelected
+                                                ? '1px solid rgba(52, 211, 153, 0.3)'
+                                                : '1px solid transparent',
+                                              cursor: 'pointer',
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              justifyContent: 'space-between',
+                                              fontSize: '0.8rem',
+                                            }}
+                                          >
+                                            <div
+                                              style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                              }}
+                                            >
+                                              <span
+                                                style={{
+                                                  fontSize: '0.7rem',
+                                                  color: '#818CF8',
+                                                  fontWeight: 600,
+                                                }}
+                                              >
+                                                &lt;{elem.tag_name}&gt;
+                                              </span>
+                                              <span>{elem.text_content}</span>
+                                            </div>
+
+                                            {/* AC1: Color-Coded Stability Tier Badges */}
+                                            {elem.stability_tier === 'high' && (
+                                              <span
+                                                style={{
+                                                  fontSize: '0.65rem',
+                                                  background: 'rgba(16, 185, 129, 0.2)',
+                                                  color: '#34D399',
+                                                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                                                  padding: '1px 6px',
+                                                  borderRadius: '10px',
+                                                  fontWeight: 600,
+                                                }}
+                                              >
+                                                High Tier
+                                              </span>
+                                            )}
+                                            {elem.stability_tier === 'medium' && (
+                                              <span
+                                                style={{
+                                                  fontSize: '0.65rem',
+                                                  background: 'rgba(245, 158, 11, 0.2)',
+                                                  color: '#FBBF24',
+                                                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                                                  padding: '1px 6px',
+                                                  borderRadius: '10px',
+                                                  fontWeight: 600,
+                                                }}
+                                              >
+                                                Med Tier
+                                              </span>
+                                            )}
+                                            {elem.stability_tier === 'low' && (
+                                              <span
+                                                style={{
+                                                  fontSize: '0.65rem',
+                                                  background: 'rgba(244, 63, 94, 0.2)',
+                                                  color: '#FB7185',
+                                                  border: '1px solid rgba(244, 63, 94, 0.3)',
+                                                  padding: '1px 6px',
+                                                  borderRadius: '10px',
+                                                  fontWeight: 600,
+                                                }}
+                                              >
+                                                Low Tier
+                                              </span>
+                                            )}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right Column: Selected Element Detail Inspector (AC2) */}
+                <div
+                  className="glass-panel"
+                  style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+                >
+                  {(() => {
+                    let activeElem: KbElementDetail | null = null;
+                    for (const p of MOCK_KB_PAGES) {
+                      for (const c of p.components) {
+                        for (const e of c.elements) {
+                          if (e.id === selectedElementId) {
+                            activeElem = e;
+                            break;
+                          }
+                        }
+                      }
+                    }
+
+                    if (!activeElem) {
+                      activeElem = MOCK_KB_PAGES[0]!.components[0]!.elements[1]!; // fallback to button
+                    }
+
+                    return (
+                      <>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            borderBottom: '1px solid var(--border-card)',
+                            paddingBottom: '12px',
+                          }}
+                        >
+                          <div>
+                            <h3
+                              style={{
+                                fontSize: '1.1rem',
+                                fontWeight: 700,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                              }}
+                            >
+                              <span style={{ color: '#818CF8' }}>
+                                &lt;{activeElem.tag_name}&gt;
+                              </span>
+                              {activeElem.text_content}
+                            </h3>
+                            <div
+                              style={{
+                                fontSize: '0.75rem',
+                                color: 'var(--text-muted)',
+                                marginTop: '2px',
+                              }}
+                            >
+                              Element ID: {activeElem.id}
+                            </div>
+                          </div>
+
+                          {/* AC2: Interactive Source Code Reference Link */}
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              background: 'rgba(99, 102, 241, 0.15)',
+                              border: '1px solid rgba(99, 102, 241, 0.3)',
+                              padding: '4px 10px',
+                              borderRadius: '6px',
+                              fontSize: '0.75rem',
+                              color: '#818CF8',
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <ExternalLink style={{ width: '12px', height: '12px' }} />
+                            <span>{activeElem.source_ref}</span>
+                          </div>
+                        </div>
+
+                        {/* Ranked Locators Table (AC2) */}
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              fontWeight: 600,
+                              marginBottom: '10px',
+                              color: 'var(--text-muted)',
+                            }}
+                          >
+                            Ranked AST Locator Candidates:
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {activeElem.candidates.map((cand) => (
+                              <div
+                                key={cand.rank}
+                                style={{
+                                  background: 'rgba(30, 41, 59, 0.6)',
+                                  border: '1px solid var(--border-card)',
+                                  borderRadius: '8px',
+                                  padding: '12px 16px',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  gap: '8px',
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                  }}
+                                >
+                                  <div
+                                    style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                                  >
+                                    <span
+                                      style={{
+                                        fontSize: '0.75rem',
+                                        fontWeight: 700,
+                                        background: 'rgba(255,255,255,0.1)',
+                                        padding: '2px 6px',
+                                        borderRadius: '4px',
+                                      }}
+                                    >
+                                      Rank #{cand.rank}
+                                    </span>
+                                    <span
+                                      style={{
+                                        fontSize: '0.75rem',
+                                        background: 'rgba(139, 92, 246, 0.2)',
+                                        color: '#C084FC',
+                                        padding: '2px 8px',
+                                        borderRadius: '10px',
+                                        fontWeight: 600,
+                                      }}
+                                    >
+                                      {cand.strategy}
+                                    </span>
+                                    <span
+                                      style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}
+                                    >
+                                      Score: {(cand.score * 100).toFixed(0)}%
+                                    </span>
+                                  </div>
+
+                                  {cand.stability_tier === 'high' && (
+                                    <span
+                                      style={{
+                                        fontSize: '0.7rem',
+                                        background: 'rgba(16, 185, 129, 0.2)',
+                                        color: '#34D399',
+                                        border: '1px solid rgba(16, 185, 129, 0.3)',
+                                        padding: '2px 8px',
+                                        borderRadius: '10px',
+                                        fontWeight: 600,
+                                      }}
+                                    >
+                                      HIGH TIER
+                                    </span>
+                                  )}
+                                  {cand.stability_tier === 'medium' && (
+                                    <span
+                                      style={{
+                                        fontSize: '0.7rem',
+                                        background: 'rgba(245, 158, 11, 0.2)',
+                                        color: '#FBBF24',
+                                        border: '1px solid rgba(245, 158, 11, 0.3)',
+                                        padding: '2px 8px',
+                                        borderRadius: '10px',
+                                        fontWeight: 600,
+                                      }}
+                                    >
+                                      MEDIUM TIER
+                                    </span>
+                                  )}
+                                  {cand.stability_tier === 'low' && (
+                                    <span
+                                      style={{
+                                        fontSize: '0.7rem',
+                                        background: 'rgba(244, 63, 94, 0.2)',
+                                        color: '#FB7185',
+                                        border: '1px solid rgba(244, 63, 94, 0.3)',
+                                        padding: '2px 8px',
+                                        borderRadius: '10px',
+                                        fontWeight: 600,
+                                      }}
+                                    >
+                                      LOW TIER
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Code Snippet & Copy Button */}
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    background: 'rgba(15, 23, 42, 0.8)',
+                                    border: '1px solid rgba(255,255,255,0.06)',
+                                    borderRadius: '6px',
+                                    padding: '8px 12px',
+                                  }}
+                                >
+                                  <code
+                                    style={{
+                                      fontSize: '0.8rem',
+                                      color: '#E2E8F0',
+                                      fontFamily: 'monospace',
+                                    }}
+                                  >
+                                    {cand.playwright_code}
+                                  </code>
+                                  <button
+                                    onClick={() =>
+                                      navigator.clipboard.writeText(cand.playwright_code)
+                                    }
+                                    style={{
+                                      background: 'transparent',
+                                      border: 'none',
+                                      color: 'var(--text-muted)',
+                                      cursor: 'pointer',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '4px',
+                                      fontSize: '0.75rem',
+                                    }}
+                                  >
+                                    <Copy style={{ width: '12px', height: '12px' }} /> Copy
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* TAB 3: AI TEST STUDIO */}
+
           {activeTab === 'studio' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
