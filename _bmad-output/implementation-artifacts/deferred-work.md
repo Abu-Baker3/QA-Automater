@@ -25,3 +25,7 @@
 ## Deferred from: code review of E5.1-implement-framework-detector.md (2026-08-15)
 
 - **Recursive workspace `package.json` search for monorepo target apps** — `workers/scan/src/framework-detector.ts` — deferred, root `package.json` inspection is standard for MVP; multi-package root discovery deferred for E5.3.
+
+## Deferred from: code review of E5.2-implement-react-parser.md (2026-08-15)
+
+- **Anonymous default export component name resolution (`export default function()`)** — `workers/scan/src/react-parser.ts` — deferred, named function & arrow function component extraction is standard for MVP; default export fallback naming deferred for E5.3.
