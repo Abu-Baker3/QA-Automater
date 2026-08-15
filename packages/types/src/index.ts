@@ -230,3 +230,36 @@ export interface RepositoryPagesResponse {
     total_pages: number;
   };
 }
+
+export interface ElementSearchQueryDto {
+  q?: string;
+  page_route?: string;
+  repository_id?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface ElementSearchResultItem {
+  id: string;
+  scan_id: string;
+  repository_id?: string;
+  route_path?: string;
+  tag_name: string;
+  text_content?: string;
+  source_ref: string;
+  stability_tier: StabilityTier;
+  primary_candidate: LocatorCandidate;
+  candidates: LocatorCandidate[];
+  relevance_score: number;
+}
+
+export interface ElementSearchResponse {
+  data: ElementSearchResultItem[];
+  query_execution_time_ms: number;
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    total_pages: number;
+  };
+}

@@ -61,3 +61,7 @@
 ## Deferred from: code review of E7.2-implement-ui-kb-list-pages-api.md (2026-08-16)
 
 - **Prisma database persistence for scanned repository pages table** — `apps/api/src/repositories/repositories.service.ts` — deferred, `pagesStore` Map in `RepositoriesService` implemented for fast in-memory MVP querying; persistent relational schema table for scanned pages deferred for E7.4.
+
+## Deferred from: code review of E7.3-implement-ui-kb-search-elements-api.md (2026-08-16)
+
+- **Hybrid pgvector cosine similarity search engine integration** — `apps/api/src/elements/elements.service.ts` — deferred, high-performance keyword & metadata search index implemented for MVP; vector embedding similarity integration (`pgvector` HNSW index query) deferred for E7.4.
