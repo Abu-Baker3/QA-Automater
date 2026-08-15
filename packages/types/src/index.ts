@@ -295,3 +295,32 @@ export interface CreateUserStoryResponse {
   user_story_id: string;
   story: UserStoryItem;
 }
+
+export interface UserStoryListItem {
+  id: string;
+  user_story_id: string;
+  repository_id: string;
+  title: string;
+  status: 'draft' | 'pending' | 'in-progress' | 'complete';
+  linked_generation_job_status?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserStoryListQueryDto {
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface UserStoryListResponse {
+  data: UserStoryListItem[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    total_pages: number;
+  };
+}
+
+export type UserStoryDetailResponse = UserStoryItem;

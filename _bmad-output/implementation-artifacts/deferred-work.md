@@ -74,4 +74,9 @@
 
 - **Prisma database persistence for user stories table (`UserStory` model)** — `apps/api/src/stories/stories.service.ts` — deferred, in-memory `storiesStore` Map in `StoriesService` is implemented for fast MVP querying; persistent Prisma relational schema table deferred for E8.2 list and view stories story.
 
+## Deferred from: code review of E8.2-list-and-view-user-stories.md (2026-08-16)
+
+- **Prisma relational table database query for user stories** — `apps/api/src/stories/stories.service.ts` — deferred, `storiesStore` in-memory Map is active for fast MVP querying; persistent Prisma relational database query deferred for Epic 9 test suite.
+
+
 

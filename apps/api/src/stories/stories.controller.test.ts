@@ -76,4 +76,31 @@ describe('StoriesController & StoriesService (E8.1)', () => {
       );
     });
   });
+
+  describe('E8.2: GET /repositories/:id/stories & GET /stories/:id', () => {
+    it('AC1: Given org stories exist When GET /repositories/:id/stories Then return title, created_at, linked generation job status', async () => {
+      const listRes = await controller.listUserStories('repo_100');
+
+      expect(listRes.data.length).toBeGreaterThan(0);
+      expect(listRes.data[0]!.repository_id).toBe('repo_100');
+      expect(listRes.data[0]!.title).toBeDefined();
+      expect(listRes.data[0]!.created_at).toBeDefined();
+      expect(listRes.data[0]!.linked_generation_job_status).toBe('completed');
+    });
+
+    it('AC2: Given story id When GET /stories/:id Then return full description and acceptance_criteria', async () => {
+      const detail = await controller.getUserStoryDetail('story_seed_101');
+
+      expect(detail).toBeDefined();
+      expect(detail.id).toBe('story_seed_101');
+      expect(detail.title).toBe('User Login & Credentials Authentication');
+      expect(detail.description).toContain('Given a user on /login');
+      expect(detail.acceptance_criteria.length).toBe(1);
+      expect(detail.acceptance_criteria[0]!.text).toContain('Redirects to /dashboard');
+    });
+
+    it('AC2: Given non-existent story id When GET /stories/:id Then throw 404 NotFoundException', async () => {
+      await expect(controller.getUserStoryDetail('non_existent_story_999')).rejects.toThrow();
+    });
+  });
 });
