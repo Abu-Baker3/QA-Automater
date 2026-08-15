@@ -46,6 +46,8 @@ export class ReactParser {
         let id: string | undefined;
         let name: string | undefined;
         let type: string | undefined;
+        let placeholder: string | undefined;
+        let html_for: string | undefined;
 
         node.attributes.properties.forEach((prop) => {
           if (ts.isJsxAttribute(prop)) {
@@ -76,6 +78,10 @@ export class ReactParser {
               name = propValue;
             } else if (propName === 'type') {
               type = propValue;
+            } else if (propName === 'placeholder') {
+              placeholder = propValue;
+            } else if (propName === 'htmlFor' || propName === 'for') {
+              html_for = propValue;
             }
           }
         });
@@ -90,6 +96,8 @@ export class ReactParser {
           ...(id ? { id } : {}),
           ...(name ? { name } : {}),
           ...(type ? { type } : {}),
+          ...(placeholder ? { placeholder } : {}),
+          ...(html_for ? { html_for } : {}),
         };
       };
 

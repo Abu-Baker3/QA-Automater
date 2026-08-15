@@ -60,6 +60,8 @@ export interface ExtractedJsxElement {
   type?: string;
   placeholder?: string;
   text_content?: string;
+  html_for?: string;
+  label_text?: string;
 }
 
 export interface ExtractedComponent {

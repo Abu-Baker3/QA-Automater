@@ -21,7 +21,17 @@ export class LocatorExtractor {
       });
     }
 
-    // 2. role + name / aria-label strategy
+    // 2. label strategy (paired via htmlFor or nesting)
+    if (element.label_text) {
+      candidates.push({
+        strategy: 'label',
+        value: element.label_text,
+        score: 0.92, // AC1: rank <= 2 (behind testid 0.98, ahead of role_name 0.90)
+        playwright_code: `page.getByLabel('${element.label_text}')`,
+      });
+    }
+
+    // 3. role + name / aria-label strategy
     const roleName = element.aria_label || element.text_content;
     const computedRole = element.role || this.inferRoleFromTagName(element.tag_name, element.type);
 
@@ -37,7 +47,9 @@ export class LocatorExtractor {
         strategy: 'role_name',
         value: element.aria_label,
         score: 0.88,
-        playwright_code: `page.getByLabel('${element.aria_label}')`,
+        playwright_code: computedRole
+          ? `page.getByRole('${computedRole}', { name: '${element.aria_label}' })`
+          : `page.getByLabel('${element.aria_label}')`,
       });
     }
 
