@@ -45,3 +45,7 @@
 ## Deferred from: code review of E6.2-associate-form-labels-with-inputs.md (2026-08-15)
 
 - **Multi-ID `aria-labelledby` resolution** — `workers/scan/src/form-label-associator.ts` — deferred, direct `htmlFor`/`id` and `aria-label` pairing is implemented for MVP; multi-ID `aria-labelledby` resolution deferred for E6.3.
+
+## Deferred from: code review of E6.3-compute-locator-stability-scores.md (2026-08-15)
+
+- **Dynamic DOM position volatility score weighting** — `workers/scan/src/locator-extractor.ts` — deferred, static AST stability scoring is implemented for MVP; live DOM re-render stability tracking deferred for E8 runtime suite.

@@ -124,11 +124,15 @@ export interface ComponentImportGraph {
 export type LocatorStrategy =
   'testid' | 'role_name' | 'text' | 'label' | 'placeholder' | 'id' | 'name' | 'css';
 
+export type StabilityTier = 'high' | 'medium' | 'low';
+
 export interface LocatorCandidate {
   strategy: LocatorStrategy;
   value: string;
   score: number;
   playwright_code: string;
+  rank: number;
+  stability_tier: StabilityTier;
 }
 
 export interface ExtractedLocatorElement {
@@ -136,4 +140,5 @@ export interface ExtractedLocatorElement {
   line_number: number;
   candidates: LocatorCandidate[];
   primary_candidate: LocatorCandidate;
+  stability_tier: StabilityTier;
 }

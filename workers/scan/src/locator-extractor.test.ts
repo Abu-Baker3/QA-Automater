@@ -71,4 +71,47 @@ describe('LocatorExtractor (E6.1)', () => {
       );
     });
   });
+
+  describe('E6.3: Compute Locator Stability Scores', () => {
+    it('AC1: should assign rank=1 and stability_tier="high" when data-testid is present', () => {
+      const element: ExtractedJsxElement = {
+        tag_name: 'button',
+        line_number: 10,
+        data_testid: 'submit-btn',
+        text_content: 'Submit',
+      };
+
+      const result = extractor.extractCandidates(element);
+
+      expect(result.primary_candidate.strategy).toBe('testid');
+      expect(result.primary_candidate.rank).toBe(1);
+      expect(result.primary_candidate.stability_tier).toBe('high');
+      expect(result.stability_tier).toBe('high');
+    });
+
+    it('AC2: should apply penalty and assign stability_tier="low" for generated dynamic CSS class css-1a2b3c', () => {
+      const element: ExtractedJsxElement = {
+        tag_name: 'div',
+        line_number: 25,
+        props: [{ name: 'className', value: 'css-1a2b3c' }],
+      };
+
+      const result = extractor.extractCandidates(element);
+
+      const cssCandidate = result.candidates.find((c) => c.strategy === 'css');
+      expect(cssCandidate).toBeDefined();
+      expect(cssCandidate!.score).toBeLessThan(0.6);
+      expect(cssCandidate!.stability_tier).toBe('low');
+      expect(result.stability_tier).toBe('low');
+    });
+
+    it('should correctly evaluate high, medium, and low stability tiers based on score thresholds', () => {
+      expect(extractor.getStabilityTier(0.98)).toBe('high');
+      expect(extractor.getStabilityTier(0.9)).toBe('high');
+      expect(extractor.getStabilityTier(0.85)).toBe('medium');
+      expect(extractor.getStabilityTier(0.6)).toBe('medium');
+      expect(extractor.getStabilityTier(0.5)).toBe('low');
+      expect(extractor.getStabilityTier(0.4)).toBe('low');
+    });
+  });
 });
