@@ -29,3 +29,7 @@
 ## Deferred from: code review of E5.2-implement-react-parser.md (2026-08-15)
 
 - **Anonymous default export component name resolution (`export default function()`)** — `workers/scan/src/react-parser.ts` — deferred, named function & arrow function component extraction is standard for MVP; default export fallback naming deferred for E5.3.
+
+## Deferred from: code review of E5.3-implement-nextjs-app-router-parser.md (2026-08-15)
+
+- **Intercepting route `(.)` & `@slot` parallel route metadata tagging** — `workers/scan/src/nextjs-app-router-parser.ts` — deferred, standard App Router pages, route groups, and dynamic routes are supported for MVP; slot/intercept metadata tagging deferred for E5.4.

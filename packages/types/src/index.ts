@@ -83,3 +83,15 @@ export interface RepositoryParseResult {
   jsx_elements: ExtractedJsxElement[];
   file_results: FileParseResult[];
 }
+
+export interface AppRouterRoute {
+  route_path: string;
+  file_path: string;
+  component_name?: string;
+  jsx_elements: ExtractedJsxElement[];
+}
+
+export interface AppRouterParseResult {
+  routes: AppRouterRoute[];
+  total_routes: number;
+}
