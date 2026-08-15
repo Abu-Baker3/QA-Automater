@@ -51,13 +51,15 @@ export interface ExtractedJsxProp {
 export interface ExtractedJsxElement {
   tag_name: string;
   line_number: number;
-  props: ExtractedJsxProp[];
+  props?: ExtractedJsxProp[];
   data_testid?: string;
   aria_label?: string;
   role?: string;
   id?: string;
   name?: string;
   type?: string;
+  placeholder?: string;
+  text_content?: string;
 }
 
 export interface ExtractedComponent {
@@ -115,4 +117,21 @@ export interface ComponentImportGraph {
   nodes: Record<string, ComponentNode>;
   edges: ComponentEdge[];
   root_route_ids: string[];
+}
+
+export type LocatorStrategy =
+  'testid' | 'role_name' | 'text' | 'label' | 'placeholder' | 'id' | 'name' | 'css';
+
+export interface LocatorCandidate {
+  strategy: LocatorStrategy;
+  value: string;
+  score: number;
+  playwright_code: string;
+}
+
+export interface ExtractedLocatorElement {
+  tag_name: string;
+  line_number: number;
+  candidates: LocatorCandidate[];
+  primary_candidate: LocatorCandidate;
 }

@@ -37,3 +37,7 @@
 ## Deferred from: code review of E5.4-build-component-import-graph.md (2026-08-15)
 
 - **Dynamic `import()` expressions & React `lazy()` resolution** — `workers/scan/src/component-import-graph.ts` — deferred, static ES/TS imports are extracted for MVP; dynamic lazy import tracking deferred for E6.
+
+## Deferred from: code review of E6.1-extract-interactable-element-attributes.md (2026-08-15)
+
+- **Form `<label htmlFor>` ↔ `<input id>` cross-element pairing** — `workers/scan/src/locator-extractor.ts` — deferred for E6.2 (as defined in product backlog story dependencies).
