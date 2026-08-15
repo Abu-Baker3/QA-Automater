@@ -17,6 +17,7 @@ export interface ScanRecord {
   id: string;
   org_id: string;
   repository_id: string;
+  commit_sha?: string;
   status: ScanStatus;
   phase: ScanPhase;
   files_done: number;
@@ -32,6 +33,7 @@ export interface ScanRecord {
 export interface CreateScanDto {
   org_id: string;
   repository_id: string;
+  commit_sha?: string;
   scan_id?: string;
   files_total?: number;
   plan_tier?: PlanTier;
@@ -139,9 +141,33 @@ export class ScansService {
   }
 
   /**
-   * Initialize a new scan record after enforcing quota (AC2) and concurrency limits (AC1).
+   * Check if a completed scan already exists for a given repository and commit SHA (E4.6 AC1).
+   */
+  getCompletedScanByCommit(repositoryId: string, commitSha: string): ScanRecord | undefined {
+    for (const record of this.scansStore.values()) {
+      if (
+        record.repository_id === repositoryId &&
+        record.commit_sha === commitSha &&
+        record.status === 'completed'
+      ) {
+        return record;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Initialize a new scan record after checking idempotency (E4.6), enforcing quota (AC2) and concurrency limits (AC1).
    */
   createScan(dto: CreateScanDto): ScanRecord {
+    // E4.6 AC1: If same repo_id + commit_sha is already completed, return existing scan record without re-processing
+    if (dto.commit_sha) {
+      const existingCompleted = this.getCompletedScanByCommit(dto.repository_id, dto.commit_sha);
+      if (existingCompleted) {
+        return existingCompleted;
+      }
+    }
+
     const planTier = dto.plan_tier || 'free';
     const eligibility = this.checkScanEligibility(dto.org_id, planTier);
 
@@ -161,6 +187,7 @@ export class ScansService {
       id: scanId,
       org_id: dto.org_id,
       repository_id: dto.repository_id,
+      ...(dto.commit_sha ? { commit_sha: dto.commit_sha } : {}),
       status: initialStatus,
       phase: initialPhase,
       files_done: 0,
