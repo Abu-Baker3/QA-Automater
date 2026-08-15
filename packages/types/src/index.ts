@@ -203,3 +203,30 @@ export interface EmbedBatchResult {
   skipped_count: number;
   embeddings: UiElementEmbedding[];
 }
+
+export interface RepositoryPageItem {
+  id: string;
+  repository_id: string;
+  route_path: string;
+  file_path: string;
+  component_name?: string;
+  element_count: number;
+  created_at: string;
+}
+
+export interface RepositoryPagesQueryDto {
+  search?: string;
+  q?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface RepositoryPagesResponse {
+  data: RepositoryPageItem[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    total_pages: number;
+  };
+}

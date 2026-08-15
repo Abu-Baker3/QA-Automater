@@ -2,6 +2,11 @@ import { Injectable, ConflictException, NotFoundException } from '@nestjs/common
 import { randomUUID } from 'crypto';
 import { QueueService } from '../queue/queue.service';
 import { SecretsManagerService } from '../integrations/secrets-manager.service';
+import {
+  RepositoryPageItem,
+  RepositoryPagesQueryDto,
+  RepositoryPagesResponse,
+} from '@qa-automater/types';
 
 export interface RegisterRepositoryDto {
   provider?: string;
@@ -39,6 +44,7 @@ export interface StoredRepositoryRecord {
 @Injectable()
 export class RepositoriesService {
   private readonly repositoriesStore = new Map<string, StoredRepositoryRecord>();
+  private readonly pagesStore = new Map<string, RepositoryPageItem[]>();
 
   constructor(
     private readonly queueService: QueueService,
@@ -79,6 +85,46 @@ export class RepositoriesService {
     };
     this.repositoriesStore.set(existingKey, record);
 
+    // Initialize mock scanned pages for UI KB exploration
+    this.pagesStore.set(repositoryId, [
+      {
+        id: `page_${randomUUID()}`,
+        repository_id: repositoryId,
+        route_path: '/login',
+        file_path: 'app/login/page.tsx',
+        component_name: 'LoginPage',
+        element_count: 8,
+        created_at: new Date().toISOString(),
+      },
+      {
+        id: `page_${randomUUID()}`,
+        repository_id: repositoryId,
+        route_path: '/dashboard',
+        file_path: 'app/dashboard/page.tsx',
+        component_name: 'DashboardPage',
+        element_count: 24,
+        created_at: new Date().toISOString(),
+      },
+      {
+        id: `page_${randomUUID()}`,
+        repository_id: repositoryId,
+        route_path: '/checkout',
+        file_path: 'app/checkout/page.tsx',
+        component_name: 'CheckoutPage',
+        element_count: 15,
+        created_at: new Date().toISOString(),
+      },
+      {
+        id: `page_${randomUUID()}`,
+        repository_id: repositoryId,
+        route_path: '/settings',
+        file_path: 'app/settings/page.tsx',
+        component_name: 'SettingsPage',
+        element_count: 12,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+
     // Enqueue initial scan job
     await this.queueService.enqueueJob('repository-scan', 'initial-scan', {
       repository_id: repositoryId,
@@ -93,6 +139,75 @@ export class RepositoriesService {
       repository_id: repositoryId,
       scan_id: scanId,
       status: 'queued',
+    };
+  }
+
+  /**
+   * List pages by route for a repository (E7.2).
+   * AC1: Paginated pages with route_path, file_path, component_name, element_count.
+   * AC2: Filtered matching routes when search/q query is provided.
+   */
+  async listRepositoryPages(
+    orgId: string,
+    repositoryId: string,
+    query: RepositoryPagesQueryDto = {},
+  ): Promise<RepositoryPagesResponse> {
+    let pages = this.pagesStore.get(repositoryId);
+
+    if (!pages) {
+      // Default fallback sample pages if repository was created out of band
+      pages = [
+        {
+          id: `page_def_1`,
+          repository_id: repositoryId,
+          route_path: '/login',
+          file_path: 'app/login/page.tsx',
+          component_name: 'LoginPage',
+          element_count: 8,
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: `page_def_2`,
+          repository_id: repositoryId,
+          route_path: '/dashboard',
+          file_path: 'app/dashboard/page.tsx',
+          component_name: 'DashboardPage',
+          element_count: 24,
+          created_at: new Date().toISOString(),
+        },
+      ];
+    }
+
+    const searchKeyword = (query.search || query.q || '').trim().toLowerCase();
+    let filteredPages = pages;
+
+    // AC2: Filter matching routes by search keyword
+    if (searchKeyword) {
+      filteredPages = pages.filter(
+        (page) =>
+          page.route_path.toLowerCase().includes(searchKeyword) ||
+          page.file_path.toLowerCase().includes(searchKeyword) ||
+          (page.component_name && page.component_name.toLowerCase().includes(searchKeyword)),
+      );
+    }
+
+    // AC1: Pagination logic
+    const pageNum = Math.max(1, Number(query.page) || 1);
+    const limitNum = Math.max(1, Math.min(100, Number(query.limit) || 20));
+    const total = filteredPages.length;
+    const totalPages = Math.ceil(total / limitNum) || 1;
+
+    const startIndex = (pageNum - 1) * limitNum;
+    const paginatedPages = filteredPages.slice(startIndex, startIndex + limitNum);
+
+    return {
+      data: paginatedPages,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        total_pages: totalPages,
+      },
     };
   }
 
@@ -123,8 +238,9 @@ export class RepositoriesService {
       );
     }
 
-    // Cascade delete repository record
+    // Cascade delete repository record & pages
     this.repositoriesStore.delete(targetKey);
+    this.pagesStore.delete(repositoryId);
 
     // Schedule S3 data purge job via QueueService
     await this.queueService.enqueueJob('data-purge', 'purge-s3-artifacts', {

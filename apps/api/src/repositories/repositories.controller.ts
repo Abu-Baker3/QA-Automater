@@ -1,9 +1,11 @@
 import {
   Controller,
+  Get,
   Post,
   Delete,
   Body,
   Param,
+  Query,
   Headers,
   UseGuards,
   HttpCode,
@@ -49,6 +51,26 @@ export class RepositoriesController {
     };
 
     return this.repositoriesService.registerRepository(orgId, registerDto);
+  }
+
+  @Get(':id/pages')
+  @Roles('ADMIN', 'MEMBER')
+  @HttpCode(HttpStatus.OK)
+  async listRepositoryPages(
+    @Param('id') id: string,
+    @Query('search') search?: string,
+    @Query('q') q?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Headers('x-org-id') headerOrgId?: string,
+  ) {
+    const orgId = headerOrgId || 'default_org';
+    return this.repositoriesService.listRepositoryPages(orgId, id, {
+      search,
+      q,
+      page: page ? parseInt(page, 10) : undefined,
+      limit: limit ? parseInt(limit, 10) : undefined,
+    });
   }
 
   @Delete(':id')

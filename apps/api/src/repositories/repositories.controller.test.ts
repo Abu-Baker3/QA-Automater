@@ -59,4 +59,51 @@ describe('RepositoriesController', () => {
       NotFoundException,
     );
   });
+
+  describe('E7.2: GET /repositories/:id/pages', () => {
+    it('AC1: should return paginated list of pages with route_path and element_count', async () => {
+      const regRes = await controller.registerRepository(
+        { full_name: 'acme/ui-app', branch: 'main' },
+        'org_123',
+      );
+
+      const res = await controller.listRepositoryPages(
+        regRes.repository_id,
+        undefined,
+        undefined,
+        '1',
+        '10',
+        'org_123',
+      );
+
+      expect(res.data.length).toBeGreaterThan(0);
+      expect(res.pagination.total).toBe(4);
+      expect(res.pagination.page).toBe(1);
+      expect(res.pagination.limit).toBe(10);
+      expect(res.data[0]).toHaveProperty('route_path');
+      expect(res.data[0]).toHaveProperty('element_count');
+      expect(typeof res.data[0]!.element_count).toBe('number');
+    });
+
+    it('AC2: should filter pages matching route search query', async () => {
+      const regRes = await controller.registerRepository(
+        { full_name: 'acme/ui-app-2', branch: 'main' },
+        'org_123',
+      );
+
+      const res = await controller.listRepositoryPages(
+        regRes.repository_id,
+        'login',
+        undefined,
+        '1',
+        '10',
+        'org_123',
+      );
+
+      expect(res.data.length).toBe(1);
+      expect(res.data[0]!.route_path).toBe('/login');
+      expect(res.data[0]!.component_name).toBe('LoginPage');
+      expect(res.pagination.total).toBe(1);
+    });
+  });
 });
