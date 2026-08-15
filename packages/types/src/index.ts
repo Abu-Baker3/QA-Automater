@@ -95,3 +95,24 @@ export interface AppRouterParseResult {
   routes: AppRouterRoute[];
   total_routes: number;
 }
+
+export interface ComponentNode {
+  id: string;
+  file_path: string;
+  component_name: string;
+  is_page: boolean;
+  route_path?: string;
+  jsx_elements: ExtractedJsxElement[];
+}
+
+export interface ComponentEdge {
+  parent_id: string;
+  child_id: string;
+  imported_as: string;
+}
+
+export interface ComponentImportGraph {
+  nodes: Record<string, ComponentNode>;
+  edges: ComponentEdge[];
+  root_route_ids: string[];
+}

@@ -33,3 +33,7 @@
 ## Deferred from: code review of E5.3-implement-nextjs-app-router-parser.md (2026-08-15)
 
 - **Intercepting route `(.)` & `@slot` parallel route metadata tagging** — `workers/scan/src/nextjs-app-router-parser.ts` — deferred, standard App Router pages, route groups, and dynamic routes are supported for MVP; slot/intercept metadata tagging deferred for E5.4.
+
+## Deferred from: code review of E5.4-build-component-import-graph.md (2026-08-15)
+
+- **Dynamic `import()` expressions & React `lazy()` resolution** — `workers/scan/src/component-import-graph.ts` — deferred, static ES/TS imports are extracted for MVP; dynamic lazy import tracking deferred for E6.
