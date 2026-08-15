@@ -11,6 +11,7 @@ import { RepositoriesModule } from './repositories/repositories.module';
 import { ScansModule } from './scans/scans.module';
 import { StorageModule } from './storage/storage.module';
 import { TestsModule } from './tests/tests.module';
+import { ElementsModule } from './elements/elements.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TestsModule } from './tests/tests.module';
     IntegrationsModule,
     ScansModule,
     TestsModule,
+    ElementsModule,
   ],
 
   controllers: [AppController, HealthController],

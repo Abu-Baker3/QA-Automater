@@ -49,3 +49,7 @@
 ## Deferred from: code review of E6.3-compute-locator-stability-scores.md (2026-08-15)
 
 - **Dynamic DOM position volatility score weighting** — `workers/scan/src/locator-extractor.ts` — deferred, static AST stability scoring is implemented for MVP; live DOM re-render stability tracking deferred for E8 runtime suite.
+
+## Deferred from: code review of E6.4-persist-ui-elements-with-source-traceability.md (2026-08-15)
+
+- **Source code snippet preview window fetching in element detail API** — `apps/api/src/elements/elements.controller.ts` — deferred, `source_ref: "{file}:{line}"` string returned for MVP; AST snippet preview window rendering deferred for E7 UI KB.

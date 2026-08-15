@@ -114,4 +114,21 @@ describe('LocatorExtractor (E6.1)', () => {
       expect(extractor.getStabilityTier(0.4)).toBe('low');
     });
   });
+
+  describe('E6.4: Persist UI Elements with Source Traceability', () => {
+    it('AC1: should populate source_file, source_line, and source_ref on extracted locator element', () => {
+      const element: ExtractedJsxElement = {
+        tag_name: 'button',
+        line_number: 15,
+        source_file: 'src/components/LoginButton.tsx',
+        data_testid: 'login-btn',
+      };
+
+      const result = extractor.extractCandidates(element);
+
+      expect(result.source_file).toBe('src/components/LoginButton.tsx');
+      expect(result.source_line).toBe(15);
+      expect(result.source_ref).toBe('src/components/LoginButton.tsx:15');
+    });
+  });
 });

@@ -112,10 +112,10 @@ export function BrokenComponent() {
 
       expect(repoResult.total_files).toBe(3);
       expect(repoResult.parsed_files).toBe(3);
-      expect(repoResult.components.map((c) => c.name)).toContain('Good');
-      expect(repoResult.components.map((c) => c.name)).toContain('AnotherGood');
-      expect(repoResult.jsx_elements.map((e) => e.data_testid)).toContain('btn-good');
-      expect(repoResult.jsx_elements.map((e) => e.data_testid)).toContain('input-2');
+      expect(repoResult.components!.map((c) => c.name)).toContain('Good');
+      expect(repoResult.components!.map((c) => c.name)).toContain('AnotherGood');
+      expect(repoResult.jsx_elements!.map((e) => e.data_testid)).toContain('btn-good');
+      expect(repoResult.jsx_elements!.map((e) => e.data_testid)).toContain('input-2');
     });
   });
 });

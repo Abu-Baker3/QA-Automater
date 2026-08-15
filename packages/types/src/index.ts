@@ -62,6 +62,7 @@ export interface ExtractedJsxElement {
   text_content?: string;
   html_for?: string;
   label_text?: string;
+  source_file?: string;
 }
 
 export interface ExtractedComponent {
@@ -83,9 +84,10 @@ export interface RepositoryParseResult {
   total_files: number;
   parsed_files: number;
   failed_files: number;
-  components: ExtractedComponent[];
-  jsx_elements: ExtractedJsxElement[];
-  file_results: FileParseResult[];
+  results: FileParseResult[];
+  components?: ExtractedComponent[];
+  jsx_elements?: ExtractedJsxElement[];
+  file_results?: FileParseResult[];
 }
 
 export interface AppRouterRoute {
@@ -138,7 +140,35 @@ export interface LocatorCandidate {
 export interface ExtractedLocatorElement {
   tag_name: string;
   line_number: number;
+  source_file: string;
+  source_line: number;
+  source_ref: string;
   candidates: LocatorCandidate[];
   primary_candidate: LocatorCandidate;
   stability_tier: StabilityTier;
+}
+
+export interface PersistedUiElement {
+  id: string;
+  scan_id: string;
+  tag_name: string;
+  source_file: string;
+  source_line: number;
+  source_ref: string;
+  stability_tier: StabilityTier;
+  primary_candidate: LocatorCandidate;
+  candidates: LocatorCandidate[];
+  created_at: string;
+}
+
+export interface UiElementDetailResponse {
+  id: string;
+  scan_id: string;
+  tag_name: string;
+  source_file: string;
+  source_line: number;
+  source_ref: string;
+  stability_tier: StabilityTier;
+  primary_candidate: LocatorCandidate;
+  candidates: LocatorCandidate[];
 }

@@ -8,7 +8,10 @@ export class LocatorExtractor {
   /**
    * Evaluates all locator strategies for a JSX element and ranks candidate locators by stability score.
    */
-  public extractCandidates(element: ExtractedJsxElement): ExtractedLocatorElement {
+  public extractCandidates(
+    element: ExtractedJsxElement,
+    sourceFilePath?: string,
+  ): ExtractedLocatorElement {
     const candidates: LocatorCandidate[] = [];
 
     // 1. testid strategy (data-testid, data-test-id, data-qa, data-cy)
@@ -128,10 +131,15 @@ export class LocatorExtractor {
     });
 
     const primary = candidates[0]!;
+    const sourceFile = element.source_file || sourceFilePath || 'unknown';
+    const sourceLine = element.line_number;
 
     return {
       tag_name: element.tag_name,
       line_number: element.line_number,
+      source_file: sourceFile,
+      source_line: sourceLine,
+      source_ref: `${sourceFile}:${sourceLine}`,
       candidates,
       primary_candidate: primary,
       stability_tier: primary.stability_tier,

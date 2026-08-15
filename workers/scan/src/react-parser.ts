@@ -89,6 +89,7 @@ export class ReactParser {
         return {
           tag_name: tagName,
           line_number: lineNumber,
+          source_file: filePath,
           props,
           ...(data_testid ? { data_testid } : {}),
           ...(aria_label ? { aria_label } : {}),
@@ -222,6 +223,7 @@ export class ReactParser {
       total_files: files.length,
       parsed_files: parsedCount,
       failed_files: failedCount,
+      results: fileResults,
       components: allComponents,
       jsx_elements: allJsxElements,
       file_results: fileResults,
