@@ -97,4 +97,3 @@ describe('StoriesDecomposeController (E9.2)', () => {
     ).rejects.toThrow(UnprocessableEntityException);
   });
 });
-

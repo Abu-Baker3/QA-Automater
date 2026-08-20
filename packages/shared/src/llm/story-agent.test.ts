@@ -208,8 +208,18 @@ describe('StoryAgent (E9.2)', () => {
       title: 'Missing expected outcome step',
       summary: 'Test plan with missing expected_outcome string field',
       steps: [
-        { step_id: 'step_1', action: 'navigate', target_description: 'Nav', expected_outcome: 'Ok' },
-        { step_id: 'step_2', action: 'fill', target_description: 'Input', expected_outcome: 'Done' },
+        {
+          step_id: 'step_1',
+          action: 'navigate',
+          target_description: 'Nav',
+          expected_outcome: 'Ok',
+        },
+        {
+          step_id: 'step_2',
+          action: 'fill',
+          target_description: 'Input',
+          expected_outcome: 'Done',
+        },
         { step_id: 'step_3', action: 'click', target_description: 'Btn', expected_outcome: 'Done' },
         { step_id: 'step_4', action: 'assert', target_description: 'Header' }, // missing expected_outcome
       ],
@@ -242,7 +252,6 @@ describe('StoryAgent (E9.2)', () => {
       updated_at: new Date().toISOString(),
     } as unknown as UserStoryItem;
 
-
     const mockCompleteStructured = vi.fn().mockResolvedValue({
       data: validLoginTestPlan,
       rawText: JSON.stringify(validLoginTestPlan),
@@ -265,4 +274,3 @@ describe('StoryAgent (E9.2)', () => {
     expect(prompt).toContain('Acceptance Criteria:\nNone provided');
   });
 });
-
