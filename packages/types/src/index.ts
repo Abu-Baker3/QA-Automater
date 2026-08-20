@@ -389,3 +389,43 @@ export interface StoryDecompositionResult {
   status: 'success' | 'failed';
   error?: string;
 }
+
+export interface RetrievalChannelScore {
+  vector_score: number;
+  keyword_score: number;
+  graph_score: number;
+  fused_score: number;
+}
+
+export interface RetrievalTrace {
+  step_description: string;
+  page_hint?: string;
+  repository_id?: string;
+  total_candidates_evaluated: number;
+  execution_time_ms: number;
+  top_candidates: Array<{
+    element_id: string;
+    tag_name: string;
+    route_path?: string;
+    scores: RetrievalChannelScore;
+  }>;
+  channel_breakdown: {
+    vector_candidates_count: number;
+    keyword_candidates_count: number;
+    graph_candidates_count: number;
+  };
+  timestamp: string;
+}
+
+export interface HybridRetrievalRequest {
+  step_description: string;
+  page_hint?: string;
+  repository_id?: string;
+  top_k?: number;
+}
+
+export interface HybridRetrievalResult {
+  step_description: string;
+  candidates: ElementSearchResultItem[];
+  retrieval_trace: RetrievalTrace;
+}

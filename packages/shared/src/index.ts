@@ -33,3 +33,4 @@ export * from './queue';
 export * from './telemetry';
 export * from './events/pubsub';
 export * from './llm';
+export * from './rag';
