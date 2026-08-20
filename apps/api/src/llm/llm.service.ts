@@ -9,11 +9,19 @@ import type {
 import { createLLMProvider, ILLMProvider } from '@qa-automater/shared';
 
 @Injectable()
-export class LlmService {
+export class LlmService implements ILLMProvider {
   private provider: ILLMProvider;
 
   constructor(config?: LLMProviderConfig) {
     this.provider = createLLMProvider(config);
+  }
+
+  get name(): LLMProviderName {
+    return this.provider.name;
+  }
+
+  get model(): string {
+    return this.provider.model;
   }
 
   get providerName(): LLMProviderName {

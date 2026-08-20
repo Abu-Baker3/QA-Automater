@@ -364,3 +364,28 @@ export interface LLMProviderConfig {
   anthropicApiKey?: string;
   anthropicModel?: string;
 }
+
+export type TestStepAction = 'navigate' | 'fill' | 'click' | 'assert' | 'select' | 'wait';
+
+export interface TestPlanStep {
+  step_id: string;
+  action: TestStepAction;
+  target_description: string;
+  value?: string;
+  expected_outcome: string;
+  page_hint?: string;
+}
+
+export interface TestPlanIR {
+  user_story_id: string;
+  title: string;
+  summary: string;
+  steps: TestPlanStep[];
+}
+
+export interface StoryDecompositionResult {
+  test_plan: TestPlanIR;
+  attempts: number;
+  status: 'success' | 'failed';
+  error?: string;
+}

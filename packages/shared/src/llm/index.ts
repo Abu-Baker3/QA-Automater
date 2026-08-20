@@ -8,6 +8,7 @@ export * from './types';
 export * from './openai.provider';
 export * from './anthropic.provider';
 export * from './fallback.provider';
+export * from './story-agent';
 
 export function createLLMProvider(config?: LLMProviderConfig): ILLMProvider {
   const fallbackEnabled = config?.fallbackEnabled ?? process.env.LLM_FALLBACK_ENABLED !== 'false';
