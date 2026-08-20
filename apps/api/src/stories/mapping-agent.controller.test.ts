@@ -104,9 +104,11 @@ describe('MappingAgentController (E9.4)', () => {
 
   it('POST /stories/map-step throws BadRequestException when step is missing or invalid', async () => {
     const { BadRequestException } = await import('@nestjs/common');
-    const realService = new MappingAgentService({} as any);
-    await expect(realService.mapStepToElement(null as any, candidatePool)).rejects.toThrow(
-      BadRequestException,
+    const realService = new MappingAgentService(
+      {} as unknown as import('../llm/llm.service').LlmService,
     );
+    await expect(
+      realService.mapStepToElement(null as unknown as TestPlanStep, candidatePool),
+    ).rejects.toThrow(BadRequestException);
   });
 });

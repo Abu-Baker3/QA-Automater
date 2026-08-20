@@ -1,11 +1,11 @@
 import type {
   ElementSearchResultItem,
   LLMJsonSchema,
-  LocatorCandidate,
   MappingAgentResult,
   StepLocatorMapping,
   TestPlanStep,
 } from '@qa-automater/types';
+
 import { incrementCounter, recordHistogram, withSpan } from '../telemetry';
 import { ILLMProvider } from './types';
 
