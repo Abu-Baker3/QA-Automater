@@ -280,6 +280,19 @@ export interface CreateUserStoryDto {
 
 export interface UserStoryItem {
   id: string;
+  user_story_id: string;
+  repository_id: string;
+  org_id: string;
+  title: string;
+  description: string;
+  acceptance_criteria: AcceptanceCriterionInput[];
+  status: 'draft' | 'pending' | 'in-progress' | 'complete';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserStoryDetails {
+  id: string;
   user_story_id?: string;
   repository_id?: string;
   org_id?: string;
@@ -375,8 +388,6 @@ export interface TestPlanStep {
   expected_outcome: string;
   page_hint?: string;
 }
-
-export type UserStoryDetails = UserStoryItem;
 
 export interface TestPlanIR {
   user_story_id: string;

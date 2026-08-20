@@ -1,11 +1,14 @@
 import type {
+  AcceptanceCriterionInput,
   LLMJsonSchema,
   StoryDecompositionResult,
   TestPlanIR,
   TestPlanStep,
   TestStepAction,
+  UserStoryDetails,
   UserStoryItem,
 } from '@qa-automater/types';
+
 import { incrementCounter, recordHistogram, withSpan } from '../telemetry';
 import { ILLMProvider } from './types';
 
@@ -118,7 +121,10 @@ export class StoryAgent {
    * - AC1: Requires >= 4 steps with at least 1 'assert' action.
    * - AC2: Retries up to 2 times (3 total attempts) if LLM produces invalid JSON or fails validation rules.
    */
-  async decomposeStory(story: UserStoryItem, maxRetries = 2): Promise<StoryDecompositionResult> {
+  async decomposeStory(
+    story: UserStoryItem | UserStoryDetails,
+    maxRetries = 2,
+  ): Promise<StoryDecompositionResult> {
     const storyId = story.user_story_id || story.id;
     const startTime = Date.now();
     const maxAttempts = Math.max(1, maxRetries + 1);
@@ -131,7 +137,7 @@ export class StoryAgent {
 
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         const criteriaText = story.acceptance_criteria
-          ?.map((c, i) => {
+          ?.map((c: AcceptanceCriterionInput | string, i: number) => {
             if (typeof c === 'string') {
               return `AC${i + 1}: ${c}`;
             }

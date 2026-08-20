@@ -9,10 +9,12 @@ const mockJob: GenerationJob = {
   repository_id: 'repo_main',
   status: 'codegen',
   test_plan_ir: {
-    story_id: 'story_login_101',
+    user_story_id: 'story_login_101',
     title: 'Login Flow',
+    summary: 'Login flow test plan',
     steps: [],
   },
+
   model_versions: {
     story_agent: { provider: 'openai', model: 'gpt-4o' },
     mapping_agent: { provider: 'openai', model: 'gpt-4o' },

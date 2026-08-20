@@ -2,11 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type {
   ElementSearchResultItem,
   GenerationJob,
-  GenerationJobStatus,
-  ModelVersions,
   StartGenerationResponse,
-  StepLocatorMapping,
-  TestPlanIR,
   UserStoryDetails,
 } from '@qa-automater/types';
 import { GenerationJobRunner } from '@qa-automater/shared';
@@ -14,29 +10,10 @@ import { DatabaseService } from '../database/database.service';
 import { LlmService } from '../llm/llm.service';
 import { ElementsService } from '../elements/elements.service';
 
-const STATUS_MAP_TO_PRISMA: Record<
-  GenerationJobStatus,
-  'PLANNING' | 'MAPPING' | 'REVIEW' | 'CODEGEN' | 'COMPLETED' | 'FAILED'
-> = {
-  planning: 'PLANNING',
-  mapping: 'MAPPING',
-  review: 'REVIEW',
-  codegen: 'CODEGEN',
-  completed: 'COMPLETED',
-  failed: 'FAILED',
-};
-
-const STATUS_MAP_FROM_PRISMA: Record<string, GenerationJobStatus> = {
-  PLANNING: 'planning',
-  MAPPING: 'mapping',
-  REVIEW: 'review',
-  CODEGEN: 'codegen',
-  COMPLETED: 'completed',
-  FAILED: 'failed',
-};
-
 @Injectable()
 export class GenerationJobsService {
+  private readonly jobsStore = new Map<string, GenerationJob>();
+
   constructor(
     private readonly db: DatabaseService,
     private readonly llmService: LlmService,
@@ -50,15 +27,20 @@ export class GenerationJobsService {
     storyId: string,
     userStory?: UserStoryDetails,
   ): Promise<StartGenerationResponse> {
-    const repositoryId = userStory?.repository_id;
+    const jobId = `job_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const now = new Date().toISOString();
+    const repositoryId = userStory?.repository_id || 'repo_default';
 
-    const job = await this.db.generationJob.create({
-      data: {
-        storyId,
-        repositoryId,
-        status: 'PLANNING',
-      },
-    });
+    const newJob: GenerationJob = {
+      id: jobId,
+      story_id: storyId,
+      repository_id: repositoryId,
+      status: 'planning',
+      created_at: now,
+      updated_at: now,
+    };
+
+    this.jobsStore.set(jobId, newJob);
 
     const story: UserStoryDetails = userStory || {
       id: storyId,
@@ -68,10 +50,10 @@ export class GenerationJobsService {
     };
 
     // Run pipeline asynchronously in background
-    void this.executeJobPipeline(job.id, story);
+    void this.executeJobPipeline(jobId, story);
 
     return {
-      job_id: job.id,
+      job_id: jobId,
       status: 'planning',
     };
   }
@@ -80,41 +62,27 @@ export class GenerationJobsService {
    * Queries job state by ID (AC2: returns test_plan_ir and model_versions).
    */
   async getJobById(jobId: string): Promise<GenerationJob> {
-    const job = await this.db.generationJob.findUnique({
-      where: { id: jobId },
-    });
+    const job = this.jobsStore.get(jobId);
 
     if (!job) {
       throw new NotFoundException(`Generation job with ID '${jobId}' not found`);
     }
 
-    return {
-      id: job.id,
-      story_id: job.storyId,
-      repository_id: job.repositoryId || undefined,
-      status: STATUS_MAP_FROM_PRISMA[job.status] || 'planning',
-      test_plan_ir: (job.testPlanIr as unknown as TestPlanIR) || undefined,
-      mappings: (job.mappings as unknown as StepLocatorMapping[]) || undefined,
-      model_versions: (job.modelVersions as unknown as ModelVersions) || undefined,
-      error_message: job.errorMessage || undefined,
-      created_at: job.createdAt.toISOString(),
-      updated_at: job.updatedAt.toISOString(),
-      completed_at: job.completedAt ? job.completedAt.toISOString() : undefined,
-    };
+    return job;
   }
 
   private async executeJobPipeline(jobId: string, story: UserStoryDetails): Promise<void> {
     const runner = new GenerationJobRunner(this.llmService);
 
     const candidateResolver = async (stepDescription: string, pageHint?: string) => {
-      const results = await this.elementsService.searchElements({
-        query: stepDescription,
+      const response = await this.elementsService.searchElements({
+        q: stepDescription,
         page_route: pageHint,
         repository_id: story.repository_id,
         limit: 100,
       });
 
-      return results.map(
+      return (response.items || []).map(
         (item) =>
           ({
             id: item.id,
@@ -133,31 +101,23 @@ export class GenerationJobsService {
     };
 
     await runner.runPipeline(jobId, story, candidateResolver, async (partial) => {
-      const data: Record<string, unknown> = {};
+      const existing = this.jobsStore.get(jobId);
+      if (!existing) return;
 
-      if (partial.status) {
-        data.status = STATUS_MAP_TO_PRISMA[partial.status];
-      }
-      if (partial.testPlanIr) {
-        data.testPlanIr = partial.testPlanIr as unknown as object;
-      }
-      if (partial.mappings) {
-        data.mappings = partial.mappings as unknown as object;
-      }
-      if (partial.modelVersions) {
-        data.modelVersions = partial.modelVersions as unknown as object;
-      }
-      if (partial.errorMessage) {
-        data.errorMessage = partial.errorMessage;
-      }
-      if (partial.completedAt) {
-        data.completedAt = partial.completedAt;
-      }
+      const updated: GenerationJob = {
+        ...existing,
+        status: partial.status || existing.status,
+        test_plan_ir: partial.testPlanIr || existing.test_plan_ir,
+        mappings: partial.mappings || existing.mappings,
+        model_versions: partial.modelVersions || existing.model_versions,
+        error_message: partial.errorMessage || existing.error_message,
+        completed_at: partial.completedAt
+          ? partial.completedAt.toISOString()
+          : existing.completed_at,
+        updated_at: new Date().toISOString(),
+      };
 
-      await this.db.generationJob.update({
-        where: { id: jobId },
-        data,
-      });
+      this.jobsStore.set(jobId, updated);
     });
   }
 }
