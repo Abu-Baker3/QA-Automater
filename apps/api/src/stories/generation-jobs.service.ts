@@ -82,8 +82,8 @@ export class GenerationJobsService {
         limit: 100,
       });
 
-      return (response.items || []).map(
-        (item) =>
+      return (response.data || []).map(
+        (item: ElementSearchResultItem) =>
           ({
             id: item.id,
             scan_id: item.scan_id,
