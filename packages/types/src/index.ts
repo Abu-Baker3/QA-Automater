@@ -324,3 +324,43 @@ export interface UserStoryListResponse {
 }
 
 export type UserStoryDetailResponse = UserStoryItem;
+
+export type LLMProviderName = 'openai' | 'anthropic' | 'mock';
+
+export interface LLMCompletionPrompt {
+  userPrompt: string;
+  systemPrompt?: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+export interface LLMJsonSchema<T = unknown> {
+  name: string;
+  description?: string;
+  schema: Record<string, unknown>;
+  validator?: (data: unknown) => data is T;
+}
+
+export interface LLMCompletionUsage {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+}
+
+export interface LLMCompletionResponse<T = unknown> {
+  data: T;
+  rawText: string;
+  provider: LLMProviderName;
+  model: string;
+  usage?: LLMCompletionUsage;
+}
+
+export interface LLMProviderConfig {
+  primaryProvider?: LLMProviderName;
+  fallbackProvider?: LLMProviderName;
+  fallbackEnabled?: boolean;
+  openaiApiKey?: string;
+  openaiModel?: string;
+  anthropicApiKey?: string;
+  anthropicModel?: string;
+}

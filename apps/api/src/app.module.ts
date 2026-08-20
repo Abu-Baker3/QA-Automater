@@ -13,6 +13,7 @@ import { StorageModule } from './storage/storage.module';
 import { TestsModule } from './tests/tests.module';
 import { ElementsModule } from './elements/elements.module';
 import { StoriesModule } from './stories/stories.module';
+import { LlmModule } from './llm/llm.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { StoriesModule } from './stories/stories.module';
     TestsModule,
     ElementsModule,
     StoriesModule,
+    LlmModule,
   ],
 
   controllers: [AppController, HealthController],
