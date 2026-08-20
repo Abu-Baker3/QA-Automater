@@ -280,15 +280,15 @@ export interface CreateUserStoryDto {
 
 export interface UserStoryItem {
   id: string;
-  user_story_id: string;
-  repository_id: string;
-  org_id: string;
+  user_story_id?: string;
+  repository_id?: string;
+  org_id?: string;
   title: string;
-  description: string;
-  acceptance_criteria: AcceptanceCriterionInput[];
-  status: 'draft' | 'pending' | 'in-progress' | 'complete';
-  created_at: string;
-  updated_at: string;
+  description?: string;
+  acceptance_criteria?: Array<AcceptanceCriterionInput | string>;
+  status?: 'draft' | 'pending' | 'in-progress' | 'complete';
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface CreateUserStoryResponse {
@@ -376,6 +376,8 @@ export interface TestPlanStep {
   page_hint?: string;
 }
 
+export type UserStoryDetails = UserStoryItem;
+
 export interface TestPlanIR {
   user_story_id: string;
   title: string;
@@ -450,4 +452,44 @@ export interface MappingAgentResult {
   attempts: number;
   status: 'success' | 'failed';
   error?: string;
+}
+
+export type GenerationJobStatus =
+  'planning' | 'mapping' | 'review' | 'codegen' | 'completed' | 'failed';
+
+export interface ModelVersionInfo {
+  provider: string;
+  model: string;
+  prompt_hash?: string;
+  timestamp?: string;
+}
+
+export interface ModelVersions {
+  story_agent?: ModelVersionInfo;
+  mapping_agent?: ModelVersionInfo;
+}
+
+export interface GenerationJob {
+  id: string;
+  story_id: string;
+  repository_id?: string;
+  status: GenerationJobStatus;
+  test_plan_ir?: TestPlanIR;
+  mappings?: StepLocatorMapping[];
+  model_versions?: ModelVersions;
+  error_message?: string;
+  created_at: string;
+  updated_at: string;
+  completed_at?: string;
+}
+
+export interface StartGenerationRequest {
+  story_id: string;
+  repository_id?: string;
+  user_story?: UserStoryDetails;
+}
+
+export interface StartGenerationResponse {
+  job_id: string;
+  status: GenerationJobStatus;
 }

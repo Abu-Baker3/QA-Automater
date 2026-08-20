@@ -131,10 +131,12 @@ export class StoryAgent {
 
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         const criteriaText = story.acceptance_criteria
-          ?.map(
-            (c, i) =>
-              `AC${i + 1}: ${c.text}${c.given ? ` [Given: ${c.given}]` : ''}${c.when ? ` [When: ${c.when}]` : ''}${c.then ? ` [Then: ${c.then}]` : ''}`,
-          )
+          ?.map((c, i) => {
+            if (typeof c === 'string') {
+              return `AC${i + 1}: ${c}`;
+            }
+            return `AC${i + 1}: ${c.text || ''}${c.given ? ` [Given: ${c.given}]` : ''}${c.when ? ` [When: ${c.when}]` : ''}${c.then ? ` [Then: ${c.then}]` : ''}`;
+          })
           .join('\n');
 
         const systemPrompt = `You decompose user stories into executable browser test steps.

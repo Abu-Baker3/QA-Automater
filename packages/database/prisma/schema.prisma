@@ -82,3 +82,29 @@ model OrganizationInvite {
   @@map("organization_invites")
 }
 
+enum GenerationJobStatus {
+  PLANNING
+  MAPPING
+  REVIEW
+  CODEGEN
+  COMPLETED
+  FAILED
+}
+
+model GenerationJob {
+  id            String              @id @default(uuid()) @db.Uuid
+  storyId       String              @map("story_id") @db.VarChar(255)
+  repositoryId  String?             @map("repository_id") @db.VarChar(255)
+  status        GenerationJobStatus @default(PLANNING)
+  testPlanIr    Json?               @map("test_plan_ir")
+  mappings      Json?               @map("mappings")
+  modelVersions Json?               @map("model_versions")
+  errorMessage  String?             @map("error_message")
+  createdAt     DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  completedAt   DateTime?           @map("completed_at") @db.Timestamptz(6)
+
+  @@map("generation_jobs")
+}
+
+
