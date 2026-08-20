@@ -429,3 +429,25 @@ export interface HybridRetrievalResult {
   candidates: ElementSearchResultItem[];
   retrieval_trace: RetrievalTrace;
 }
+
+export interface StepLocatorMapping {
+  step_id: string;
+  element_id: string | null;
+  chosen_locator: LocatorCandidate | null;
+  confidence: number;
+  rationale: string;
+  needs_review: boolean;
+  source_ref?: string;
+}
+
+export interface MapStepRequest {
+  step: TestPlanStep;
+  candidates: ElementSearchResultItem[];
+}
+
+export interface MappingAgentResult {
+  mapping: StepLocatorMapping;
+  attempts: number;
+  status: 'success' | 'failed';
+  error?: string;
+}
