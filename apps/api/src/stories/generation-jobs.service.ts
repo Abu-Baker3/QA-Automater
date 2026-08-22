@@ -5,7 +5,8 @@ import type {
   StartGenerationResponse,
   UserStoryDetails,
 } from '@qa-automater/types';
-import { GenerationJobRunner } from '@qa-automater/shared';
+import { buildReviewItems, GenerationJobRunner, isExportAllowed } from '@qa-automater/shared';
+
 import { DatabaseService } from '../database/database.service';
 import { LlmService } from '../llm/llm.service';
 import { ElementsService } from '../elements/elements.service';
@@ -104,11 +105,18 @@ export class GenerationJobsService {
       const existing = this.jobsStore.get(jobId);
       if (!existing) return;
 
+      const testPlanIr = partial.testPlanIr || existing.test_plan_ir;
+      const mappings = partial.mappings || existing.mappings;
+      const reviewItems = buildReviewItems(testPlanIr, mappings);
+      const exportAllowed = isExportAllowed(mappings);
+
       const updated: GenerationJob = {
         ...existing,
         status: partial.status || existing.status,
-        test_plan_ir: partial.testPlanIr || existing.test_plan_ir,
-        mappings: partial.mappings || existing.mappings,
+        test_plan_ir: testPlanIr,
+        mappings,
+        review_items: reviewItems,
+        export_allowed: exportAllowed,
         model_versions: partial.modelVersions || existing.model_versions,
         error_message: partial.errorMessage || existing.error_message,
         completed_at: partial.completedAt

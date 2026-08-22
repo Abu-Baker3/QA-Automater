@@ -445,12 +445,29 @@ export interface HybridRetrievalResult {
 
 export interface StepLocatorMapping {
   step_id: string;
+  step_order?: number;
   element_id: string | null;
   chosen_locator: LocatorCandidate | null;
   confidence: number;
   rationale: string;
   needs_review: boolean;
+  human_verified?: boolean;
+  candidates?: ElementSearchResultItem[];
   source_ref?: string;
+}
+
+export interface ReviewItem {
+  step_id: string;
+  step_order: number;
+  action: string;
+  target_description: string;
+  confidence: number;
+  element_id: string | null;
+  chosen_locator: LocatorCandidate | null;
+  candidates: ElementSearchResultItem[];
+  rationale: string;
+  needs_review: boolean;
+  human_verified: boolean;
 }
 
 export interface MapStepRequest {
@@ -512,6 +529,8 @@ export interface GenerationJob {
   status: GenerationJobStatus;
   test_plan_ir?: TestPlanIR;
   mappings?: StepLocatorMapping[];
+  review_items?: ReviewItem[];
+  export_allowed?: boolean;
   model_versions?: ModelVersions;
   error_message?: string;
   created_at: string;

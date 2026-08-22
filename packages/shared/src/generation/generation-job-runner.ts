@@ -98,10 +98,18 @@ export class GenerationJobRunner {
       // Step 2: Mapping Phase — Candidate Retrieval + Mapping Agent
       const mappings: StepLocatorMapping[] = [];
 
-      for (const step of testPlanIr.steps) {
+      for (let i = 0; i < testPlanIr.steps.length; i++) {
+        const step = testPlanIr.steps[i];
+        if (!step) continue;
         const candidates = await candidateResolver(step.target_description, step.page_hint);
+
         const mappingResult = await this.mappingAgent.mapStepToElement(step, candidates);
-        mappings.push(mappingResult.mapping);
+        const mappingWithOrder: StepLocatorMapping = {
+          ...mappingResult.mapping,
+          step_order: i + 1,
+          candidates,
+        };
+        mappings.push(mappingWithOrder);
       }
 
       currentState.mappings = mappings;
