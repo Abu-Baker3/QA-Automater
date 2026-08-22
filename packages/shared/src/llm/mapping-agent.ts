@@ -120,11 +120,37 @@ export const TestPlanMappingSchema: LLMJsonSchema<StepLocatorMapping> = {
   validator: (data) => validateStepLocatorMapping(data, []),
 };
 
+import { computePromptHash, MAPPING_AGENT_PROMPT_VERSION } from './prompt-versioning';
+
 export class MappingAgent {
   private readonly provider: ILLMProvider;
 
   constructor(provider: ILLMProvider) {
     this.provider = provider;
+  }
+
+  getPromptInfo(): { version: string; prompt_hash: string } {
+    const systemPrompt = `You are a QA Mapping Agent. Map a test plan step to the best matching UI element candidate.
+Output JSON matching StepLocatorMappingSchema.
+
+CRITICAL MAPPING CONSTRAINTS:
+1. element_id MUST be selected ONLY from the provided candidate list. If no element matches, set element_id to null.
+2. confidence must be a float between 0.0 and 1.0. If confidence < 0.85, set needs_review to true.
+3. rationale MUST explain the decision and cite the chosen element's source_ref if confidence >= 0.5.
+4. chosen_locator should be the primary candidate locator object from the selected element.`;
+
+    const userPrompt = `Test Step:
+- Action: "click"
+- Target Description: "Click Submit button"
+- Expected Outcome: "Form submits successfully"
+
+Candidate UI Elements:
+None provided`;
+
+    return {
+      version: MAPPING_AGENT_PROMPT_VERSION,
+      prompt_hash: computePromptHash(systemPrompt, userPrompt),
+    };
   }
 
   /**

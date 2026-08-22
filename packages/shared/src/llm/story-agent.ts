@@ -8,9 +8,9 @@ import type {
   UserStoryDetails,
   UserStoryItem,
 } from '@qa-automater/types';
-
 import { incrementCounter, recordHistogram, withSpan } from '../telemetry';
 import { ILLMProvider } from './types';
+import { computePromptHash, STORY_AGENT_PROMPT_VERSION } from './prompt-versioning';
 
 export class StoryAgentException extends Error {
   readonly storyId: string;
@@ -114,6 +114,29 @@ export class StoryAgent {
 
   constructor(provider: ILLMProvider) {
     this.provider = provider;
+  }
+
+  getPromptInfo(story?: UserStoryItem | UserStoryDetails): {
+    version: string;
+    prompt_hash: string;
+  } {
+    const storyId = story?.user_story_id || story?.id || 'sample_story_id';
+    const systemPrompt = `You decompose user stories into executable browser test steps.
+Output JSON matching TestPlanSchema.
+
+CRITICAL CONSTRAINTS:
+1. Output MUST contain AT LEAST 4 test steps.
+2. Output MUST contain AT LEAST 1 "assert" action step verifying an observable outcome.
+3. Valid actions: "navigate" | "fill" | "click" | "assert" | "select" | "wait".
+4. Set user_story_id to "${storyId}".`;
+
+    const userPrompt = `User Story Title: ${story?.title || ''}
+Description: ${story?.description || 'No description provided'}`;
+
+    return {
+      version: STORY_AGENT_PROMPT_VERSION,
+      prompt_hash: computePromptHash(systemPrompt, userPrompt),
+    };
   }
 
   /**

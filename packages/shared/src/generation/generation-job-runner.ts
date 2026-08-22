@@ -49,15 +49,22 @@ export class GenerationJobRunner {
     onStateChange?: (state: Partial<GenerationJobState>) => Promise<void>,
   ): Promise<GenerationJobState> {
     const timestamp = new Date().toISOString();
+    const storyPromptInfo = this.storyAgent.getPromptInfo(story);
+    const mappingPromptInfo = this.mappingAgent.getPromptInfo();
+
     const modelVersions: ModelVersions = {
       story_agent: {
         provider: this.provider.name,
         model: this.provider.model,
+        prompt_version: storyPromptInfo.version,
+        prompt_hash: storyPromptInfo.prompt_hash,
         timestamp,
       },
       mapping_agent: {
         provider: this.provider.name,
         model: this.provider.model,
+        prompt_version: mappingPromptInfo.version,
+        prompt_hash: mappingPromptInfo.prompt_hash,
         timestamp,
       },
     };

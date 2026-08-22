@@ -10,6 +10,8 @@ export * from './anthropic.provider';
 export * from './fallback.provider';
 export * from './story-agent';
 export * from './mapping-agent';
+export * from './prompt-versioning';
+export * from './prompt-eval-harness';
 
 export function createLLMProvider(config?: LLMProviderConfig): ILLMProvider {
   const fallbackEnabled = config?.fallbackEnabled ?? process.env.LLM_FALLBACK_ENABLED !== 'false';

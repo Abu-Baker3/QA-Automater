@@ -471,6 +471,7 @@ export type GenerationJobStatus =
 export interface ModelVersionInfo {
   provider: string;
   model: string;
+  prompt_version?: string;
   prompt_hash?: string;
   timestamp?: string;
 }
@@ -478,6 +479,30 @@ export interface ModelVersionInfo {
 export interface ModelVersions {
   story_agent?: ModelVersionInfo;
   mapping_agent?: ModelVersionInfo;
+}
+
+export interface PromptEvalDatasetItem {
+  id: string;
+  story: UserStoryDetails;
+  expected_steps_count: number;
+  expected_locators?: Record<string, string>;
+}
+
+export interface PromptEvalResult {
+  eval_run_id: string;
+  prompt_version: string;
+  prompt_hash: string;
+  total_samples: number;
+  precision: number;
+  baseline_precision?: number;
+  precision_delta?: number;
+  deploy_blocked: boolean;
+  block_reason?: string;
+  timestamp: string;
+}
+
+export interface PromptEvalOptions {
+  max_precision_drop?: number; // Default 0.05 (5%)
 }
 
 export interface GenerationJob {
