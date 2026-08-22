@@ -82,8 +82,8 @@ describe('GenerationJobsController (E9.5)', () => {
 
     expect(job.status).toBe('review');
     expect(job.review_items).toHaveLength(1);
-    expect(job.review_items?.[0].step_order).toBe(1);
-    expect(job.review_items?.[0].confidence).toBe(0.65);
+    expect(job.review_items?.[0]?.step_order).toBe(1);
+    expect(job.review_items?.[0]?.confidence).toBe(0.65);
     expect(job.export_allowed).toBe(false);
   });
 });
