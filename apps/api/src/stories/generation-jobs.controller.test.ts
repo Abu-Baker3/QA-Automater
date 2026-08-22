@@ -34,6 +34,7 @@ describe('GenerationJobsController (E9.5)', () => {
         status: 'planning',
       }),
       getJobById: vi.fn().mockResolvedValue(mockJob),
+      overrideMapping: vi.fn().mockResolvedValue(mockJob),
     } as unknown as GenerationJobsService;
 
     controller = new GenerationJobsController(service);
@@ -85,5 +86,24 @@ describe('GenerationJobsController (E9.5)', () => {
     expect(job.review_items?.[0]?.step_order).toBe(1);
     expect(job.review_items?.[0]?.confidence).toBe(0.65);
     expect(job.export_allowed).toBe(false);
+  });
+
+  it('E10.2 AC1 & AC2: PATCH /stories/generation-jobs/:id/mappings/:stepOrder overrides mapping confidence to 1.0', async () => {
+    const overriddenJob: GenerationJob = {
+      ...mockJob,
+      status: 'codegen',
+      export_allowed: true,
+    };
+    vi.mocked(service.overrideMapping).mockResolvedValueOnce(overriddenJob);
+
+    const result = await controller.overrideStoryJobMapping('job_uuid_101', '1', {
+      element_id: 'elem_email_override',
+    });
+
+    expect(result.status).toBe('codegen');
+    expect(result.export_allowed).toBe(true);
+    expect(service.overrideMapping).toHaveBeenCalledWith('job_uuid_101', 1, {
+      element_id: 'elem_email_override',
+    });
   });
 });

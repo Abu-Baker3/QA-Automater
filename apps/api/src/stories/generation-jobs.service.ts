@@ -2,10 +2,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type {
   ElementSearchResultItem,
   GenerationJob,
+  OverrideMappingRequest,
   StartGenerationResponse,
   UserStoryDetails,
 } from '@qa-automater/types';
-import { buildReviewItems, GenerationJobRunner, isExportAllowed } from '@qa-automater/shared';
+
+import {
+  applyMappingOverride,
+  buildReviewItems,
+  GenerationJobRunner,
+  isExportAllowed,
+} from '@qa-automater/shared';
 
 import { DatabaseService } from '../database/database.service';
 import { LlmService } from '../llm/llm.service';
@@ -70,6 +77,21 @@ export class GenerationJobsService {
     }
 
     return job;
+  }
+
+  /**
+   * Overrides mapping for a specific step_order (E10.2).
+   * Sets confidence = 1.0, human_verified = true, and unlocks codegen when export_allowed = true.
+   */
+  async overrideMapping(
+    jobId: string,
+    stepOrder: number,
+    override: OverrideMappingRequest,
+  ): Promise<GenerationJob> {
+    const job = await this.getJobById(jobId);
+    const updatedJob = applyMappingOverride(job, stepOrder, override);
+    this.jobsStore.set(jobId, updatedJob);
+    return updatedJob;
   }
 
   private async executeJobPipeline(jobId: string, story: UserStoryDetails): Promise<void> {

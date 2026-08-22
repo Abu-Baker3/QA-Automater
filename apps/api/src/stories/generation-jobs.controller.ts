@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Patch,
   Param,
   Body,
   UseGuards,
@@ -14,6 +15,7 @@ import { Roles } from '../auth/roles.decorator';
 import { GenerationJobsService } from './generation-jobs.service';
 import type {
   GenerationJob,
+  OverrideMappingRequest,
   StartGenerationRequest,
   StartGenerationResponse,
 } from '@qa-automater/types';
@@ -50,5 +52,25 @@ export class GenerationJobsController {
   @Roles('ADMIN', 'MEMBER')
   async getTestJob(@Param('id') jobId: string): Promise<GenerationJob> {
     return this.generationJobsService.getJobById(jobId);
+  }
+
+  @Patch('stories/generation-jobs/:id/mappings/:stepOrder')
+  @Roles('ADMIN', 'MEMBER')
+  async overrideStoryJobMapping(
+    @Param('id') jobId: string,
+    @Param('stepOrder') stepOrder: string,
+    @Body() body: OverrideMappingRequest,
+  ): Promise<GenerationJob> {
+    return this.generationJobsService.overrideMapping(jobId, parseInt(stepOrder, 10), body);
+  }
+
+  @Patch('generation-jobs/:id/mappings/:stepOrder')
+  @Roles('ADMIN', 'MEMBER')
+  async overrideJobMapping(
+    @Param('id') jobId: string,
+    @Param('stepOrder') stepOrder: string,
+    @Body() body: OverrideMappingRequest,
+  ): Promise<GenerationJob> {
+    return this.generationJobsService.overrideMapping(jobId, parseInt(stepOrder, 10), body);
   }
 }

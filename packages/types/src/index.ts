@@ -548,3 +548,16 @@ export interface StartGenerationResponse {
   job_id: string;
   status: GenerationJobStatus;
 }
+
+export interface OverrideMappingRequest {
+  element_id?: string | null;
+  chosen_locator?: LocatorCandidate | null;
+  rationale?: string;
+}
+
+export interface OverrideMappingResponse {
+  job_id: string;
+  step_order: number;
+  mapping: StepLocatorMapping;
+  job: GenerationJob;
+}

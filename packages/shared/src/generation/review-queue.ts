@@ -1,5 +1,7 @@
 import type {
   ElementSearchResultItem,
+  GenerationJob,
+  OverrideMappingRequest,
   ReviewItem,
   StepLocatorMapping,
   TestPlanIR,
@@ -64,4 +66,78 @@ export function isExportAllowed(mappings?: StepLocatorMapping[]): boolean {
 
     return (isHighConfidence || isHumanVerified) && hasElementId;
   });
+}
+
+/**
+ * Applies human override to a specific step mapping by step_order.
+ * AC1: Sets confidence = 1.0, human_verified = true, needs_review = false.
+ * AC2: When all mappings pass, sets export_allowed = true and status = 'codegen'.
+ */
+export function applyMappingOverride(
+  job: GenerationJob,
+  stepOrder: number,
+  override: OverrideMappingRequest,
+): GenerationJob {
+  if (!job.mappings || job.mappings.length === 0) {
+    throw new Error(`Cannot override mapping on job '${job.id}': no mappings present`);
+  }
+
+  const targetMappingIndex = job.mappings.findIndex(
+    (m, idx) => m.step_order === stepOrder || idx === stepOrder - 1,
+  );
+
+  if (targetMappingIndex === -1) {
+    throw new Error(
+      `Step order ${stepOrder} out of bounds for job '${job.id}' (has ${job.mappings.length} steps)`,
+    );
+  }
+
+  const existingMapping = job.mappings[targetMappingIndex];
+  if (!existingMapping) {
+    throw new Error(`Step order ${stepOrder} not found in job '${job.id}'`);
+  }
+
+  const updatedElementId =
+    override.element_id !== undefined ? override.element_id : existingMapping.element_id;
+
+  let updatedChosenLocator = override.chosen_locator;
+  if (!updatedChosenLocator && updatedElementId && existingMapping.candidates) {
+    const candidateElem = existingMapping.candidates.find((c) => c.id === updatedElementId);
+    if (candidateElem) {
+      updatedChosenLocator = candidateElem.primary_candidate;
+    }
+  }
+  if (!updatedChosenLocator) {
+    updatedChosenLocator = existingMapping.chosen_locator;
+  }
+
+  const updatedMapping: StepLocatorMapping = {
+    ...existingMapping,
+    element_id: updatedElementId,
+    chosen_locator: updatedChosenLocator,
+    confidence: 1.0,
+    human_verified: true,
+    needs_review: false,
+    rationale: override.rationale || 'Human override verified by QA Engineer',
+  };
+
+  const updatedMappings = [...job.mappings];
+  updatedMappings[targetMappingIndex] = updatedMapping;
+
+  const reviewItems = buildReviewItems(job.test_plan_ir, updatedMappings);
+  const exportAllowed = isExportAllowed(updatedMappings);
+
+  let status = job.status;
+  if (exportAllowed && status === 'review') {
+    status = 'codegen';
+  }
+
+  return {
+    ...job,
+    status,
+    mappings: updatedMappings,
+    review_items: reviewItems,
+    export_allowed: exportAllowed,
+    updated_at: new Date().toISOString(),
+  };
 }
