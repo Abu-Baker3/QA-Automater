@@ -131,18 +131,63 @@ export class PageObjectGenerator {
       const getterRef = `${poVarName}.${getter.name}`;
 
       switch (step.action) {
-        case 'fill':
-          testStatements.push(`    await ${getterRef}.fill('test-data-${i + 1}');`);
+        case 'fill': {
+          const fillValue = step.value || `test-data-${i + 1}`;
+          testStatements.push(`    await ${getterRef}.fill('${this.escapeString(fillValue)}');`);
+          if (
+            step.expected_outcome &&
+            /populated|filled|entered|value/i.test(step.expected_outcome)
+          ) {
+            testStatements.push(
+              `    await expect(${getterRef}).toHaveValue('${this.escapeString(fillValue)}');`,
+            );
+          }
           break;
+        }
 
-        case 'click':
+        case 'click': {
           testStatements.push(`    await ${getterRef}.click();`);
+          const urlMatch = step.expected_outcome?.match(/(\/[a-zA-Z0-9_/-]+)/);
+          if (urlMatch && urlMatch[1]) {
+            testStatements.push(`    await expect(${poVarName}.page).toHaveURL('${urlMatch[1]}');`);
+          }
           break;
+        }
 
-        case 'assert':
-        default:
+        case 'navigate': {
+          const navUrl = step.value || step.page_hint || routePath;
+          testStatements.push(`    await ${poVarName}.page.goto('${navUrl}');`);
+          break;
+        }
+
+        case 'wait': {
           testStatements.push(`    await expect(${getterRef}).toBeVisible();`);
           break;
+        }
+
+        case 'assert':
+        default: {
+          const urlMatch = step.expected_outcome?.match(/(\/[a-zA-Z0-9_/-]+)/);
+          if (urlMatch && urlMatch[1]) {
+            testStatements.push(`    await expect(${poVarName}.page).toHaveURL('${urlMatch[1]}');`);
+          } else if (
+            step.expected_outcome &&
+            /text|header|title|heading|label/i.test(step.expected_outcome)
+          ) {
+            const textMatch = step.expected_outcome.match(/'([^']+)'|"([^"]+)"/);
+            const extractedText = textMatch ? textMatch[1] || textMatch[2] : undefined;
+            if (extractedText) {
+              testStatements.push(
+                `    await expect(${getterRef}).toContainText('${this.escapeString(extractedText)}');`,
+              );
+            } else {
+              testStatements.push(`    await expect(${getterRef}).toBeVisible();`);
+            }
+          } else {
+            testStatements.push(`    await expect(${getterRef}).toBeVisible();`);
+          }
+          break;
+        }
       }
     }
 

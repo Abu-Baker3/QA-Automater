@@ -165,11 +165,37 @@ describe('PageObjectGenerator (E11.2)', () => {
       );
 
       // Verify NO raw selectors appear in the spec body
-
       expect(spec.content).not.toContain("getByTestId('input-email')");
       expect(spec.content).not.toContain("getByTestId('input-password')");
       expect(spec.content).not.toContain("getByTestId('login-submit')");
       expect(spec.content).not.toContain("getByRole('heading'");
+    });
+  });
+
+  describe('Playwright Spec Template Generator (E11.3 AC1 & AC2)', () => {
+    it('AC1: Given login story IR When codegen Then *.spec.ts created with describe/test structure and expected_outcome assertions', () => {
+      const result = generator.generate(mockTestPlan, mockMappings, {
+        pageName: 'LoginPage',
+      });
+
+      const spec = result.specFile;
+      expect(spec.content).toContain("test.describe('Login & Authentication Flow'");
+      expect(spec.content).toContain("test('execute user story acceptance flow'");
+
+      // Verify assertions generated from expected_outcome
+      expect(spec.content).toContain('await expect(loginPage.emailAddressInput).toHaveValue(');
+      expect(spec.content).toContain('await expect(loginPage.passwordInput).toHaveValue(');
+      expect(spec.content).toContain(
+        'await expect(loginPage.dashboardHeaderVisibleElement).toBeVisible();',
+      );
+    });
+
+    it('AC2: Given generated spec When inspected Then no waitForTimeout present', () => {
+      const result = generator.generate(mockTestPlan, mockMappings);
+
+      expect(result.specFile.content).not.toContain('waitForTimeout');
+      expect(result.specFile.content).not.toContain('page.waitForTimeout');
+      expect(result.specFile.content).not.toContain('setTimeout');
     });
   });
 });
