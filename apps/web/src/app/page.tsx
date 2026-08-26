@@ -493,6 +493,10 @@ export default function DashboardPage() {
   const [userStoryText, setUserStoryText] = useState(
     'Given a user on /login, when they enter valid credentials and click login, then they are redirected to /dashboard.',
   );
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [genProgress, setGenProgress] = useState(0);
+  const [codeOutput, setCodeOutput] = useState(INITIAL_CODE);
+  const [copied, setCopied] = useState(false);
   const [reviewItems, setReviewItems] = useState<UiReviewItem[]>(INITIAL_REVIEW_ITEMS);
   const [activePickerStepId, setActivePickerStepId] = useState<string | null>('step-2');
   const [customSelectorInput, setCustomSelectorInput] = useState<string>('');
