@@ -578,3 +578,30 @@ export interface ExportBlockedResponse {
   code: 'EXPORT_BLOCKED_UNRESOLVED_REVIEW_ITEMS';
   pending_steps: ReviewItem[];
 }
+
+export interface PageObjectGetterDefinition {
+  name: string;
+  playwright_code: string;
+  target_description: string;
+  step_order: number;
+}
+
+export interface GeneratedPageObjectFile {
+  className: string;
+  fileName: string;
+  filePath: string;
+  content: string;
+  getters: PageObjectGetterDefinition[];
+}
+
+export interface GeneratedSpecFile {
+  fileName: string;
+  filePath: string;
+  content: string;
+  pageObjectImports: string[];
+}
+
+export interface PlaywrightCodegenOutput {
+  pageObjects: GeneratedPageObjectFile[];
+  specFile: GeneratedSpecFile;
+}
