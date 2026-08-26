@@ -561,3 +561,20 @@ export interface OverrideMappingResponse {
   mapping: StepLocatorMapping;
   job: GenerationJob;
 }
+
+export interface ExportJobRequest {
+  job_id: string;
+}
+
+export interface ExportJobResponse {
+  job_id: string;
+  status: string;
+  message: string;
+  export_allowed: boolean;
+}
+
+export interface ExportBlockedResponse {
+  message: string;
+  code: 'EXPORT_BLOCKED_UNRESOLVED_REVIEW_ITEMS';
+  pending_steps: ReviewItem[];
+}

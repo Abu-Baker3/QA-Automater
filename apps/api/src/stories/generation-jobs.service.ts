@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import type {
   ElementSearchResultItem,
+  ExportJobResponse,
   GenerationJob,
   OverrideMappingRequest,
   StartGenerationResponse,
@@ -10,6 +11,7 @@ import type {
 import {
   applyMappingOverride,
   buildReviewItems,
+  getPendingReviewItems,
   GenerationJobRunner,
   isExportAllowed,
 } from '@qa-automater/shared';
@@ -92,6 +94,37 @@ export class GenerationJobsService {
     const updatedJob = applyMappingOverride(job, stepOrder, override);
     this.jobsStore.set(jobId, updatedJob);
     return updatedJob;
+  }
+
+  /**
+   * Initiates export for a generation job (E10.3).
+   * Gates export on review resolution: throws 409 Conflict if pending review items exist.
+   */
+  async exportGenerationJob(jobId: string): Promise<ExportJobResponse> {
+    const job = await this.getJobById(jobId);
+    const pendingSteps = getPendingReviewItems(job);
+
+    if (pendingSteps.length > 0 || !job.export_allowed) {
+      throw new ConflictException({
+        message: `Export blocked: ${pendingSteps.length} step locator mapping(s) require human review resolution before export.`,
+        code: 'EXPORT_BLOCKED_UNRESOLVED_REVIEW_ITEMS',
+        pending_steps: pendingSteps,
+      });
+    }
+
+    const updatedJob: GenerationJob = {
+      ...job,
+      status: 'codegen',
+      updated_at: new Date().toISOString(),
+    };
+    this.jobsStore.set(jobId, updatedJob);
+
+    return {
+      job_id: jobId,
+      status: 'codegen',
+      message: 'Export initiated successfully.',
+      export_allowed: true,
+    };
   }
 
   private async executeJobPipeline(jobId: string, story: UserStoryDetails): Promise<void> {

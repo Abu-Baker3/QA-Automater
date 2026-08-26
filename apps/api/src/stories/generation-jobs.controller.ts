@@ -14,6 +14,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { GenerationJobsService } from './generation-jobs.service';
 import type {
+  ExportJobResponse,
   GenerationJob,
   OverrideMappingRequest,
   StartGenerationRequest,
@@ -72,5 +73,19 @@ export class GenerationJobsController {
     @Body() body: OverrideMappingRequest,
   ): Promise<GenerationJob> {
     return this.generationJobsService.overrideMapping(jobId, parseInt(stepOrder, 10), body);
+  }
+
+  @Post('stories/generation-jobs/:id/export')
+  @HttpCode(HttpStatus.OK)
+  @Roles('ADMIN', 'MEMBER')
+  async exportStoryJob(@Param('id') jobId: string): Promise<ExportJobResponse> {
+    return this.generationJobsService.exportGenerationJob(jobId);
+  }
+
+  @Post('generation-jobs/:id/export')
+  @HttpCode(HttpStatus.OK)
+  @Roles('ADMIN', 'MEMBER')
+  async exportJob(@Param('id') jobId: string): Promise<ExportJobResponse> {
+    return this.generationJobsService.exportGenerationJob(jobId);
   }
 }

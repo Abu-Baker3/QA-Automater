@@ -141,3 +141,42 @@ export function applyMappingOverride(
     updated_at: new Date().toISOString(),
   };
 }
+
+/**
+ * Returns pending review items that require human resolution before export.
+ * E10.3 AC1: Filters steps where needs_review is true or confidence < 0.85 and human_verified is false.
+ */
+export function getPendingReviewItems(job: GenerationJob): ReviewItem[] {
+  const reviewItems = job.review_items || buildReviewItems(job.test_plan_ir, job.mappings);
+  return reviewItems.filter(
+    (item) =>
+      item.needs_review || (item.confidence < 0.85 && !item.human_verified) || !item.element_id,
+  );
+}
+
+/**
+ * Exception thrown when export is blocked due to unresolved step locator mappings.
+ */
+export class ExportBlockedException extends Error {
+  readonly code = 'EXPORT_BLOCKED_UNRESOLVED_REVIEW_ITEMS';
+  readonly pending_steps: ReviewItem[];
+
+  constructor(pendingSteps: ReviewItem[]) {
+    super(
+      `Export blocked: ${pendingSteps.length} step locator mapping(s) require human review resolution before export.`,
+    );
+    this.name = 'ExportBlockedException';
+    this.pending_steps = pendingSteps;
+  }
+}
+
+/**
+ * Asserts export is allowed for a job. Throws an error with pending_steps if blocked.
+ * E10.3 AC1: Given unresolved review items When export requested Then throws error with pending steps.
+ */
+export function assertExportAllowed(job: GenerationJob): void {
+  const pendingSteps = getPendingReviewItems(job);
+  if (pendingSteps.length > 0 || !job.export_allowed) {
+    throw new ExportBlockedException(pendingSteps);
+  }
+}

@@ -35,6 +35,12 @@ describe('GenerationJobsController (E9.5)', () => {
       }),
       getJobById: vi.fn().mockResolvedValue(mockJob),
       overrideMapping: vi.fn().mockResolvedValue(mockJob),
+      exportGenerationJob: vi.fn().mockResolvedValue({
+        job_id: 'job_uuid_101',
+        status: 'codegen',
+        message: 'Export initiated successfully.',
+        export_allowed: true,
+      }),
     } as unknown as GenerationJobsService;
 
     controller = new GenerationJobsController(service);
@@ -105,5 +111,14 @@ describe('GenerationJobsController (E9.5)', () => {
     expect(service.overrideMapping).toHaveBeenCalledWith('job_uuid_101', 1, {
       element_id: 'elem_email_override',
     });
+  });
+
+  it('E10.3 AC2: POST /stories/generation-jobs/:id/export proceeds to codegen when all mappings are resolved', async () => {
+    const res = await controller.exportStoryJob('job_uuid_101');
+
+    expect(res.job_id).toBe('job_uuid_101');
+    expect(res.status).toBe('codegen');
+    expect(res.export_allowed).toBe(true);
+    expect(service.exportGenerationJob).toHaveBeenCalledWith('job_uuid_101');
   });
 });
