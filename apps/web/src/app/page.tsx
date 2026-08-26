@@ -25,9 +25,13 @@ import {
   FileText,
   Component,
   ExternalLink,
+  AlertCircle,
+  CheckSquare,
+  ShieldCheck,
+  Sliders,
 } from 'lucide-react';
 
-type Tab = 'overview' | 'locators' | 'explorer' | 'studio' | 'export' | 'settings';
+type Tab = 'overview' | 'locators' | 'explorer' | 'studio' | 'review' | 'export' | 'settings';
 
 interface LocatorItem {
   id: string;
@@ -341,6 +345,144 @@ test.describe('Login & Authentication Suite', () => {
 });
 `;
 
+export interface UiReviewCandidate {
+  strategy: string;
+  value: string;
+  score: number;
+  playwright_code: string;
+  rank: number;
+  stability_tier: 'high' | 'medium' | 'low';
+}
+
+export interface UiReviewItem {
+  step_id: string;
+  step_order: number;
+  action: string;
+  target_description: string;
+  confidence: number;
+  element_id: string | null;
+  chosen_locator: UiReviewCandidate | null;
+  candidates: UiReviewCandidate[];
+  rationale: string;
+  needs_review: boolean;
+  human_verified: boolean;
+}
+
+const INITIAL_REVIEW_ITEMS: UiReviewItem[] = [
+  {
+    step_id: 'step-1',
+    step_order: 1,
+    action: 'fill',
+    target_description: 'Enter user email address',
+    confidence: 0.95,
+    element_id: 'elem-1',
+    chosen_locator: {
+      strategy: 'label',
+      value: 'Email Address',
+      score: 0.95,
+      playwright_code: "page.getByLabel('Email Address')",
+      rank: 1,
+      stability_tier: 'high',
+    },
+    candidates: [
+      {
+        strategy: 'label',
+        value: 'Email Address',
+        score: 0.95,
+        playwright_code: "page.getByLabel('Email Address')",
+        rank: 1,
+        stability_tier: 'high',
+      },
+      {
+        strategy: 'role_name',
+        value: 'textbox:Email Address',
+        score: 0.9,
+        playwright_code: "page.getByRole('textbox', { name: 'Email Address' })",
+        rank: 2,
+        stability_tier: 'high',
+      },
+    ],
+    rationale: 'High confidence match against label Email Address.',
+    needs_review: false,
+    human_verified: false,
+  },
+  {
+    step_id: 'step-2',
+    step_order: 2,
+    action: 'fill',
+    target_description: 'Enter user password',
+    confidence: 0.65,
+    element_id: 'elem-pass',
+    chosen_locator: {
+      strategy: 'css',
+      value: '.pass-input-99',
+      score: 0.65,
+      playwright_code: "page.locator('.pass-input-99')",
+      rank: 2,
+      stability_tier: 'low',
+    },
+    candidates: [
+      {
+        strategy: 'testid',
+        value: 'input-password',
+        score: 0.98,
+        playwright_code: "page.getByTestId('input-password')",
+        rank: 1,
+        stability_tier: 'high',
+      },
+      {
+        strategy: 'css',
+        value: '.pass-input-99',
+        score: 0.65,
+        playwright_code: "page.locator('.pass-input-99')",
+        rank: 2,
+        stability_tier: 'low',
+      },
+    ],
+    rationale:
+      'Ambiguous low-confidence CSS selector. Recommended data-testid candidate available.',
+    needs_review: true,
+    human_verified: false,
+  },
+  {
+    step_id: 'step-3',
+    step_order: 3,
+    action: 'click',
+    target_description: 'Click Submit Login Button',
+    confidence: 0.72,
+    element_id: 'elem-2',
+    chosen_locator: {
+      strategy: 'css',
+      value: 'button.btn-primary',
+      score: 0.72,
+      playwright_code: "page.locator('button.btn-primary')",
+      rank: 2,
+      stability_tier: 'medium',
+    },
+    candidates: [
+      {
+        strategy: 'testid',
+        value: 'login-submit',
+        score: 0.98,
+        playwright_code: "page.getByTestId('login-submit')",
+        rank: 1,
+        stability_tier: 'high',
+      },
+      {
+        strategy: 'css',
+        value: 'button.btn-primary',
+        score: 0.72,
+        playwright_code: "page.locator('button.btn-primary')",
+        rank: 2,
+        stability_tier: 'medium',
+      },
+    ],
+    rationale: 'Sub-threshold confidence match (72%). Review candidate selectors.',
+    needs_review: true,
+    human_verified: false,
+  },
+];
+
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [selectedRepo, setSelectedRepo] = useState('acme-inc/frontend-app');
@@ -351,10 +493,31 @@ export default function DashboardPage() {
   const [userStoryText, setUserStoryText] = useState(
     'Given a user on /login, when they enter valid credentials and click login, then they are redirected to /dashboard.',
   );
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [genProgress, setGenProgress] = useState(0);
-  const [codeOutput, setCodeOutput] = useState(INITIAL_CODE);
-  const [copied, setCopied] = useState(false);
+  const [reviewItems, setReviewItems] = useState<UiReviewItem[]>(INITIAL_REVIEW_ITEMS);
+  const [activePickerStepId, setActivePickerStepId] = useState<string | null>('step-2');
+  const [customSelectorInput, setCustomSelectorInput] = useState<string>('');
+
+  const pendingReviewCount = reviewItems.filter(
+    (item) => (item.needs_review || item.confidence < 0.85) && !item.human_verified,
+  ).length;
+
+  const isExportAllowed = pendingReviewCount === 0;
+
+  const handleConfirmOverride = (stepId: string, candidate: UiReviewCandidate) => {
+    setReviewItems((prev) =>
+      prev.map((item) => {
+        if (item.step_id !== stepId) return item;
+        return {
+          ...item,
+          chosen_locator: candidate,
+          confidence: 1.0,
+          human_verified: true,
+          needs_review: false,
+          rationale: `Human override verified by QA Engineer (${candidate.strategy}: ${candidate.value})`,
+        };
+      }),
+    );
+  };
 
   const filteredLocators = MOCK_LOCATORS.filter(
     (loc) =>
@@ -638,6 +801,65 @@ test.describe('Automated Acceptance Test', () => {
           >
             <Bot style={{ width: '18px', height: '18px' }} />
             AI Test Studio
+          </button>
+
+          <button
+            onClick={() => setActiveTab('review')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              border: 'none',
+              background: activeTab === 'review' ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
+              color: activeTab === 'review' ? '#FBBF24' : 'var(--text-muted)',
+              fontSize: '0.9rem',
+              fontWeight: activeTab === 'review' ? 600 : 400,
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.2s',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <AlertCircle
+                style={{
+                  width: '18px',
+                  height: '18px',
+                  color: pendingReviewCount > 0 ? '#FBBF24' : '#34D399',
+                }}
+              />
+              Review Queue
+            </div>
+            {pendingReviewCount > 0 ? (
+              <span
+                style={{
+                  background: 'rgba(245, 158, 11, 0.2)',
+                  color: '#FBBF24',
+                  border: '1px solid rgba(245, 158, 11, 0.4)',
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                }}
+              >
+                {pendingReviewCount}
+              </span>
+            ) : (
+              <span
+                style={{
+                  background: 'rgba(16, 185, 129, 0.2)',
+                  color: '#34D399',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                }}
+              >
+                ✓ Ready
+              </span>
+            )}
           </button>
 
           <button
@@ -1926,6 +2148,505 @@ test.describe('Automated Acceptance Test', () => {
                       lineHeight: '1.6',
                     }}
                   />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: REVIEW QUEUE DASHBOARD UI (E10.4) */}
+          {activeTab === 'review' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <h1 style={{ fontSize: '1.75rem', fontWeight: 700 }}>
+                  Human-in-the-Loop Review Queue
+                </h1>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
+                  Review low-confidence AST element mappings, select candidate locators, or enter
+                  manual overrides before test export.
+                </p>
+              </div>
+
+              {/* Status Header Banner */}
+              <div
+                className="glass-panel"
+                style={{
+                  padding: '20px 24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: isExportAllowed
+                    ? 'rgba(16, 185, 129, 0.08)'
+                    : 'rgba(245, 158, 11, 0.08)',
+                  border: isExportAllowed
+                    ? '1px solid rgba(16, 185, 129, 0.3)'
+                    : '1px solid rgba(245, 158, 11, 0.4)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div
+                    style={{
+                      width: '42px',
+                      height: '42px',
+                      borderRadius: '10px',
+                      background: isExportAllowed
+                        ? 'rgba(16, 185, 129, 0.2)'
+                        : 'rgba(245, 158, 11, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {isExportAllowed ? (
+                      <CheckSquare style={{ width: '22px', height: '22px', color: '#34D399' }} />
+                    ) : (
+                      <AlertCircle style={{ width: '22px', height: '22px', color: '#FBBF24' }} />
+                    )}
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 600 }}>
+                      {isExportAllowed
+                        ? 'All Step Mappings Verified — Export Unlocked'
+                        : `Export Blocked: ${pendingReviewCount} Step Mapping(s) Require QA Review`}
+                    </h3>
+                    <p
+                      style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '2px' }}
+                    >
+                      {isExportAllowed
+                        ? 'All element locators satisfy confidence >= 85% or are human verified. Playwright codegen ready.'
+                        : 'Review candidates or confirm manual overrides to enable test suite export.'}
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <button
+                    disabled={!isExportAllowed}
+                    onClick={() => setActiveTab('export')}
+                    style={{
+                      background: isExportAllowed
+                        ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                        : 'rgba(51, 65, 85, 0.5)',
+                      color: isExportAllowed ? '#fff' : '#64748B',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '10px 20px',
+                      fontSize: '0.88rem',
+                      fontWeight: 600,
+                      cursor: isExportAllowed ? 'pointer' : 'not-allowed',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: isExportAllowed ? '0 0 16px rgba(16, 185, 129, 0.3)' : 'none',
+                    }}
+                  >
+                    <Download style={{ width: '16px', height: '16px' }} />
+                    {isExportAllowed
+                      ? 'Proceed to Export'
+                      : `Export Blocked (${pendingReviewCount} Pending)`}
+                  </button>
+                </div>
+              </div>
+
+              {/* Main Review Queue Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px' }}>
+                {/* Left Column: Test Plan Step Review List */}
+                <div
+                  className="glass-panel"
+                  style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '1.1rem',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <Sliders style={{ width: '18px', height: '18px', color: '#818CF8' }} />
+                    Test Plan Steps & Locators
+                  </h3>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {reviewItems.map((item) => {
+                      const isLowConfidence = item.confidence < 0.85 && !item.human_verified;
+                      const isSelected = activePickerStepId === item.step_id;
+
+                      return (
+                        <div
+                          key={item.step_id}
+                          onClick={() => setActivePickerStepId(item.step_id)}
+                          style={{
+                            padding: '16px',
+                            borderRadius: '10px',
+                            background: isSelected
+                              ? 'rgba(99, 102, 241, 0.12)'
+                              : isLowConfidence
+                                ? 'rgba(245, 158, 11, 0.06)'
+                                : 'rgba(30, 41, 59, 0.4)',
+                            border: isSelected
+                              ? '1px solid #818CF8'
+                              : isLowConfidence
+                                ? '1px solid rgba(245, 158, 11, 0.5)'
+                                : '1px solid var(--border-card)',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '10px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <span
+                                style={{
+                                  background: 'rgba(15, 23, 42, 0.8)',
+                                  border: '1px solid var(--border-card)',
+                                  color: '#fff',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 700,
+                                  padding: '2px 8px',
+                                  borderRadius: '6px',
+                                }}
+                              >
+                                Step {item.step_order}
+                              </span>
+                              <span
+                                style={{
+                                  background:
+                                    item.action === 'fill'
+                                      ? 'rgba(99, 102, 241, 0.2)'
+                                      : 'rgba(16, 185, 129, 0.2)',
+                                  color: item.action === 'fill' ? '#818CF8' : '#34D399',
+                                  fontSize: '0.7rem',
+                                  fontWeight: 700,
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  textTransform: 'uppercase',
+                                }}
+                              >
+                                {item.action}
+                              </span>
+                              <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                                {item.target_description}
+                              </span>
+                            </div>
+
+                            {item.human_verified ? (
+                              <span
+                                style={{
+                                  background: 'rgba(16, 185, 129, 0.15)',
+                                  color: '#34D399',
+                                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 600,
+                                  padding: '3px 10px',
+                                  borderRadius: '12px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                }}
+                              >
+                                <ShieldCheck style={{ width: '12px', height: '12px' }} /> Verified
+                                (100%)
+                              </span>
+                            ) : isLowConfidence ? (
+                              <span
+                                style={{
+                                  background: 'rgba(245, 158, 11, 0.15)',
+                                  color: '#FBBF24',
+                                  border: '1px solid rgba(245, 158, 11, 0.4)',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 600,
+                                  padding: '3px 10px',
+                                  borderRadius: '12px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                }}
+                              >
+                                <AlertCircle style={{ width: '12px', height: '12px' }} /> Review (
+                                {Math.round(item.confidence * 100)}%)
+                              </span>
+                            ) : (
+                              <span
+                                style={{
+                                  background: 'rgba(99, 102, 241, 0.15)',
+                                  color: '#818CF8',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 600,
+                                  padding: '3px 10px',
+                                  borderRadius: '12px',
+                                }}
+                              >
+                                High Confidence ({Math.round(item.confidence * 100)}%)
+                              </span>
+                            )}
+                          </div>
+
+                          <div
+                            style={{
+                              background: 'rgba(15, 23, 42, 0.6)',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              fontSize: '0.8rem',
+                              fontFamily: 'JetBrains Mono, monospace',
+                              color: '#93C5FD',
+                            }}
+                          >
+                            {item.chosen_locator?.playwright_code || 'No locator assigned'}
+                          </div>
+
+                          {isLowConfidence && (
+                            <div
+                              style={{
+                                fontSize: '0.78rem',
+                                color: '#FCD34D',
+                                background: 'rgba(245, 158, 11, 0.1)',
+                                padding: '6px 10px',
+                                borderRadius: '6px',
+                              }}
+                            >
+                              ⚠️ {item.rationale}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right Column: Candidate Selector Inspector Panel */}
+                <div
+                  className="glass-panel"
+                  style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+                >
+                  {(() => {
+                    const activeItem =
+                      reviewItems.find((i) => i.step_id === activePickerStepId) ||
+                      reviewItems[1] ||
+                      reviewItems[0];
+                    if (!activeItem) return null;
+
+                    return (
+                      <>
+                        <h3
+                          style={{
+                            fontSize: '1.1rem',
+                            fontWeight: 600,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                        >
+                          <Bot style={{ width: '18px', height: '18px', color: '#C084FC' }} />
+                          Candidate Picker (Step {activeItem.step_order})
+                        </h3>
+
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                          Target:{' '}
+                          <strong style={{ color: '#fff' }}>{activeItem.target_description}</strong>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          <span
+                            style={{
+                              fontSize: '0.8rem',
+                              fontWeight: 600,
+                              color: 'var(--text-muted)',
+                            }}
+                          >
+                            Available Candidate Selectors:
+                          </span>
+
+                          {activeItem.candidates.map((cand, idx) => {
+                            const isChosen = activeItem.chosen_locator?.value === cand.value;
+
+                            return (
+                              <div
+                                key={idx}
+                                style={{
+                                  padding: '12px 14px',
+                                  borderRadius: '8px',
+                                  background: isChosen
+                                    ? 'rgba(16, 185, 129, 0.12)'
+                                    : 'rgba(30, 41, 59, 0.6)',
+                                  border: isChosen
+                                    ? '1px solid #34D399'
+                                    : '1px solid var(--border-card)',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  gap: '8px',
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                  }}
+                                >
+                                  <div
+                                    style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                                  >
+                                    <span
+                                      style={{
+                                        background:
+                                          cand.strategy === 'testid'
+                                            ? 'rgba(16, 185, 129, 0.2)'
+                                            : cand.strategy === 'label'
+                                              ? 'rgba(99, 102, 241, 0.2)'
+                                              : 'rgba(245, 158, 11, 0.2)',
+                                        color:
+                                          cand.strategy === 'testid'
+                                            ? '#34D399'
+                                            : cand.strategy === 'label'
+                                              ? '#818CF8'
+                                              : '#FBBF24',
+                                        fontSize: '0.7rem',
+                                        fontWeight: 700,
+                                        padding: '2px 6px',
+                                        borderRadius: '4px',
+                                        textTransform: 'uppercase',
+                                      }}
+                                    >
+                                      {cand.strategy}
+                                    </span>
+                                    <span
+                                      style={{
+                                        fontSize: '0.8rem',
+                                        color: '#CBD5E1',
+                                        fontFamily: 'JetBrains Mono, monospace',
+                                      }}
+                                    >
+                                      {cand.value}
+                                    </span>
+                                  </div>
+
+                                  <span
+                                    style={{
+                                      fontSize: '0.75rem',
+                                      color: '#34D399',
+                                      fontWeight: 600,
+                                    }}
+                                  >
+                                    Score: {Math.round(cand.score * 100)}%
+                                  </span>
+                                </div>
+
+                                <div
+                                  style={{
+                                    fontSize: '0.8rem',
+                                    fontFamily: 'JetBrains Mono, monospace',
+                                    color: '#93C5FD',
+                                  }}
+                                >
+                                  {cand.playwright_code}
+                                </div>
+
+                                <button
+                                  onClick={() => handleConfirmOverride(activeItem.step_id, cand)}
+                                  style={{
+                                    alignSelf: 'flex-end',
+                                    background: isChosen
+                                      ? 'rgba(16, 185, 129, 0.2)'
+                                      : 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                                    color: isChosen ? '#34D399' : '#fff',
+                                    border: isChosen ? '1px solid #34D399' : 'none',
+                                    borderRadius: '6px',
+                                    padding: '5px 12px',
+                                    fontSize: '0.78rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    marginTop: '4px',
+                                  }}
+                                >
+                                  {isChosen && activeItem.human_verified
+                                    ? '✓ Active Verified Selector'
+                                    : 'Confirm Override Selector'}
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Custom Selector Manual Override */}
+                        <div
+                          style={{
+                            marginTop: '12px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '0.8rem',
+                              fontWeight: 600,
+                              color: 'var(--text-muted)',
+                            }}
+                          >
+                            Or Custom Selector Override:
+                          </span>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <input
+                              type="text"
+                              placeholder="e.g. page.getByTestId('custom-input')"
+                              value={customSelectorInput}
+                              onChange={(e) => setCustomSelectorInput(e.target.value)}
+                              style={{
+                                flex: 1,
+                                background: 'rgba(15, 23, 42, 0.8)',
+                                color: '#fff',
+                                border: '1px solid var(--border-card)',
+                                borderRadius: '6px',
+                                padding: '8px 12px',
+                                fontSize: '0.82rem',
+                                fontFamily: 'JetBrains Mono, monospace',
+                                outline: 'none',
+                              }}
+                            />
+                            <button
+                              disabled={!customSelectorInput.trim()}
+                              onClick={() => {
+                                if (!customSelectorInput.trim()) return;
+                                handleConfirmOverride(activeItem.step_id, {
+                                  strategy: 'custom',
+                                  value: customSelectorInput,
+                                  score: 1.0,
+                                  playwright_code: customSelectorInput.startsWith('page.')
+                                    ? customSelectorInput
+                                    : `page.locator('${customSelectorInput}')`,
+                                  rank: 1,
+                                  stability_tier: 'high',
+                                });
+                                setCustomSelectorInput('');
+                              }}
+                              style={{
+                                background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '8px 14px',
+                                fontSize: '0.8rem',
+                                fontWeight: 600,
+                                cursor: customSelectorInput.trim() ? 'pointer' : 'not-allowed',
+                                opacity: customSelectorInput.trim() ? 1 : 0.5,
+                              }}
+                            >
+                              Apply Custom
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
