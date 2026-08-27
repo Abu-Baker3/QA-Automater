@@ -38,3 +38,4 @@ export * from './generation/generation-job-runner';
 export * from './generation/review-queue';
 export * from './generation/playwright-code-mapper';
 export * from './generation/page-object-generator';
+export * from './generation/code-validator';

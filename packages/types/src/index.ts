@@ -605,3 +605,21 @@ export interface PlaywrightCodegenOutput {
   pageObjects: GeneratedPageObjectFile[];
   specFile: GeneratedSpecFile;
 }
+
+export type CodeValidationRuleId =
+  'no-xpath' | 'po-encapsulation' | 'ts-syntax-error' | 'ts-type-error';
+
+export interface CodeValidationDiagnostic {
+  rule_id: CodeValidationRuleId;
+  file_path: string;
+  line_number?: number;
+  column_number?: number;
+  message: string;
+  severity: 'error' | 'warning';
+}
+
+export interface CodeValidationResult {
+  valid: boolean;
+  diagnostics: CodeValidationDiagnostic[];
+  passed_rules: CodeValidationRuleId[];
+}
