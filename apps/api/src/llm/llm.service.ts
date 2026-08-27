@@ -20,7 +20,6 @@ export class LlmService implements ILLMProvider {
     this.provider = createLLMProvider(config);
   }
 
-
   get name(): LLMProviderName {
     return this.provider.name;
   }

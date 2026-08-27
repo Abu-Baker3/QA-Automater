@@ -29,13 +29,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     }
     try {
       await verifyPgvector(this.pool);
-    } catch (error) {
+    } catch {
       console.warn(
         '[DatabaseService] Database connection unverified on startup (Docker/PostgreSQL offline). Server booting in local dev mode.',
       );
     }
-  }
 
+  }
 
   async checkHealth() {
     return checkDatabaseHealth(this.pool);

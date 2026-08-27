@@ -146,7 +146,6 @@ export async function checkDatabaseHealth(pool: Pool): Promise<{
   return Promise.race([checkPromise, timeoutPromise]);
 }
 
-
 export async function verifyPgvector(pool: Pool): Promise<void> {
   await withClient(pool, async (client) => {
     const ext = await client.query(

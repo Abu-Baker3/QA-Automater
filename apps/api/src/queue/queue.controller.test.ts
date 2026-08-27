@@ -17,7 +17,6 @@ describe('QueueController', () => {
     service = new QueueService();
     service.sharedQueueService = mockSharedQueue;
     controller = new QueueController(service);
-
   });
 
   it('AC1: POST /queue/scan should enqueue scan job and return 202 payload with status queued', async () => {

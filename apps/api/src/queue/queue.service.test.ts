@@ -16,7 +16,6 @@ describe('QueueService in API app', () => {
     queueService.sharedQueueService = mockSharedQueue;
   });
 
-
   it('instantiates and provides queue enqueuing interface', () => {
     expect(queueService.enqueueJob).toBeDefined();
     expect(queueService.checkHealth).toBeDefined();

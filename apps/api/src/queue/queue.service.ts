@@ -32,11 +32,6 @@ export class QueueService implements OnModuleDestroy {
     this.sharedQueueService = new SharedQueueService();
   }
 
-
-
-
-
-
   async enqueueJob<T = Record<string, unknown>>(
     queueName: QueueName | string,
     jobName: string,
