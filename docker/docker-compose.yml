@@ -40,11 +40,8 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'psql "postgresql://postgres:postgres@127.0.0.1:6432/qa_automater" -c "SELECT 1" >/dev/null 2>&1 || exit 1',
-        ]
+      test: ['CMD-SHELL', 'nc -z 127.0.0.1 6432 || exit 1']
+
       interval: 10s
       timeout: 5s
       retries: 5

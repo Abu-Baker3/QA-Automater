@@ -34,7 +34,6 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         '[DatabaseService] Database connection unverified on startup (Docker/PostgreSQL offline). Server booting in local dev mode.',
       );
     }
-
   }
 
   async checkHealth() {
