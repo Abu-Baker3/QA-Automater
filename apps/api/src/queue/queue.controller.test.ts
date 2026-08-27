@@ -14,8 +14,10 @@ describe('QueueController', () => {
     vi.spyOn(mockSharedQueue, 'enqueueJob').mockResolvedValue({
       job: { id: 'job_999' },
     } as unknown as { job: Record<string, unknown> });
-    service = new QueueService(mockSharedQueue);
+    service = new QueueService();
+    service.sharedQueueService = mockSharedQueue;
     controller = new QueueController(service);
+
   });
 
   it('AC1: POST /queue/scan should enqueue scan job and return 202 payload with status queued', async () => {

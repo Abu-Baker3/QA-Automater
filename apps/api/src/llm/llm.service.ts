@@ -12,9 +12,14 @@ import { createLLMProvider, ILLMProvider } from '@qa-automater/shared';
 export class LlmService implements ILLMProvider {
   private provider: ILLMProvider;
 
-  constructor(config?: LLMProviderConfig) {
+  constructor() {
+    this.provider = createLLMProvider();
+  }
+
+  public reconfigure(config?: LLMProviderConfig): void {
     this.provider = createLLMProvider(config);
   }
+
 
   get name(): LLMProviderName {
     return this.provider.name;

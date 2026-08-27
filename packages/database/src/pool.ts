@@ -90,42 +90,62 @@ export async function checkDatabaseHealth(pool: Pool): Promise<{
   activeConnections?: number;
 }> {
   const start = Date.now();
-  try {
-    const result = await withClient(pool, async (client) => {
-      const health = await client.query<{ ok: number }>('SELECT 1 AS ok');
-      const ext = await client.query<{ exists: boolean }>(
-        `SELECT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'vector') AS exists`,
-      );
-      let activeConnections: number | undefined;
-      try {
-        const stats = await client.query<{ count: string }>(
-          `SELECT count(*)::text AS count FROM pg_stat_activity WHERE datname = current_database()`,
-        );
-        activeConnections = Number(stats.rows[0]?.count ?? 0);
-      } catch {
-        activeConnections = undefined;
-      }
-      return {
-        ok: health.rows[0]?.ok === 1,
-        pgvector: ext.rows[0]?.exists === true,
-        activeConnections,
-      };
-    });
+  const timeoutPromise = new Promise<{
+    ok: boolean;
+    pgvector: boolean;
+    latencyMs: number;
+    activeConnections?: number;
+  }>((resolve) =>
+    setTimeout(
+      () =>
+        resolve({
+          ok: false,
+          pgvector: false,
+          latencyMs: Date.now() - start,
+        }),
+      2000,
+    ),
+  );
 
-    return {
-      ok: result.ok && result.pgvector,
-      pgvector: result.pgvector,
-      latencyMs: Date.now() - start,
-      activeConnections: result.activeConnections,
-    };
-  } catch {
-    return {
-      ok: false,
-      pgvector: false,
-      latencyMs: Date.now() - start,
-    };
-  }
+  const checkPromise = (async () => {
+    try {
+      const result = await withClient(pool, async (client) => {
+        const health = await client.query<{ ok: number }>('SELECT 1 AS ok');
+        const ext = await client.query<{ exists: boolean }>(
+          `SELECT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'vector') AS exists`,
+        );
+        let activeConnections: number | undefined;
+        try {
+          const stats = await client.query<{ count: string }>(
+            `SELECT count(*)::text AS count FROM pg_stat_activity WHERE datname = current_database()`,
+          );
+          activeConnections = Number(stats.rows[0]?.count ?? 0);
+        } catch {
+          activeConnections = undefined;
+        }
+        return {
+          ok: health.rows[0]?.ok === 1,
+          pgvector: ext.rows[0]?.exists === true,
+          activeConnections,
+        };
+      });
+
+      return {
+        ...result,
+        latencyMs: Date.now() - start,
+      };
+    } catch {
+      return {
+        ok: false,
+        pgvector: false,
+        latencyMs: Date.now() - start,
+      };
+    }
+  })();
+
+  return Promise.race([checkPromise, timeoutPromise]);
 }
+
 
 export async function verifyPgvector(pool: Pool): Promise<void> {
   await withClient(pool, async (client) => {

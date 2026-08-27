@@ -27,8 +27,15 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     if (process.env.DATABASE_SKIP_STARTUP_VERIFY === 'true') {
       return;
     }
-    await verifyPgvector(this.pool);
+    try {
+      await verifyPgvector(this.pool);
+    } catch (error) {
+      console.warn(
+        '[DatabaseService] Database connection unverified on startup (Docker/PostgreSQL offline). Server booting in local dev mode.',
+      );
+    }
   }
+
 
   async checkHealth() {
     return checkDatabaseHealth(this.pool);

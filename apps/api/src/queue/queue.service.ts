@@ -26,11 +26,14 @@ export interface ScanJobRecord {
 @Injectable()
 export class QueueService implements OnModuleDestroy {
   private readonly scanJobsStore = new Map<string, ScanJobRecord>();
-  private readonly sharedQueueService: SharedQueueService;
+  public sharedQueueService: SharedQueueService;
 
-  constructor(sharedQueueService?: SharedQueueService) {
-    this.sharedQueueService = sharedQueueService || new SharedQueueService();
+  constructor() {
+    this.sharedQueueService = new SharedQueueService();
   }
+
+
+
 
 
 

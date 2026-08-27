@@ -12,8 +12,10 @@ describe('QueueService in API app', () => {
     vi.spyOn(mockSharedQueue, 'enqueueJob').mockResolvedValue({
       job: { id: 'job_123' },
     } as unknown as { job: Record<string, unknown> });
-    queueService = new QueueService(mockSharedQueue);
+    queueService = new QueueService();
+    queueService.sharedQueueService = mockSharedQueue;
   });
+
 
   it('instantiates and provides queue enqueuing interface', () => {
     expect(queueService.enqueueJob).toBeDefined();
