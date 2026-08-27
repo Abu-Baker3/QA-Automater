@@ -623,3 +623,22 @@ export interface CodeValidationResult {
   diagnostics: CodeValidationDiagnostic[];
   passed_rules: CodeValidationRuleId[];
 }
+
+export interface GeneratedArtifactMetadata {
+  id?: string;
+  jobId: string;
+  orgId: string;
+  filename: string;
+  storageKey: string;
+  bucket: string;
+  sizeBytes: number;
+  checksumSha256: string;
+  createdAt?: string;
+}
+
+export interface ArtifactStorageResult {
+  key: string;
+  bucket: string;
+  size: number;
+  checksumSha256: string;
+}

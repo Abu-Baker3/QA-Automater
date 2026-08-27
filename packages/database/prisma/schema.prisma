@@ -107,4 +107,19 @@ model GenerationJob {
   @@map("generation_jobs")
 }
 
+model GeneratedArtifact {
+  id             String   @id @default(uuid()) @db.Uuid
+  jobId          String   @map("job_id") @db.Uuid
+  orgId          String   @map("org_id") @db.VarChar(255)
+  filename       String   @db.VarChar(255)
+  storageKey     String   @map("storage_key") @db.VarChar(1024)
+  bucket         String   @db.VarChar(255)
+  sizeBytes      Int      @map("size_bytes")
+  checksumSha256 String   @map("checksum_sha256") @db.VarChar(64)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("generated_artifacts")
+}
+
+
 

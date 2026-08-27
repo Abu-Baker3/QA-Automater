@@ -1,5 +1,13 @@
-import { describe, it, expect } from 'vitest';
-import { buildArtifactStorageKey, parseArtifactStorageKey, S3StorageService } from './index';
+import { describe, expect, it } from 'vitest';
+import {
+  buildArtifactStorageKey,
+  buildJobArtifactStorageKey,
+  computeSha256Checksum,
+  generateEnvExamplePlaceholder,
+  parseArtifactStorageKey,
+  sanitizeArtifactCredentials,
+  S3StorageService,
+} from './index';
 
 describe('S3 Storage Key Prefix Rules (AC-2)', () => {
   it('correctly formats storage keys with org_id/repo_id/ prefix', () => {
@@ -74,5 +82,45 @@ describe('S3StorageService Client Initializer', () => {
     const health = await service.checkHealth();
     expect(health.bucket).toBe('custom-test-bucket');
     expect(typeof health.ok).toBe('boolean');
+  });
+});
+
+describe('Store Generated Artifacts in S3 (E12.1 AC1 & AC2)', () => {
+  it('AC1: builds job artifact key in s3://{org_id}/artifacts/{job_id}/{path} format', () => {
+    const key = buildJobArtifactStorageKey('org-acme', 'job-999', 'tests/login.spec.ts');
+    expect(key).toBe('org-acme/artifacts/job-999/tests/login.spec.ts');
+  });
+
+  it('AC1: computes valid SHA-256 checksum for artifact payload', () => {
+    const checksum = computeSha256Checksum('console.log("hello world");');
+    expect(checksum).toHaveLength(64);
+    expect(checksum).toBe('c315b2d7ef4b9a2b8e783c2d43264d996a53d23a8252292a6aa56525db5d87fd');
+  });
+
+  it('AC2: redacts GitHub tokens, OpenAI keys, AWS keys, and Bearer tokens from content', () => {
+    const rawContent = `
+const GITHUB_TOKEN = 'ghp_1234567890abcdefghijklmnopqrstuvwxyz';
+const OPENAI_KEY = 'sk-1234567890abcdef1234567890abcdef';
+const AWS_KEY = 'AKIA1234567890ABCDEF';
+const AUTH_HEADER = 'Bearer secret-jwt-token-value';
+`;
+    const sanitized = sanitizeArtifactCredentials(rawContent);
+
+    expect(sanitized).not.toContain('ghp_1234567890abcdefghijklmnopqrstuvwxyz');
+    expect(sanitized).not.toContain('sk-1234567890abcdef1234567890abcdef');
+    expect(sanitized).not.toContain('AKIA1234567890ABCDEF');
+    expect(sanitized).toContain('[REDACTED_GITHUB_TOKEN]');
+    expect(sanitized).toContain('[REDACTED_OPENAI_KEY]');
+    expect(sanitized).toContain('[REDACTED_AWS_ACCESS_KEY]');
+    expect(sanitized).toContain('Bearer [REDACTED_BEARER_TOKEN]');
+  });
+
+  it('AC2: generates .env.example with safe placeholders only', () => {
+    const envExample = generateEnvExamplePlaceholder();
+
+    expect(envExample).toContain('BASE_URL=http://localhost:3000');
+    expect(envExample).toContain('TEST_USER_EMAIL=placeholder_user@example.com');
+    expect(envExample).not.toContain('ghp_');
+    expect(envExample).not.toContain('sk-');
   });
 });
