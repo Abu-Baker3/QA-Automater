@@ -11,6 +11,8 @@ import type {
   ExportJobRequest,
   ExportJobResponse,
   ExportType,
+  GenerationAuditLog,
+  GenerationAuditLogResponse,
   GenerationJob,
   OverrideMappingRequest,
   StartGenerationResponse,
@@ -19,6 +21,7 @@ import type {
 
 import {
   applyMappingOverride,
+  buildGenerationAuditLog,
   buildReviewItems,
   createTestZipArchive,
   getPendingReviewItems,
@@ -26,6 +29,7 @@ import {
   isExportAllowed,
   PageObjectGenerator,
   S3StorageService,
+  verifyTraceabilityChain,
 } from '@qa-automater/shared';
 
 import { DatabaseService } from '../database/database.service';
@@ -36,6 +40,7 @@ import { GitHubIntegrationService } from '../integrations/github-integration.ser
 @Injectable()
 export class GenerationJobsService {
   private readonly jobsStore = new Map<string, GenerationJob>();
+  private readonly auditLogsStore = new Map<string, GenerationAuditLog>();
   private readonly storageService = new S3StorageService();
 
   constructor(
@@ -239,6 +244,18 @@ export class GenerationJobsService {
     };
     this.jobsStore.set(jobId, updatedJob);
 
+    // Story E12.4 AC1 & AC2: Automatically construct and store generation audit log upon completed export
+    const auditLog = buildGenerationAuditLog({
+      jobId,
+      storyId: job.story_id,
+      exportType,
+      testPlan: job.test_plan_ir,
+      mappings: job.mappings,
+      modelVersions: job.model_versions,
+    });
+    this.auditLogsStore.set(jobId, auditLog);
+    this.auditLogsStore.set(auditLog.id, auditLog);
+
     return {
       job_id: jobId,
       status: 'codegen',
@@ -254,6 +271,38 @@ export class GenerationJobsService {
       branch_name: branchName,
       target_branch: targetBranch,
       target_path: targetPath,
+    };
+  }
+
+  /**
+   * Story E12.4 AC1 & AC2: Retrieves generation audit log and validates source_ref chain traceability.
+   */
+  async getGenerationAuditLog(jobId: string): Promise<GenerationAuditLogResponse> {
+    let auditLog = this.auditLogsStore.get(jobId);
+
+    if (!auditLog) {
+      const job = this.jobsStore.get(jobId);
+      if (!job) {
+        throw new NotFoundException(`Generation job or audit log with ID '${jobId}' not found.`);
+      }
+
+      auditLog = buildGenerationAuditLog({
+        jobId: job.id,
+        storyId: job.story_id,
+        exportType: 'zip',
+        testPlan: job.test_plan_ir,
+        mappings: job.mappings,
+        modelVersions: job.model_versions,
+      });
+      this.auditLogsStore.set(jobId, auditLog);
+    }
+
+    const intact = verifyTraceabilityChain(auditLog);
+
+    return {
+      audit_log: auditLog,
+      job_id: jobId,
+      traceability_chain_intact: intact,
     };
   }
 

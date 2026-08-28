@@ -679,3 +679,42 @@ export interface ArtifactStorageResult {
   size: number;
   checksumSha256: string;
 }
+
+/**
+ * Story E12.4 AC2: Traceability item preserving story -> step -> locator -> file:line chain.
+ */
+export interface SourceRefChainItem {
+  story_id: string;
+  story_title: string;
+  step_id: string;
+  step_order: number;
+  step_action: string;
+  locator_id?: string;
+  selector?: string;
+  confidence?: number;
+  file_path?: string;
+  line_number?: number;
+  source_ref: string;
+}
+
+/**
+ * Story E12.4 AC1 & AC2: Generation Audit Log Record.
+ */
+export interface GenerationAuditLog {
+  id: string;
+  job_id: string;
+  story_id: string;
+  user_id: string;
+  export_type: ExportType;
+  story_text: string;
+  mappings: StepLocatorMapping[];
+  model_versions: ModelVersions;
+  source_ref_chain: SourceRefChainItem[];
+  export_timestamp: string;
+}
+
+export interface GenerationAuditLogResponse {
+  audit_log: GenerationAuditLog;
+  job_id: string;
+  traceability_chain_intact: boolean;
+}

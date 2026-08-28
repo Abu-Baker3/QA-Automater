@@ -121,5 +121,21 @@ model GeneratedArtifact {
   @@map("generated_artifacts")
 }
 
+model GenerationAuditLog {
+  id              String   @id @default(uuid()) @db.Uuid
+  jobId           String   @map("job_id") @db.VarChar(255)
+  storyId         String   @map("story_id") @db.VarChar(255)
+  userId          String   @map("user_id") @db.VarChar(255)
+  exportType      String   @map("export_type") @db.VarChar(50)
+  storyText       String   @map("story_text") @db.Text
+  mappings        Json     @map("mappings")
+  modelVersions   Json     @map("model_versions")
+  sourceRefChain  Json     @map("source_ref_chain")
+  exportTimestamp DateTime @default(now()) @map("export_timestamp") @db.Timestamptz(6)
+
+  @@map("generation_audit_logs")
+}
+
+
 
 

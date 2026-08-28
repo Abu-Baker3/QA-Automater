@@ -16,6 +16,7 @@ import { GenerationJobsService } from './generation-jobs.service';
 import type {
   ExportJobRequest,
   ExportJobResponse,
+  GenerationAuditLogResponse,
   GenerationJob,
   OverrideMappingRequest,
   StartGenerationRequest,
@@ -94,5 +95,32 @@ export class GenerationJobsController {
     @Body() body?: ExportJobRequest,
   ): Promise<ExportJobResponse> {
     return this.generationJobsService.exportGenerationJob(jobId, body);
+  }
+
+  /**
+   * Story E12.4 AC1 & AC2: GET audit record and source_ref chain for a generation job.
+   */
+  @Get('stories/generation-jobs/:id/audit')
+  @Roles('ADMIN', 'MEMBER')
+  async getStoryJobAudit(@Param('id') jobId: string): Promise<GenerationAuditLogResponse> {
+    return this.generationJobsService.getGenerationAuditLog(jobId);
+  }
+
+  @Get('generation-jobs/:id/audit')
+  @Roles('ADMIN', 'MEMBER')
+  async getJobAudit(@Param('id') jobId: string): Promise<GenerationAuditLogResponse> {
+    return this.generationJobsService.getGenerationAuditLog(jobId);
+  }
+
+  @Get('generation-audit-logs/:id')
+  @Roles('ADMIN', 'MEMBER')
+  async getAuditLog(@Param('id') id: string): Promise<GenerationAuditLogResponse> {
+    return this.generationJobsService.getGenerationAuditLog(id);
+  }
+
+  @Get('generation-audit-logs/:id/export')
+  @Roles('ADMIN', 'MEMBER')
+  async exportAuditLogJson(@Param('id') id: string): Promise<GenerationAuditLogResponse> {
+    return this.generationJobsService.getGenerationAuditLog(id);
   }
 }

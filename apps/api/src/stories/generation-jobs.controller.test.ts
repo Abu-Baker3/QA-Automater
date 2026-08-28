@@ -41,6 +41,7 @@ describe('GenerationJobsController (E9.5)', () => {
         message: 'Export initiated successfully.',
         export_allowed: true,
       }),
+      getGenerationAuditLog: vi.fn(),
     } as unknown as GenerationJobsService;
 
     controller = new GenerationJobsController(service);
@@ -177,5 +178,49 @@ describe('GenerationJobsController (E9.5)', () => {
       target_branch: 'main',
       target_path: 'tests/e2e',
     });
+  });
+
+  it('E12.4 AC1 & AC2: GET /stories/generation-jobs/:id/audit returns audit log and intact source_ref chain', async () => {
+    vi.mocked(service.getGenerationAuditLog).mockResolvedValueOnce({
+      job_id: 'job_uuid_101',
+      traceability_chain_intact: true,
+      audit_log: {
+        id: 'audit_888',
+        job_id: 'job_uuid_101',
+        story_id: 'story_auth',
+        user_id: 'usr_qa_lead_1',
+        export_type: 'zip',
+        story_text: 'User Story: Login Flow',
+        mappings: [],
+        model_versions: {
+          story_agent: { provider: 'google', model: 'gemini-2.5-flash' },
+          mapping_agent: { provider: 'google', model: 'gemini-2.5-flash' },
+        },
+        source_ref_chain: [
+          {
+            story_id: 'story_auth',
+            story_title: 'Login Flow',
+            step_id: 'step_1',
+            step_order: 1,
+            step_action: 'Enter Username',
+            locator_id: 'input_user',
+            file_path: 'apps/web/src/Login.tsx',
+            line_number: 25,
+            source_ref:
+              'story:story_auth -> step:1 (Enter Username) -> locator:input_user -> file:apps/web/src/Login.tsx:25',
+          },
+        ],
+        export_timestamp: new Date().toISOString(),
+      },
+    });
+
+    const res = await controller.getStoryJobAudit('job_uuid_101');
+
+    expect(res.job_id).toBe('job_uuid_101');
+    expect(res.traceability_chain_intact).toBe(true);
+    expect(res.audit_log.story_text).toBe('User Story: Login Flow');
+    expect(res.audit_log.model_versions.story_agent?.model).toBe('gemini-2.5-flash');
+    expect(res.audit_log.source_ref_chain[0]?.source_ref).toContain('story:story_auth');
+    expect(service.getGenerationAuditLog).toHaveBeenCalledWith('job_uuid_101');
   });
 });
