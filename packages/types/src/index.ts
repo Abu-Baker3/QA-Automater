@@ -562,8 +562,14 @@ export interface OverrideMappingResponse {
   job: GenerationJob;
 }
 
+export type ExportType = 'zip' | 'github_pr';
+
 export interface ExportJobRequest {
-  job_id: string;
+  job_id?: string;
+  type?: ExportType;
+  export_type?: ExportType;
+  target_branch?: string;
+  target_path?: string;
 }
 
 export interface ExportJobResponse {
@@ -571,6 +577,11 @@ export interface ExportJobResponse {
   status: string;
   message: string;
   export_allowed: boolean;
+  export_type?: ExportType;
+  download_url?: string;
+  expires_in_seconds?: number;
+  expires_at?: string;
+  artifact_key?: string;
 }
 
 export interface ExportBlockedResponse {

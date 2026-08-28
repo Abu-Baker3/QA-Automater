@@ -313,3 +313,17 @@ export class S3StorageService {
     }
   }
 }
+
+/**
+ * Story E12.2 AC1: Helper to generate a 15-minute presigned download URL for an S3 artifact key.
+ */
+export async function generatePresignedDownloadUrl(
+  key: string,
+  expiresInSeconds = 900,
+  config?: Partial<StorageConfig>,
+): Promise<string> {
+  const service = new S3StorageService(config);
+  return service.getPresignedDownloadUrl(key, expiresInSeconds);
+}
+
+export * from './zip-archiver';

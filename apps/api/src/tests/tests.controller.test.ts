@@ -30,6 +30,8 @@ describe('TestsController (AC2 Verification)', () => {
 
     expect(result.job_id).toBe('job_uuid_101');
     expect(result.export_allowed).toBe(true);
-    expect(mockService.exportGenerationJob).toHaveBeenCalledWith('job_uuid_101');
+    expect(mockService.exportGenerationJob).toHaveBeenCalledWith('job_uuid_101', {
+      job_id: 'job_uuid_101',
+    });
   });
 });

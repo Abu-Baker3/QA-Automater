@@ -27,6 +27,6 @@ export class TestsController {
   @Roles('ADMIN', 'MEMBER')
   @HttpCode(HttpStatus.OK)
   async exportTestJob(@Body() body: ExportJobRequest): Promise<ExportJobResponse> {
-    return this.generationJobsService.exportGenerationJob(body.job_id);
+    return this.generationJobsService.exportGenerationJob(body.job_id || '', body);
   }
 }

@@ -119,6 +119,29 @@ describe('GenerationJobsController (E9.5)', () => {
     expect(res.job_id).toBe('job_uuid_101');
     expect(res.status).toBe('codegen');
     expect(res.export_allowed).toBe(true);
-    expect(service.exportGenerationJob).toHaveBeenCalledWith('job_uuid_101');
+    expect(service.exportGenerationJob).toHaveBeenCalledWith('job_uuid_101', undefined);
+  });
+
+  it('E12.2 AC1 & AC2: POST /generation-jobs/:id/export with type zip returns 15-minute presigned download URL', async () => {
+    vi.mocked(service.exportGenerationJob).mockResolvedValueOnce({
+      job_id: 'job_uuid_101',
+      status: 'codegen',
+      message: "Export type 'zip' processed successfully.",
+      export_allowed: true,
+      export_type: 'zip',
+      download_url:
+        'https://s3.amazonaws.com/bucket/exports/job_uuid_101/tests.zip?X-Amz-Expires=900',
+      expires_in_seconds: 900,
+      expires_at: new Date(Date.now() + 900 * 1000).toISOString(),
+      artifact_key: 'exports/job_uuid_101/tests.zip',
+    });
+
+    const res = await controller.exportJob('job_uuid_101', { type: 'zip' });
+
+    expect(res.job_id).toBe('job_uuid_101');
+    expect(res.export_type).toBe('zip');
+    expect(res.expires_in_seconds).toBe(900);
+    expect(res.download_url).toContain('X-Amz-Expires=900');
+    expect(service.exportGenerationJob).toHaveBeenCalledWith('job_uuid_101', { type: 'zip' });
   });
 });

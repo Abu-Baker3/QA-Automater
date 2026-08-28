@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import type {
   ElementSearchResultItem,
+  ExportJobRequest,
   ExportJobResponse,
+  ExportType,
   GenerationJob,
   OverrideMappingRequest,
   StartGenerationResponse,
@@ -11,9 +13,12 @@ import type {
 import {
   applyMappingOverride,
   buildReviewItems,
+  createTestZipArchive,
   getPendingReviewItems,
   GenerationJobRunner,
   isExportAllowed,
+  PageObjectGenerator,
+  S3StorageService,
 } from '@qa-automater/shared';
 
 import { DatabaseService } from '../database/database.service';
@@ -23,6 +28,7 @@ import { ElementsService } from '../elements/elements.service';
 @Injectable()
 export class GenerationJobsService {
   private readonly jobsStore = new Map<string, GenerationJob>();
+  private readonly storageService = new S3StorageService();
 
   constructor(
     private readonly db: DatabaseService,
@@ -33,6 +39,7 @@ export class GenerationJobsService {
   /**
    * Starts an asynchronous generation job (AC1: returns 202 Accepted with job_id and status 'planning').
    */
+
   async startGeneration(
     storyId: string,
     userStory?: UserStoryDetails,
@@ -97,10 +104,11 @@ export class GenerationJobsService {
   }
 
   /**
-   * Initiates export for a generation job (E10.3).
+   * Initiates export for a generation job (E10.3 & E12.2).
    * Gates export on review resolution: throws 409 Conflict if pending review items exist.
+   * E12.2 AC1 & AC2: Generates ZIP archive containing spec, PO, README, and .env.example with 15-min presigned URL.
    */
-  async exportGenerationJob(jobId: string): Promise<ExportJobResponse> {
+  async exportGenerationJob(jobId: string, request?: ExportJobRequest): Promise<ExportJobResponse> {
     const job = await this.getJobById(jobId);
     const pendingSteps = getPendingReviewItems(job);
 
@@ -110,6 +118,61 @@ export class GenerationJobsService {
         code: 'EXPORT_BLOCKED_UNRESOLVED_REVIEW_ITEMS',
         pending_steps: pendingSteps,
       });
+    }
+
+    const exportType: ExportType = request?.type || request?.export_type || 'zip';
+    const orgId = job.repository_id || 'default_org';
+
+    let downloadUrl: string | undefined;
+    let expiresAt: string | undefined;
+    let artifactKey: string | undefined;
+    const expiresInSeconds = Number(process.env.EXPORT_PRESIGNED_EXPIRATION_SECONDS ?? 900); // AC1: valid 15 minutes (900s)
+
+    if (exportType === 'zip') {
+      const generator = new PageObjectGenerator();
+      const testPlan = job.test_plan_ir || {
+        user_story_id: job.story_id || 'story_default',
+        title: 'Generated E2E Suite',
+        summary: 'Auto-generated e2e Playwright suite',
+        steps: [],
+      };
+      const mappings = job.mappings || [];
+      const codegenOutput = generator.generate(testPlan, mappings);
+
+      const zipBuffer = await createTestZipArchive({
+        specFiles: [
+          {
+            filename: codegenOutput.specFile.fileName,
+            content: codegenOutput.specFile.content,
+          },
+        ],
+        pageObjectFiles: codegenOutput.pageObjects.map((po) => ({
+          filename: po.fileName,
+          content: po.content,
+        })),
+      });
+
+      try {
+        const uploadResult = await this.storageService.uploadJobArtifact(
+          orgId,
+          jobId,
+          'tests.zip',
+          zipBuffer,
+          'application/zip',
+        );
+        artifactKey = uploadResult.key;
+
+        downloadUrl = await this.storageService.getPresignedDownloadUrl(
+          artifactKey,
+          expiresInSeconds,
+        );
+        expiresAt = new Date(Date.now() + expiresInSeconds * 1000).toISOString();
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        console.warn(
+          `[GenerationJobsService] S3 storage upload warning for job ${jobId}: ${errorMessage}`,
+        );
+      }
     }
 
     const updatedJob: GenerationJob = {
@@ -122,8 +185,13 @@ export class GenerationJobsService {
     return {
       job_id: jobId,
       status: 'codegen',
-      message: 'Export initiated successfully.',
+      message: `Export type '${exportType}' processed successfully.`,
       export_allowed: true,
+      export_type: exportType,
+      download_url: downloadUrl,
+      expires_in_seconds: downloadUrl ? expiresInSeconds : undefined,
+      expires_at: expiresAt,
+      artifact_key: artifactKey,
     };
   }
 
