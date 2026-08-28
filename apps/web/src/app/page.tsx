@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { OrgSelector } from '../components/OrgSelector';
 import { RepoConnectModal } from '../components/RepoConnectModal';
 import { ScanProgressCard, ScanProgressState } from '../components/ScanProgressCard';
+import { TestGenerationWizard } from '../components/TestGenerationWizard';
 import {
   Sparkles,
   GitBranch,
@@ -2004,6 +2005,14 @@ test.describe('Automated Acceptance Test', () => {
                   Coached test creation mapping user stories to AST locators via LLM RAG
                   orchestration
                 </p>
+              </div>
+
+              {/* Story E13.3 AC1 & AC2: Test Generation Wizard Component */}
+              <div style={{ marginBottom: '1rem' }}>
+                <TestGenerationWizard
+                  initialStoryText={userStoryText}
+                  onGenerateComplete={(code) => setCodeOutput(code)}
+                />
               </div>
 
               {/* Story Input Bar */}
