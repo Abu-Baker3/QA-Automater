@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { OrgSelector } from '../components/OrgSelector';
 import {
   Sparkles,
   GitBranch,
@@ -611,6 +612,9 @@ test.describe('Automated Acceptance Test', () => {
             <span className="gradient-text">QA Automater</span>
           </div>
 
+          {/* Story E13.1 AC1: Organization Selector */}
+          <OrgSelector />
+
           <div
             style={{
               height: '20px',
@@ -620,8 +624,45 @@ test.describe('Automated Acceptance Test', () => {
             }}
           />
 
+          {/* Story E13.1 AC1: Navigation Links */}
+          <nav
+            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+            data-testid="nav-links"
+          >
+            <button
+              onClick={() => setActiveTab('locators')}
+              className={`nav-link ${activeTab === 'locators' || activeTab === 'explorer' ? 'active' : ''}`}
+              data-testid="nav-repositories"
+              style={{ border: 'none', background: 'transparent' }}
+            >
+              <GitBranch style={{ width: '16px', height: '16px' }} />
+              <span>Repositories</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('studio')}
+              className={`nav-link ${activeTab === 'studio' || activeTab === 'overview' ? 'active' : ''}`}
+              data-testid="nav-generate"
+              style={{ border: 'none', background: 'transparent' }}
+            >
+              <Sparkles style={{ width: '16px', height: '16px' }} />
+              <span>Generate</span>
+              <span className="nav-badge">AI</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`nav-link ${activeTab === 'settings' ? 'active' : ''}`}
+              data-testid="nav-settings"
+              style={{ border: 'none', background: 'transparent' }}
+            >
+              <Sliders style={{ width: '16px', height: '16px' }} />
+              <span>Settings</span>
+            </button>
+          </nav>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Workspace:</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Repo:</span>
             <select
               value={selectedRepo}
               onChange={(e) => setSelectedRepo(e.target.value)}
