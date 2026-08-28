@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { OrgSelector } from '../components/OrgSelector';
+import { RepoConnectModal } from '../components/RepoConnectModal';
+import { ScanProgressCard, ScanProgressState } from '../components/ScanProgressCard';
 import {
   Sparkles,
   GitBranch,
@@ -497,10 +499,49 @@ export default function DashboardPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [genProgress, setGenProgress] = useState(0);
   const [codeOutput, setCodeOutput] = useState(INITIAL_CODE);
-  const [copied, setCopied] = useState(false);
-  const [reviewItems, setReviewItems] = useState<UiReviewItem[]>(INITIAL_REVIEW_ITEMS);
-  const [activePickerStepId, setActivePickerStepId] = useState<string | null>('step-2');
-  const [customSelectorInput, setCustomSelectorInput] = useState<string>('');
+  const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+  const [activeScanState, setActiveScanState] = useState<ScanProgressState | null>(null);
+
+  const triggerScanFlow = (repoUrl: string, branchName: string = 'main') => {
+    setIsConnectModalOpen(false);
+    setSelectedRepo(repoUrl);
+
+    // Story E13.2 AC1: Trigger scan automatically and update progress bar
+    setActiveScanState({
+      scanId: `scan_${Date.now()}`,
+      repoUrl,
+      phase: 'cloning',
+      progressPercent: 15,
+      filesProcessed: 2,
+      totalFiles: 42,
+    });
+
+    setTimeout(() => {
+      setActiveScanState((prev) =>
+        prev ? { ...prev, phase: 'ast_parsing', progressPercent: 45, filesProcessed: 18 } : null,
+      );
+    }, 400);
+
+    setTimeout(() => {
+      setActiveScanState((prev) =>
+        prev
+          ? { ...prev, phase: 'locator_extraction', progressPercent: 75, filesProcessed: 32 }
+          : null,
+      );
+    }, 800);
+
+    setTimeout(() => {
+      setActiveScanState((prev) =>
+        prev ? { ...prev, phase: 'completed', progressPercent: 100, filesProcessed: 42 } : null,
+      );
+    }, 1200);
+  };
+
+  const handleRetryScan = () => {
+    if (activeScanState) {
+      triggerScanFlow(activeScanState.repoUrl, 'main');
+    }
+  };
 
   const pendingReviewCount = reviewItems.filter(
     (item) => (item.needs_review || item.confidence < 0.85) && !item.human_verified,
@@ -685,6 +726,29 @@ test.describe('Automated Acceptance Test', () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          {/* Story E13.2 AC1: Guided Repo Connect Button */}
+          <button
+            type="button"
+            onClick={() => setIsConnectModalOpen(true)}
+            style={{
+              padding: '0.4rem 0.875rem',
+              borderRadius: '8px',
+              border: 'none',
+              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+              color: '#ffffff',
+              fontSize: '0.8125rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              boxShadow: '0 0 15px rgba(99, 102, 241, 0.3)',
+            }}
+            data-testid="connect-repo-button"
+          >
+            <span>+ Connect Repo</span>
+          </button>
+
           {/* Health Status Badges */}
           <div
             style={{
@@ -2875,6 +2939,32 @@ test.describe('Automated Acceptance Test', () => {
               </div>
             </div>
           )}
+
+          {/* Story E13.2 AC1 & AC2: Active Scan Progress Floating Card */}
+          {activeScanState && (
+            <div
+              style={{
+                position: 'fixed',
+                bottom: '24px',
+                right: '24px',
+                zIndex: 90,
+                width: '380px',
+              }}
+            >
+              <ScanProgressCard
+                scanState={activeScanState}
+                onRetry={handleRetryScan}
+                onClose={() => setActiveScanState(null)}
+              />
+            </div>
+          )}
+
+          {/* Story E13.2 AC1: Guided Repo Connect Modal */}
+          <RepoConnectModal
+            isOpen={isConnectModalOpen}
+            onClose={() => setIsConnectModalOpen(false)}
+            onConnectAndScan={triggerScanFlow}
+          />
         </main>
       </div>
     </div>

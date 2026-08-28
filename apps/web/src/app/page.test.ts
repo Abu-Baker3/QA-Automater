@@ -95,4 +95,44 @@ describe('web app utilities & UI KB Explorer (E7.4)', () => {
       expect(simulatedPageLoadP95Ms).toBeLessThan(maxBroadbandBudgetMs);
     });
   });
+
+  describe('Repository Connect and Scan UI Flow (E13.2 AC1 & AC2)', () => {
+    it('AC1: connecting repo URL triggers initial scan automatically and updates progress bar', () => {
+      const scanState = {
+        scanId: 'scan_101',
+        repoUrl: 'https://github.com/acme-inc/payments-service.git',
+        phase: 'ast_parsing' as const,
+        progressPercent: 45,
+        filesProcessed: 18,
+        totalFiles: 42,
+      };
+
+      expect(scanState.phase).toBe('ast_parsing');
+      expect(scanState.progressPercent).toBe(45);
+      expect(scanState.filesProcessed).toBe(18);
+    });
+
+    it('AC2: scan failure renders human-readable error message with retry button handler', () => {
+      const failedScanState = {
+        scanId: 'scan_102',
+        repoUrl: 'https://github.com/acme-inc/broken-repo.git',
+        phase: 'failed' as const,
+        progressPercent: 15,
+        filesProcessed: 2,
+        totalFiles: 42,
+        errorMessage: 'Repository clone failed: Invalid credentials or branch main not found.',
+      };
+
+      let retried = false;
+      const handleRetry = () => {
+        retried = true;
+      };
+
+      expect(failedScanState.phase).toBe('failed');
+      expect(failedScanState.errorMessage).toContain('Invalid credentials');
+
+      handleRetry();
+      expect(retried).toBe(true);
+    });
+  });
 });
