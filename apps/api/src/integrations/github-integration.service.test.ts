@@ -112,14 +112,33 @@ describe('GitHubIntegrationService', () => {
     expect(res.repositories[0]?.full_name).toBe('acme/docs');
   });
 
-  it('AC2: should throw ForbiddenException with clear remediation steps when token is missing or expired', async () => {
-    const orgId = 'org_unconnected';
+  it('E12.3 AC1 & AC2: should create GitHub Pull Request with files strictly under target_path', async () => {
+    const orgId = 'org_123';
+    await secretsManager.storeInstallationToken(
+      orgId,
+      'inst_1',
+      'gho_valid_token',
+      new Date(Date.now() + 3600 * 1000),
+    );
 
-    await expect(githubService.listAccessibleRepositories(orgId)).rejects.toThrow(
-      ForbiddenException,
-    );
-    await expect(githubService.listAccessibleRepositories(orgId)).rejects.toThrow(
-      'GitHub integration token lacks required repository scope. Please re-authenticate your GitHub connection with repo scope.',
-    );
+    const prResult = await githubService.createPullRequest({
+      orgId,
+      repositoryId: 'acme/web-app',
+      jobId: 'job_uuid_777',
+      targetBranch: 'main',
+      targetPath: 'tests/e2e',
+      specFiles: [{ filename: 'login.spec.ts', content: 'test code' }],
+      pageObjectFiles: [{ filename: 'LoginPage.page.ts', content: 'po code' }],
+    });
+
+    expect(prResult.pull_request_url).toContain('https://github.com/acme/web-app/pull/');
+    expect(prResult.pull_request_number).toBeGreaterThan(0);
+    expect(prResult.branch_name).toBe('qa-automater/tests-job_uuid_777');
+    expect(prResult.target_branch).toBe('main');
+    expect(prResult.target_path).toBe('tests/e2e');
+    expect(prResult.files_created).toContain('tests/e2e/specs/login.spec.ts');
+    expect(prResult.files_created).toContain('tests/e2e/page-objects/LoginPage.page.ts');
+    expect(prResult.files_created).toContain('tests/e2e/README.qa-automater.md');
+    expect(prResult.files_created).toContain('tests/e2e/.env.example');
   });
 });

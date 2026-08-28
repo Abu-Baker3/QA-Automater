@@ -582,6 +582,32 @@ export interface ExportJobResponse {
   expires_in_seconds?: number;
   expires_at?: string;
   artifact_key?: string;
+  pull_request_url?: string;
+  pull_request_number?: number;
+  branch_name?: string;
+  target_branch?: string;
+  target_path?: string;
+}
+
+export interface CreatePullRequestOptions {
+  orgId: string;
+  repositoryId: string;
+  jobId: string;
+  targetBranch?: string;
+  targetPath?: string;
+  specFiles: Array<{ filename: string; content: string }>;
+  pageObjectFiles: Array<{ filename: string; content: string }>;
+  readmeContent?: string;
+  envExampleContent?: string;
+}
+
+export interface CreatePullRequestResult {
+  pull_request_url: string;
+  pull_request_number: number;
+  branch_name: string;
+  target_branch: string;
+  target_path: string;
+  files_created: string[];
 }
 
 export interface ExportBlockedResponse {

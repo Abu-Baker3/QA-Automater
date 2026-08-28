@@ -144,4 +144,38 @@ describe('GenerationJobsController (E9.5)', () => {
     expect(res.download_url).toContain('X-Amz-Expires=900');
     expect(service.exportGenerationJob).toHaveBeenCalledWith('job_uuid_101', { type: 'zip' });
   });
+
+  it('E12.3 AC1 & AC2: POST /generation-jobs/:id/export with type github_pr creates PR and returns PR metadata', async () => {
+    vi.mocked(service.exportGenerationJob).mockResolvedValueOnce({
+      job_id: 'job_uuid_101',
+      status: 'codegen',
+      message: "Export type 'github_pr' processed successfully.",
+      export_allowed: true,
+      export_type: 'github_pr',
+      pull_request_url: 'https://github.com/acme/web-app/pull/142',
+      pull_request_number: 142,
+      branch_name: 'qa-automater/tests-job_uuid_101',
+      target_branch: 'main',
+      target_path: 'tests/e2e',
+    });
+
+    const res = await controller.exportJob('job_uuid_101', {
+      type: 'github_pr',
+      target_branch: 'main',
+      target_path: 'tests/e2e',
+    });
+
+    expect(res.job_id).toBe('job_uuid_101');
+    expect(res.export_type).toBe('github_pr');
+    expect(res.pull_request_url).toBe('https://github.com/acme/web-app/pull/142');
+    expect(res.pull_request_number).toBe(142);
+    expect(res.branch_name).toBe('qa-automater/tests-job_uuid_101');
+    expect(res.target_branch).toBe('main');
+    expect(res.target_path).toBe('tests/e2e');
+    expect(service.exportGenerationJob).toHaveBeenCalledWith('job_uuid_101', {
+      type: 'github_pr',
+      target_branch: 'main',
+      target_path: 'tests/e2e',
+    });
+  });
 });

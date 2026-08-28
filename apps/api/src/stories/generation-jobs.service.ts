@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  ServiceUnavailableException,
+  Optional,
+} from '@nestjs/common';
+
 import type {
   ElementSearchResultItem,
   ExportJobRequest,
@@ -24,6 +31,7 @@ import {
 import { DatabaseService } from '../database/database.service';
 import { LlmService } from '../llm/llm.service';
 import { ElementsService } from '../elements/elements.service';
+import { GitHubIntegrationService } from '../integrations/github-integration.service';
 
 @Injectable()
 export class GenerationJobsService {
@@ -34,6 +42,7 @@ export class GenerationJobsService {
     private readonly db: DatabaseService,
     private readonly llmService: LlmService,
     private readonly elementsService: ElementsService,
+    @Optional() private readonly githubService?: GitHubIntegrationService,
   ) {}
 
   /**
@@ -175,6 +184,54 @@ export class GenerationJobsService {
       }
     }
 
+    let pullRequestUrl: string | undefined;
+    let pullRequestNumber: number | undefined;
+    let branchName: string | undefined;
+    let targetBranch: string | undefined;
+    let targetPath: string | undefined;
+
+    if (exportType === 'github_pr') {
+      const generator = new PageObjectGenerator();
+      const testPlan = job.test_plan_ir || {
+        user_story_id: job.story_id || 'story_default',
+        title: 'Generated E2E Suite',
+        summary: 'Auto-generated e2e Playwright suite',
+        steps: [],
+      };
+      const mappings = job.mappings || [];
+      const codegenOutput = generator.generate(testPlan, mappings);
+
+      if (!this.githubService) {
+        throw new ServiceUnavailableException(
+          'GitHub integration service is currently unavailable for Pull Request export.',
+        );
+      }
+
+      const prResult = await this.githubService.createPullRequest({
+        orgId,
+        repositoryId: job.repository_id || 'repo_default',
+        jobId,
+        targetBranch: request?.target_branch,
+        targetPath: request?.target_path,
+        specFiles: [
+          {
+            filename: codegenOutput.specFile.fileName,
+            content: codegenOutput.specFile.content,
+          },
+        ],
+        pageObjectFiles: codegenOutput.pageObjects.map((po) => ({
+          filename: po.fileName,
+          content: po.content,
+        })),
+      });
+
+      pullRequestUrl = prResult.pull_request_url;
+      pullRequestNumber = prResult.pull_request_number;
+      branchName = prResult.branch_name;
+      targetBranch = prResult.target_branch;
+      targetPath = prResult.target_path;
+    }
+
     const updatedJob: GenerationJob = {
       ...job,
       status: 'codegen',
@@ -192,6 +249,11 @@ export class GenerationJobsService {
       expires_in_seconds: downloadUrl ? expiresInSeconds : undefined,
       expires_at: expiresAt,
       artifact_key: artifactKey,
+      pull_request_url: pullRequestUrl,
+      pull_request_number: pullRequestNumber,
+      branch_name: branchName,
+      target_branch: targetBranch,
+      target_path: targetPath,
     };
   }
 

@@ -12,9 +12,11 @@ import { GenerationJobsService } from './generation-jobs.service';
 import { LlmModule } from '../llm/llm.module';
 import { ElementsModule } from '../elements/elements.module';
 import { DatabaseModule } from '../database/database.module';
+import { IntegrationsModule } from '../integrations/integrations.module';
 
 @Module({
-  imports: [LlmModule, ElementsModule, DatabaseModule],
+  imports: [LlmModule, ElementsModule, DatabaseModule, IntegrationsModule],
+
   controllers: [
     StoriesController,
     StoriesDecomposeController,
