@@ -499,10 +499,14 @@ export default function DashboardPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [genProgress, setGenProgress] = useState(0);
   const [codeOutput, setCodeOutput] = useState(INITIAL_CODE);
+  const [copied, setCopied] = useState(false);
+  const [reviewItems, setReviewItems] = useState<UiReviewItem[]>(INITIAL_REVIEW_ITEMS);
+  const [activePickerStepId, setActivePickerStepId] = useState<string | null>('step-2');
+  const [customSelectorInput, setCustomSelectorInput] = useState<string>('');
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
   const [activeScanState, setActiveScanState] = useState<ScanProgressState | null>(null);
 
-  const triggerScanFlow = (repoUrl: string, branchName: string = 'main') => {
+  const triggerScanFlow = (repoUrl: string, _branchName: string = 'main') => {
     setIsConnectModalOpen(false);
     setSelectedRepo(repoUrl);
 
