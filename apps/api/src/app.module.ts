@@ -11,9 +11,9 @@ import { RepositoriesModule } from './repositories/repositories.module';
 import { ScansModule } from './scans/scans.module';
 import { StorageModule } from './storage/storage.module';
 import { TestsModule } from './tests/tests.module';
-import { ElementsModule } from './elements/elements.module';
 import { StoriesModule } from './stories/stories.module';
 import { LlmModule } from './llm/llm.module';
+import { RateLimitingModule } from './rate-limiting/rate-limiting.module';
 
 @Module({
   imports: [
@@ -30,6 +30,7 @@ import { LlmModule } from './llm/llm.module';
     ElementsModule,
     StoriesModule,
     LlmModule,
+    RateLimitingModule,
   ],
 
   controllers: [AppController, HealthController],

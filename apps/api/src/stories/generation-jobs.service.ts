@@ -36,6 +36,7 @@ import { DatabaseService } from '../database/database.service';
 import { LlmService } from '../llm/llm.service';
 import { ElementsService } from '../elements/elements.service';
 import { GitHubIntegrationService } from '../integrations/github-integration.service';
+import { RateLimiterService } from '../rate-limiting/rate-limiter.service';
 
 @Injectable()
 export class GenerationJobsService {
@@ -48,16 +49,25 @@ export class GenerationJobsService {
     private readonly llmService: LlmService,
     private readonly elementsService: ElementsService,
     @Optional() private readonly githubService?: GitHubIntegrationService,
+    @Optional() private readonly rateLimiterService?: RateLimiterService,
   ) {}
 
   /**
    * Starts an asynchronous generation job (AC1: returns 202 Accepted with job_id and status 'planning').
+   * Enforces rate limit for Story E14.1 AC1 (>10 generation jobs/hour for Free tier).
    */
 
   async startGeneration(
     storyId: string,
     userStory?: UserStoryDetails,
+    orgId?: string,
   ): Promise<StartGenerationResponse> {
+    const targetOrgId = orgId || userStory?.organization_id || 'org_default';
+
+    if (this.rateLimiterService) {
+      this.rateLimiterService.enforceOrgGenerationLimit(targetOrgId, 'FREE', 10);
+    }
+
     const jobId = `job_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const now = new Date().toISOString();
     const repositoryId = userStory?.repository_id || 'repo_default';

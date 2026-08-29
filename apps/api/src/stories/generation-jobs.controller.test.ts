@@ -223,4 +223,22 @@ describe('GenerationJobsController (E9.5)', () => {
     expect(res.audit_log.source_ref_chain[0]?.source_ref).toContain('story:story_auth');
     expect(service.getGenerationAuditLog).toHaveBeenCalledWith('job_uuid_101');
   });
+
+  it('E14.1 AC1: passes story and triggers generation job through rate-limited service flow', async () => {
+    const res = await controller.startStoryGeneration('story_101', {
+      user_story: {
+        id: 'story_101',
+        title: 'Title',
+        description: 'Desc',
+        organization_id: 'org_acme',
+      },
+    });
+
+    expect(res.job_id).toBe('job_uuid_101');
+    expect(res.status).toBe('planning');
+    expect(service.startGeneration).toHaveBeenCalledWith(
+      'story_101',
+      expect.objectContaining({ organization_id: 'org_acme' }),
+    );
+  });
 });
