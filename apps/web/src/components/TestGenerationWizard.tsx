@@ -20,7 +20,6 @@ export const TestGenerationWizard: React.FC<TestGenerationWizardProps> = ({
   const [storyText, setStoryText] = useState<string>(initialStoryText);
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [generatedCode, setGeneratedCode] = useState<string>('');
-  const [isExportReached, setIsExportReached] = useState<boolean>(false);
 
   const stepsList: { key: WizardStep; label: string; number: number }[] = [
     { key: 'input', label: '1. Input Story', number: 1 },
@@ -75,7 +74,6 @@ test.describe('Automated Acceptance Test', () => {
       setGeneratedCode(code);
       setCurrentStep('export');
       setProgressPercent(100);
-      setIsExportReached(true);
       if (onGenerateComplete) {
         onGenerateComplete(code);
       }

@@ -139,6 +139,7 @@ describe('web app utilities & UI KB Explorer (E7.4)', () => {
   describe('Test Generation Wizard UI (E13.3 AC1 & AC2)', () => {
     it('AC1: submitting story form creates generation job and updates plan->mapping->review progress steps', () => {
       const wizardSteps = ['input', 'plan', 'mapping', 'review', 'export'] as const;
+      expect(wizardSteps).toHaveLength(5);
       let currentStep: (typeof wizardSteps)[number] = 'input';
       let progressPercent = 0;
 

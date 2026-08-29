@@ -7,7 +7,6 @@ import { ScanProgressCard, ScanProgressState } from '../components/ScanProgressC
 import { TestGenerationWizard } from '../components/TestGenerationWizard';
 import { ExportActionsCard } from '../components/ExportActionsCard';
 import {
-
   Sparkles,
   GitBranch,
   Layers,
@@ -2787,6 +2786,8 @@ test.describe('Automated Acceptance Test', () => {
                   Export Playwright test suites via downloadable ZIP bundle or automated GitHub Pull
                   Request
                 </p>
+              </div>
+
               {/* Story E13.4 AC1 & AC2: Export Actions Card */}
               <ExportActionsCard
                 jobId="job_gen_golden_101"
