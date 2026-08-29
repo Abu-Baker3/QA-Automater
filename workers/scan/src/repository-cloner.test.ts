@@ -12,6 +12,7 @@ describe('RepositoryCloner', () => {
       key: 'org_123/repo_abc/abcdef1234567890.tar.gz',
       bucket: 'qa-automater-artifacts-local',
       size: 1024,
+      serverSideEncryption: 'aws:kms',
     });
 
     cloner = new RepositoryCloner(mockStorage);

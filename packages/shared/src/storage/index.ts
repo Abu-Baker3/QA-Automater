@@ -248,7 +248,7 @@ export class S3StorageService {
     key: string;
     bucket: string;
     size: number;
-    serverSideEncryption: string;
+    serverSideEncryption?: string;
     kmsKeyId?: string;
   }> {
     const key = buildArtifactStorageKey(orgId, repoId, filename);
