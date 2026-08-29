@@ -123,4 +123,21 @@ const AUTH_HEADER = 'Bearer secret-jwt-token-value';
     expect(envExample).not.toContain('ghp_');
     expect(envExample).not.toContain('sk-');
   });
+
+  describe('Encrypt Repo Snapshots and Artifacts at Rest via SSE-KMS (E14.2 AC1)', () => {
+    it('AC1: enables SSE-KMS by default with default KMS key ID', () => {
+      const service = new S3StorageService();
+      expect(service.getServerSideEncryption()).toBe('aws:kms');
+      expect(service.getKmsKeyId()).toBe('alias/qa-automater-artifacts-key');
+    });
+
+    it('AC1: accepts custom KMS key and encryption configuration', () => {
+      const service = new S3StorageService({
+        serverSideEncryption: 'aws:kms',
+        kmsKeyId: 'arn:aws:kms:us-east-1:123456789012:key/test-key-id',
+      });
+      expect(service.getServerSideEncryption()).toBe('aws:kms');
+      expect(service.getKmsKeyId()).toBe('arn:aws:kms:us-east-1:123456789012:key/test-key-id');
+    });
+  });
 });

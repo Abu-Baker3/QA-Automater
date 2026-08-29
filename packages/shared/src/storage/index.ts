@@ -8,6 +8,7 @@ import {
   PutObjectCommandInput,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { createHash } from 'crypto';
 
 export interface StorageConfig {
   bucketName: string;
@@ -18,6 +19,8 @@ export interface StorageConfig {
     accessKeyId: string;
     secretAccessKey: string;
   };
+  serverSideEncryption?: 'aws:kms' | 'AES256';
+  kmsKeyId?: string;
 }
 
 export function buildArtifactStorageKey(
@@ -90,8 +93,14 @@ export function parseArtifactStorageKey(key: string): {
   return { orgId, repoId, relativePath };
 }
 
-import crypto from 'crypto';
-import { ArtifactStorageResult } from '@qa-automater/types';
+export interface ArtifactStorageResult {
+  key: string;
+  bucket: string;
+  size: number;
+  checksumSha256: string;
+  serverSideEncryption?: string;
+  kmsKeyId?: string;
+}
 
 export function buildJobArtifactStorageKey(
   orgId: string,
@@ -99,13 +108,13 @@ export function buildJobArtifactStorageKey(
   relativePath: string,
 ): string {
   if (!orgId || !orgId.trim()) {
-    throw new Error('orgId is required to construct artifact storage key');
+    throw new Error('orgId is required to construct job artifact storage key');
   }
   if (!jobId || !jobId.trim()) {
-    throw new Error('jobId is required to construct artifact storage key');
+    throw new Error('jobId is required to construct job artifact storage key');
   }
   if (!relativePath || !relativePath.trim()) {
-    throw new Error('relativePath is required to construct artifact storage key');
+    throw new Error('relativePath is required to construct job artifact storage key');
   }
 
   const cleanOrg = orgId
@@ -134,19 +143,28 @@ export function buildJobArtifactStorageKey(
   return `${cleanOrg}/artifacts/${cleanJob}/${cleanPath}`;
 }
 
-export function computeSha256Checksum(body: Buffer | string): string {
-  const buffer = typeof body === 'string' ? Buffer.from(body) : body;
-  return crypto.createHash('sha256').update(buffer).digest('hex');
+export function computeSha256Checksum(content: Buffer | string): string {
+  const buffer = typeof content === 'string' ? Buffer.from(content, 'utf-8') : content;
+  return createHash('sha256').update(buffer).digest('hex');
 }
 
 /**
  * AC2: Sanitizes credentials/secrets from artifact content, ensuring no API keys or secrets are embedded.
  */
 export function sanitizeArtifactCredentials(content: string): string {
+  if (!content) return '';
+
   return content
-    .replace(/(ghp_[a-zA-Z0-9]{36})/g, '[REDACTED_GITHUB_TOKEN]')
-    .replace(/(sk-[a-zA-Z0-9]{32,})/g, '[REDACTED_OPENAI_KEY]')
+    .replace(/(ghp_[a-zA-Z0-9]{20,})/g, '[REDACTED_GITHUB_TOKEN]')
+    .replace(/(github_pat_[a-zA-Z0-9_]{20,})/g, '[REDACTED_GITHUB_TOKEN]')
+    .replace(/(gho_[a-zA-Z0-9]{20,})/g, '[REDACTED_GITHUB_TOKEN]')
+    .replace(/(ghs_[a-zA-Z0-9]{20,})/g, '[REDACTED_GITHUB_TOKEN]')
+    .replace(/(sk-[a-zA-Z0-9]{20,})/g, '[REDACTED_OPENAI_KEY]')
     .replace(/(AKIA[0-9A-Z]{16})/g, '[REDACTED_AWS_ACCESS_KEY]')
+    .replace(
+      /((?:api[_-]?key|secret|token|password)\s*[:=]\s*['"]?)[a-zA-Z0-9_\-.~!@#$%^&*+=]{8,}(['"]?)/gi,
+      '$1[REDACTED_SECRET]$2',
+    )
     .replace(/(bearer\s+)[a-zA-Z0-9._~+/-]+=*/gi, '$1[REDACTED_BEARER_TOKEN]');
 }
 
@@ -167,10 +185,23 @@ export function generateEnvExamplePlaceholder(): string {
 export class S3StorageService {
   private client: S3Client;
   private bucketName: string;
+  private serverSideEncryption: 'aws:kms' | 'AES256';
+  private kmsKeyId?: string;
 
   constructor(config?: Partial<StorageConfig>) {
     this.bucketName =
       config?.bucketName || process.env.S3_BUCKET_NAME || 'qa-automater-artifacts-local';
+
+    this.serverSideEncryption =
+      config?.serverSideEncryption ||
+      (process.env.S3_SERVER_SIDE_ENCRYPTION as 'aws:kms' | 'AES256') ||
+      'aws:kms';
+
+    this.kmsKeyId =
+      config?.kmsKeyId ||
+      process.env.S3_KMS_KEY_ID ||
+      process.env.AWS_KMS_KEY_ARN ||
+      'alias/qa-automater-artifacts-key';
 
     const region = config?.region || process.env.S3_REGION || process.env.AWS_REGION || 'us-east-1';
     const endpoint = config?.endpoint || process.env.S3_ENDPOINT;
@@ -189,6 +220,14 @@ export class S3StorageService {
     return this.bucketName;
   }
 
+  getServerSideEncryption(): string {
+    return this.serverSideEncryption;
+  }
+
+  getKmsKeyId(): string | undefined {
+    return this.kmsKeyId;
+  }
+
   async checkHealth(): Promise<{ ok: boolean; bucket: string }> {
     try {
       const command = new HeadBucketCommand({ Bucket: this.bucketName });
@@ -205,7 +244,13 @@ export class S3StorageService {
     filename: string,
     body: Buffer | string,
     contentType = 'application/octet-stream',
-  ): Promise<{ key: string; bucket: string; size: number }> {
+  ): Promise<{
+    key: string;
+    bucket: string;
+    size: number;
+    serverSideEncryption: string;
+    kmsKeyId?: string;
+  }> {
     const key = buildArtifactStorageKey(orgId, repoId, filename);
     const buffer = typeof body === 'string' ? Buffer.from(body) : body;
 
@@ -214,9 +259,14 @@ export class S3StorageService {
       Key: key,
       Body: buffer,
       ContentType: contentType,
+      ServerSideEncryption: this.serverSideEncryption,
+      ...(this.serverSideEncryption === 'aws:kms' && this.kmsKeyId
+        ? { SSEKMSKeyId: this.kmsKeyId }
+        : {}),
       Metadata: {
         'org-id': orgId,
         'repo-id': repoId,
+        'sse-kms': 'enabled',
       },
     };
 
@@ -226,11 +276,13 @@ export class S3StorageService {
       key,
       bucket: this.bucketName,
       size: buffer.length,
+      serverSideEncryption: this.serverSideEncryption,
+      kmsKeyId: this.kmsKeyId,
     };
   }
 
   /**
-   * AC1: Uploads a job artifact to s3://{org_id}/artifacts/{job_id}/{filename} with SHA-256 checksum (AC1) and credential sanitization (AC2).
+   * AC1: Uploads a job artifact to s3://{org_id}/artifacts/{job_id}/{filename} with SSE-KMS encryption (E14.2 AC1), SHA-256 checksum (E12.1 AC1) and credential sanitization (E12.1 AC2).
    */
   async uploadJobArtifact(
     orgId: string,
@@ -250,10 +302,15 @@ export class S3StorageService {
       Key: key,
       Body: buffer,
       ContentType: contentType,
+      ServerSideEncryption: this.serverSideEncryption,
+      ...(this.serverSideEncryption === 'aws:kms' && this.kmsKeyId
+        ? { SSEKMSKeyId: this.kmsKeyId }
+        : {}),
       Metadata: {
         'org-id': orgId,
         'job-id': jobId,
         'checksum-sha256': checksumSha256,
+        'sse-kms': 'enabled',
       },
     };
 
@@ -264,6 +321,8 @@ export class S3StorageService {
       bucket: this.bucketName,
       size: buffer.length,
       checksumSha256,
+      serverSideEncryption: this.serverSideEncryption,
+      kmsKeyId: this.kmsKeyId,
     };
   }
 

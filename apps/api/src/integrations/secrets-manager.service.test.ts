@@ -50,4 +50,47 @@ describe('SecretsManagerService', () => {
     const result = await service.getInstallationToken(orgId);
     expect(result).toBeNull();
   });
+
+  describe('Encrypt Secrets at Rest and Zero Token Logging (Story E14.2 AC2)', () => {
+    it('AC2: encrypts token at rest so internal storage does not contain plaintext token', async () => {
+      const orgId = 'org_encrypt_test';
+      const token = 'gho_plaintext_super_secret_github_token_xyz';
+
+      await service.storeInstallationToken(
+        orgId,
+        'inst_enc',
+        token,
+        new Date(Date.now() + 3600000),
+      );
+
+      const retrieved = await service.getInstallationToken(orgId);
+      expect(retrieved?.token).toBe(token);
+
+      // Verify that internal secretStore has encryptedData and does not match plaintext
+      const internalEntry = (
+        service as unknown as { secretsStore: Map<string, { encryptedData: string }> }
+      ).secretsStore.get(`secrets/github_token_${orgId}`);
+
+      expect(internalEntry).toBeDefined();
+      expect(internalEntry?.encryptedData).not.toBe(token);
+      expect(internalEntry?.encryptedData).not.toContain('gho_plaintext_super_secret');
+    });
+
+    it('AC2: masks GitHub tokens for log outputs', () => {
+      const token = 'gho_1234567890abcdefghijklmnopqrstuvwxyz';
+      const masked = SecretsManagerService.maskToken(token);
+      expect(masked).toBe('gho_...wxyz');
+      expect(masked).not.toContain('1234567890abcdefghijklmnopqrstu');
+    });
+
+    it('AC2: sanitizes log messages containing GitHub PAT or OAuth tokens', () => {
+      const rawLog =
+        'Connecting with token gho_1234567890abcdefghijklmnopqrstuvwxyz and pat github_pat_1234567890abcdefghij';
+      const sanitized = SecretsManagerService.sanitizeSecretLogs(rawLog);
+
+      expect(sanitized).not.toContain('gho_1234567890abcdefghijklmnopqrstuvwxyz');
+      expect(sanitized).not.toContain('github_pat_1234567890abcdefghij');
+      expect(sanitized).toContain('[REDACTED_GITHUB_TOKEN]');
+    });
+  });
 });
