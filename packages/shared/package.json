@@ -16,7 +16,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings 0",
     "test": "vitest run",
-    "eval:ai": "pnpm build && node dist/llm/run-golden-eval.js"
+    "eval:ai": "pnpm --filter @qa-automater/types build && pnpm build && node dist/llm/run-golden-eval.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.718.0",
