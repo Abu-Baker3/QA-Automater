@@ -20,7 +20,8 @@
     "db:down": "docker compose -f docker/docker-compose.yml down",
     "db:migrate": "pnpm --filter @qa-automater/database migrate:deploy",
     "db:migrate:dev": "pnpm --filter @qa-automater/database migrate:dev",
-    "db:verify": "pnpm --filter @qa-automater/database verify"
+    "db:verify": "pnpm --filter @qa-automater/database verify",
+    "eval:ai": "pnpm --filter @qa-automater/shared eval:ai"
   },
   "devDependencies": {
     "@qa-automater/eslint-config": "workspace:*",

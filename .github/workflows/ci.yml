@@ -55,6 +55,9 @@ jobs:
       - name: Unit tests
         run: pnpm test
 
+      - name: AI Eval Harness (Golden Stories Gate E14.4)
+        run: pnpm eval:ai
+
       - name: Build all apps
         run: pnpm build
 

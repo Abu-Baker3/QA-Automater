@@ -520,6 +520,46 @@ export interface PromptEvalResult {
 
 export interface PromptEvalOptions {
   max_precision_drop?: number; // Default 0.05 (5%)
+  min_locator_precision?: number; // Default 0.80 (80%)
+}
+
+export interface GoldenStoryExpectedLocator {
+  strategy: string;
+  value: string;
+  element_id: string;
+}
+
+export interface GoldenStoryEvalItem {
+  id: string;
+  repo_id: string;
+  repo_name: string;
+  story: UserStoryDetails;
+  expected_locators: Record<string, GoldenStoryExpectedLocator>;
+  candidates: ElementSearchResultItem[];
+}
+
+export interface RepoEvalBreakdown {
+  repo_id: string;
+  repo_name: string;
+  total_stories: number;
+  total_steps: number;
+  correct_mappings: number;
+  precision: number;
+}
+
+export interface GoldenEvalRunSummary {
+  eval_run_id: string;
+  total_repos: number;
+  total_stories: number;
+  total_steps: number;
+  correct_mappings: number;
+  locator_precision: number;
+  min_precision_threshold: number;
+  passed: boolean;
+  deploy_blocked: boolean;
+  block_reason?: string;
+  repo_breakdown: RepoEvalBreakdown[];
+  timestamp: string;
 }
 
 export interface GenerationJob {
