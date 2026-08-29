@@ -182,3 +182,5 @@ export function recordHistogram(
     // Ignore metrics failures if meter uninitialized
   }
 }
+
+export * from './alerting';
