@@ -5,7 +5,9 @@ import { OrgSelector } from '../components/OrgSelector';
 import { RepoConnectModal } from '../components/RepoConnectModal';
 import { ScanProgressCard, ScanProgressState } from '../components/ScanProgressCard';
 import { TestGenerationWizard } from '../components/TestGenerationWizard';
+import { ExportActionsCard } from '../components/ExportActionsCard';
 import {
+
   Sparkles,
   GitBranch,
   Layers,
@@ -2785,91 +2787,12 @@ test.describe('Automated Acceptance Test', () => {
                   Export Playwright test suites via downloadable ZIP bundle or automated GitHub Pull
                   Request
                 </p>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <div
-                  className="glass-panel"
-                  style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}
-                >
-                  <h3
-                    style={{
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <Download style={{ width: '18px', height: '18px', color: '#818CF8' }} />
-                    Download ZIP Test Artifact Package
-                  </h3>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Bundles all generated Playwright TypeScript test files, `playwright.config.ts`,
-                    and GitHub Actions CI runner workflows into a ready-to-run ZIP archive.
-                  </p>
-                  <button
-                    style={{
-                      background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '10px 18px',
-                      fontSize: '0.9rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <Download style={{ width: '16px', height: '16px' }} /> Download Playwright Suite
-                    ZIP
-                  </button>
-                </div>
-
-                <div
-                  className="glass-panel"
-                  style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}
-                >
-                  <h3
-                    style={{
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <GitPullRequest style={{ width: '18px', height: '18px', color: '#C084FC' }} />
-                    Automated GitHub Pull Request Export
-                  </h3>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Automatically creates a feature branch (`qa-automater/playwright-tests`) and
-                    opens a Pull Request directly against target repo `acme-inc/frontend-app`.
-                  </p>
-                  <button
-                    style={{
-                      background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '10px 18px',
-                      fontSize: '0.9rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    <GitPullRequest style={{ width: '16px', height: '16px' }} /> Create GitHub Pull
-                    Request
-                  </button>
-                </div>
-              </div>
+              {/* Story E13.4 AC1 & AC2: Export Actions Card */}
+              <ExportActionsCard
+                jobId="job_gen_golden_101"
+                isApproved={isExportAllowed}
+                repoName={selectedRepo}
+              />
             </div>
           )}
 

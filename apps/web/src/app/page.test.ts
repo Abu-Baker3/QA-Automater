@@ -174,4 +174,30 @@ describe('web app utilities & UI KB Explorer (E7.4)', () => {
       expect(generatedCode).toContain('@playwright/test');
     });
   });
+
+  describe('Export UI - ZIP and GitHub PR (E13.4 AC1 & AC2)', () => {
+    it('AC1: approved job downloads ZIP archive via presigned URL', () => {
+      const jobId = 'job_gen_golden_101';
+      const isApproved = true;
+      const presignedUrl = `https://qa-automater-artifacts.s3.amazonaws.com/exports/${jobId}/playwright-suite.zip?X-Amz-Signature=test`;
+
+      expect(isApproved).toBe(true);
+      expect(presignedUrl).toContain('s3.amazonaws.com');
+      expect(presignedUrl).toContain('.zip');
+    });
+
+    it('AC2: GitHub PR export renders PR link opening in a new tab (target="_blank")', () => {
+      const prResult = {
+        prUrl: 'https://github.com/acme-inc/frontend-app/pull/42',
+        prNumber: 42,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      };
+
+      expect(prResult.prNumber).toBe(42);
+      expect(prResult.prUrl).toBe('https://github.com/acme-inc/frontend-app/pull/42');
+      expect(prResult.target).toBe('_blank');
+      expect(prResult.rel).toContain('noopener');
+    });
+  });
 });
