@@ -508,7 +508,7 @@ export default function DashboardPage() {
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
   const [activeScanState, setActiveScanState] = useState<ScanProgressState | null>(null);
 
-  const triggerScanFlow = (repoUrl: string, _branchName: string = 'main') => {
+  const triggerScanFlow = (repoUrl: string) => {
     setIsConnectModalOpen(false);
     setSelectedRepo(repoUrl);
 

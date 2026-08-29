@@ -230,7 +230,7 @@ describe('GenerationJobsController (E9.5)', () => {
         id: 'story_101',
         title: 'Title',
         description: 'Desc',
-        organization_id: 'org_acme',
+        org_id: 'org_acme',
       },
     });
 
@@ -238,7 +238,7 @@ describe('GenerationJobsController (E9.5)', () => {
     expect(res.status).toBe('planning');
     expect(service.startGeneration).toHaveBeenCalledWith(
       'story_101',
-      expect.objectContaining({ organization_id: 'org_acme' }),
+      expect.objectContaining({ org_id: 'org_acme' }),
     );
   });
 });

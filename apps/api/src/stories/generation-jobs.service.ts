@@ -62,7 +62,7 @@ export class GenerationJobsService {
     userStory?: UserStoryDetails,
     orgId?: string,
   ): Promise<StartGenerationResponse> {
-    const targetOrgId = orgId || userStory?.organization_id || 'org_default';
+    const targetOrgId = orgId || userStory?.org_id || 'org_default';
 
     if (this.rateLimiterService) {
       this.rateLimiterService.enforceOrgGenerationLimit(targetOrgId, 'FREE', 10);
