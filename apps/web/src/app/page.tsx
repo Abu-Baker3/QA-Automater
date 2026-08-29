@@ -508,13 +508,13 @@ export default function DashboardPage() {
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
   const [activeScanState, setActiveScanState] = useState<ScanProgressState | null>(null);
 
-  const triggerScanFlow = (repoUrl: string) => {
+  const triggerScanFlow = (repoUrl: string, branchName: string = 'main') => {
     setIsConnectModalOpen(false);
     setSelectedRepo(repoUrl);
 
     // Story E13.2 AC1: Trigger scan automatically and update progress bar
     setActiveScanState({
-      scanId: `scan_${Date.now()}`,
+      scanId: `scan_${Date.now()}_${branchName}`,
       repoUrl,
       phase: 'cloning',
       progressPercent: 15,
