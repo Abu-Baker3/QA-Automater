@@ -1158,7 +1158,31 @@ test.describe('Automated Acceptance Test', () => {
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {MOCK_KB_PAGES.map((pageNode) => {
+                    {MOCK_KB_PAGES.length === 0 ? (
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          padding: '24px 12px',
+                          color: 'var(--text-muted)',
+                        }}
+                      >
+                        <FolderTree
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            margin: '0 auto 8px',
+                            opacity: 0.4,
+                          }}
+                        />
+                        <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#fff' }}>
+                          No Pages Indexed
+                        </div>
+                        <div style={{ fontSize: '0.75rem', marginTop: '2px' }}>
+                          Connect a repo and run a scan to index UI pages and components.
+                        </div>
+                      </div>
+                    ) : (
+                      MOCK_KB_PAGES.map((pageNode) => {
                       const isPageSelected = selectedPageId === pageNode.id;
                       return (
                         <div
@@ -1358,15 +1382,16 @@ test.describe('Automated Acceptance Test', () => {
                                           </div>
                                         );
                                       })}
+                                      </div>
                                     </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
 
@@ -1389,7 +1414,43 @@ test.describe('Automated Acceptance Test', () => {
                     }
 
                     if (!activeElem) {
-                      activeElem = MOCK_KB_PAGES[0]!.components[0]!.elements[1]!; // fallback to button
+                      return (
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minHeight: '260px',
+                            textAlign: 'center',
+                            color: 'var(--text-muted)',
+                            padding: '2rem',
+                          }}
+                        >
+                          <Layers
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              marginBottom: '12px',
+                              opacity: 0.4,
+                            }}
+                          />
+                          <h4
+                            style={{
+                              fontSize: '1rem',
+                              fontWeight: 600,
+                              color: '#fff',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            No UI Element Selected
+                          </h4>
+                          <p style={{ fontSize: '0.8125rem', maxWidth: '320px', margin: 0 }}>
+                            Connect a repository and trigger a scan to inspect extracted UI elements
+                            and locator rankings.
+                          </p>
+                        </div>
+                      );
                     }
 
                     return (
