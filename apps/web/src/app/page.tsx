@@ -48,53 +48,7 @@ interface LocatorItem {
   vectorIndexed: boolean;
 }
 
-const MOCK_LOCATORS: LocatorItem[] = [
-  {
-    id: 'loc-1',
-    component: 'src/components/auth/LoginForm.tsx',
-    name: 'Email Input',
-    selector: '[data-testid="input-email"]',
-    type: 'data-testid',
-    confidence: '99%',
-    vectorIndexed: true,
-  },
-  {
-    id: 'loc-2',
-    component: 'src/components/auth/LoginForm.tsx',
-    name: 'Password Input',
-    selector: '[data-testid="input-password"]',
-    type: 'data-testid',
-    confidence: '99%',
-    vectorIndexed: true,
-  },
-  {
-    id: 'loc-3',
-    component: 'src/components/auth/LoginForm.tsx',
-    name: 'Submit Login Button',
-    selector: 'button[type="submit"]',
-    type: 'css',
-    confidence: '95%',
-    vectorIndexed: true,
-  },
-  {
-    id: 'loc-4',
-    component: 'src/components/cart/CartDrawer.tsx',
-    name: 'Checkout Button',
-    selector: 'button:has-text("Proceed to Checkout")',
-    type: 'aria',
-    confidence: '90%',
-    vectorIndexed: true,
-  },
-  {
-    id: 'loc-5',
-    component: 'src/components/checkout/PaymentForm.tsx',
-    name: 'Card Number Field',
-    selector: '[data-testid="card-number-input"]',
-    type: 'data-testid',
-    confidence: '99%',
-    vectorIndexed: true,
-  },
-];
+const MOCK_LOCATORS: LocatorItem[] = [];
 
 interface KbElementDetail {
   id: string;
@@ -138,217 +92,9 @@ interface KbPageNode {
   components: KbComponentNode[];
 }
 
-const MOCK_KB_PAGES: KbPageNode[] = [
-  {
-    id: 'page-1',
-    route_path: '/login',
-    file_path: 'app/login/page.tsx',
-    component_name: 'LoginPage',
-    element_count: 5,
-    components: [
-      {
-        id: 'comp-1',
-        name: 'LoginForm',
-        file_path: 'components/auth/LoginForm.tsx',
-        elements: [
-          {
-            id: 'elem-1',
-            tag_name: 'input',
-            text_content: 'Email Address',
-            source_file: 'app/login/page.tsx',
-            source_line: 24,
-            source_ref: 'app/login/page.tsx:24',
-            stability_tier: 'high',
-            primary_candidate: {
-              strategy: 'label',
-              value: 'Email Address',
-              score: 0.92,
-              playwright_code: "page.getByLabel('Email Address')",
-              rank: 1,
-              stability_tier: 'high',
-            },
-            candidates: [
-              {
-                strategy: 'label',
-                value: 'Email Address',
-                score: 0.92,
-                playwright_code: "page.getByLabel('Email Address')",
-                rank: 1,
-                stability_tier: 'high',
-              },
-              {
-                strategy: 'role_name',
-                value: 'textbox:Email Address',
-                score: 0.9,
-                playwright_code: "page.getByRole('textbox', { name: 'Email Address' })",
-                rank: 2,
-                stability_tier: 'high',
-              },
-            ],
-          },
-          {
-            id: 'elem-2',
-            tag_name: 'button',
-            text_content: 'Sign In',
-            source_file: 'app/login/page.tsx',
-            source_line: 42,
-            source_ref: 'app/login/page.tsx:42',
-            stability_tier: 'high',
-            primary_candidate: {
-              strategy: 'testid',
-              value: 'login-submit',
-              score: 0.98,
-              playwright_code: "page.getByTestId('login-submit')",
-              rank: 1,
-              stability_tier: 'high',
-            },
-            candidates: [
-              {
-                strategy: 'testid',
-                value: 'login-submit',
-                score: 0.98,
-                playwright_code: "page.getByTestId('login-submit')",
-                rank: 1,
-                stability_tier: 'high',
-              },
-              {
-                strategy: 'role_name',
-                value: 'button:Sign In',
-                score: 0.9,
-                playwright_code: "page.getByRole('button', { name: 'Sign In' })",
-                rank: 2,
-                stability_tier: 'high',
-              },
-            ],
-          },
-          {
-            id: 'elem-3',
-            tag_name: 'a',
-            text_content: 'Forgot Password?',
-            source_file: 'app/login/page.tsx',
-            source_line: 55,
-            source_ref: 'app/login/page.tsx:55',
-            stability_tier: 'medium',
-            primary_candidate: {
-              strategy: 'text',
-              value: 'Forgot Password?',
-              score: 0.85,
-              playwright_code: "page.getByText('Forgot Password?')",
-              rank: 1,
-              stability_tier: 'medium',
-            },
-            candidates: [
-              {
-                strategy: 'text',
-                value: 'Forgot Password?',
-                score: 0.85,
-                playwright_code: "page.getByText('Forgot Password?')",
-                rank: 1,
-                stability_tier: 'medium',
-              },
-            ],
-          },
-          {
-            id: 'elem-4',
-            tag_name: 'button',
-            text_content: 'Styled Login Helper',
-            source_file: 'app/login/page.tsx',
-            source_line: 78,
-            source_ref: 'app/login/page.tsx:78',
-            stability_tier: 'low',
-            primary_candidate: {
-              strategy: 'css',
-              value: '.css-1a2b3c',
-              score: 0.4,
-              playwright_code: "page.locator('.css-1a2b3c')",
-              rank: 1,
-              stability_tier: 'low',
-            },
-            candidates: [
-              {
-                strategy: 'css',
-                value: '.css-1a2b3c',
-                score: 0.4,
-                playwright_code: "page.locator('.css-1a2b3c')",
-                rank: 1,
-                stability_tier: 'low',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'page-2',
-    route_path: '/dashboard',
-    file_path: 'app/dashboard/page.tsx',
-    component_name: 'DashboardPage',
-    element_count: 24,
-    components: [
-      {
-        id: 'comp-2',
-        name: 'DashboardHeader',
-        file_path: 'components/dashboard/Header.tsx',
-        elements: [
-          {
-            id: 'elem-20',
-            tag_name: 'button',
-            text_content: 'Create New Test',
-            source_file: 'app/dashboard/page.tsx',
-            source_line: 18,
-            source_ref: 'app/dashboard/page.tsx:18',
-            stability_tier: 'high',
-            primary_candidate: {
-              strategy: 'testid',
-              value: 'btn-create-test',
-              score: 0.98,
-              playwright_code: "page.getByTestId('btn-create-test')",
-              rank: 1,
-              stability_tier: 'high',
-            },
-            candidates: [
-              {
-                strategy: 'testid',
-                value: 'btn-create-test',
-                score: 0.98,
-                playwright_code: "page.getByTestId('btn-create-test')",
-                rank: 1,
-                stability_tier: 'high',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+const MOCK_KB_PAGES: KbPageNode[] = [];
 
-const INITIAL_CODE = `import { test, expect } from '@playwright/test';
-
-/**
- * Feature: User Authentication & Login Flow
- * Generated by QA Automater AI (AST + pgvector RAG)
- */
-test.describe('Login & Authentication Suite', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('https://app.acme.com/login');
-  });
-
-  test('should log in successfully with valid credentials', async ({ page }) => {
-    // Fill credentials using AST-extracted locators
-    await page.locator('[data-testid="input-email"]').fill('user@acme.com');
-    await page.locator('[data-testid="input-password"]').fill('SecurePassword123!');
-    
-    // Click submit button
-    await page.locator('button[type="submit"]').click();
-
-    // Assert redirection & dashboard landing
-    await expect(page).toHaveURL('https://app.acme.com/dashboard');
-    await expect(page.locator('h1')).toContainText('Welcome Back');
-  });
-});
-`;
+const INITIAL_CODE = '';
 
 export interface UiReviewCandidate {
   strategy: string;
@@ -373,137 +119,22 @@ export interface UiReviewItem {
   human_verified: boolean;
 }
 
-const INITIAL_REVIEW_ITEMS: UiReviewItem[] = [
-  {
-    step_id: 'step-1',
-    step_order: 1,
-    action: 'fill',
-    target_description: 'Enter user email address',
-    confidence: 0.95,
-    element_id: 'elem-1',
-    chosen_locator: {
-      strategy: 'label',
-      value: 'Email Address',
-      score: 0.95,
-      playwright_code: "page.getByLabel('Email Address')",
-      rank: 1,
-      stability_tier: 'high',
-    },
-    candidates: [
-      {
-        strategy: 'label',
-        value: 'Email Address',
-        score: 0.95,
-        playwright_code: "page.getByLabel('Email Address')",
-        rank: 1,
-        stability_tier: 'high',
-      },
-      {
-        strategy: 'role_name',
-        value: 'textbox:Email Address',
-        score: 0.9,
-        playwright_code: "page.getByRole('textbox', { name: 'Email Address' })",
-        rank: 2,
-        stability_tier: 'high',
-      },
-    ],
-    rationale: 'High confidence match against label Email Address.',
-    needs_review: false,
-    human_verified: false,
-  },
-  {
-    step_id: 'step-2',
-    step_order: 2,
-    action: 'fill',
-    target_description: 'Enter user password',
-    confidence: 0.65,
-    element_id: 'elem-pass',
-    chosen_locator: {
-      strategy: 'css',
-      value: '.pass-input-99',
-      score: 0.65,
-      playwright_code: "page.locator('.pass-input-99')",
-      rank: 2,
-      stability_tier: 'low',
-    },
-    candidates: [
-      {
-        strategy: 'testid',
-        value: 'input-password',
-        score: 0.98,
-        playwright_code: "page.getByTestId('input-password')",
-        rank: 1,
-        stability_tier: 'high',
-      },
-      {
-        strategy: 'css',
-        value: '.pass-input-99',
-        score: 0.65,
-        playwright_code: "page.locator('.pass-input-99')",
-        rank: 2,
-        stability_tier: 'low',
-      },
-    ],
-    rationale:
-      'Ambiguous low-confidence CSS selector. Recommended data-testid candidate available.',
-    needs_review: true,
-    human_verified: false,
-  },
-  {
-    step_id: 'step-3',
-    step_order: 3,
-    action: 'click',
-    target_description: 'Click Submit Login Button',
-    confidence: 0.72,
-    element_id: 'elem-2',
-    chosen_locator: {
-      strategy: 'css',
-      value: 'button.btn-primary',
-      score: 0.72,
-      playwright_code: "page.locator('button.btn-primary')",
-      rank: 2,
-      stability_tier: 'medium',
-    },
-    candidates: [
-      {
-        strategy: 'testid',
-        value: 'login-submit',
-        score: 0.98,
-        playwright_code: "page.getByTestId('login-submit')",
-        rank: 1,
-        stability_tier: 'high',
-      },
-      {
-        strategy: 'css',
-        value: 'button.btn-primary',
-        score: 0.72,
-        playwright_code: "page.locator('button.btn-primary')",
-        rank: 2,
-        stability_tier: 'medium',
-      },
-    ],
-    rationale: 'Sub-threshold confidence match (72%). Review candidate selectors.',
-    needs_review: true,
-    human_verified: false,
-  },
-];
+const INITIAL_REVIEW_ITEMS: UiReviewItem[] = [];
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
-  const [selectedRepo, setSelectedRepo] = useState('acme-inc/frontend-app');
+  const [selectedRepo, setSelectedRepo] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedPageId, setSelectedPageId] = useState<string>('page-1');
-  const [selectedComponentId, setSelectedComponentId] = useState<string>('comp-1');
-  const [selectedElementId, setSelectedElementId] = useState<string>('elem-2');
-  const [userStoryText, setUserStoryText] = useState(
-    'Given a user on /login, when they enter valid credentials and click login, then they are redirected to /dashboard.',
-  );
+  const [selectedPageId, setSelectedPageId] = useState<string>('');
+  const [selectedComponentId, setSelectedComponentId] = useState<string>('');
+  const [selectedElementId, setSelectedElementId] = useState<string>('');
+  const [userStoryText, setUserStoryText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [genProgress, setGenProgress] = useState(0);
   const [codeOutput, setCodeOutput] = useState(INITIAL_CODE);
   const [copied, setCopied] = useState(false);
   const [reviewItems, setReviewItems] = useState<UiReviewItem[]>(INITIAL_REVIEW_ITEMS);
-  const [activePickerStepId, setActivePickerStepId] = useState<string | null>('step-2');
+  const [activePickerStepId, setActivePickerStepId] = useState<string | null>(null);
   const [customSelectorInput, setCustomSelectorInput] = useState<string>('');
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
   const [activeScanState, setActiveScanState] = useState<ScanProgressState | null>(null);
@@ -724,9 +355,8 @@ test.describe('Automated Acceptance Test', () => {
                 outline: 'none',
               }}
             >
-              <option value="acme-inc/frontend-app">acme-inc / frontend-app (React)</option>
-              <option value="acme-inc/admin-portal">acme-inc / admin-portal (Next.js)</option>
-              <option value="acme-inc/checkout-service">acme-inc / checkout-service (Vue)</option>
+              <option value="">-- Connect or Select Repository --</option>
+              {selectedRepo && <option value={selectedRepo}>{selectedRepo}</option>}
             </select>
           </div>
         </div>

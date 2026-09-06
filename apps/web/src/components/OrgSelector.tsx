@@ -16,9 +16,7 @@ interface OrgSelectorProps {
 }
 
 const DEFAULT_ORGS: OrganizationOption[] = [
-  { id: 'org_acme_qa', name: 'Acme Corp QA', slug: 'acme-qa', role: 'ADMIN' },
-  { id: 'org_fintech_labs', name: 'Fintech Labs', slug: 'fintech-labs', role: 'MEMBER' },
-  { id: 'org_global_dev', name: 'Global Dev Engineering', slug: 'global-dev', role: 'ADMIN' },
+  { id: 'org_workspace', name: 'My Workspace', slug: 'my-workspace', role: 'ADMIN' },
 ];
 
 export const OrgSelector: React.FC<OrgSelectorProps> = ({ currentOrgId, onOrgChange }) => {

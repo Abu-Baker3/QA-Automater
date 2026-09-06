@@ -13,11 +13,9 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
   onClose,
   onConnectAndScan,
 }) => {
-  const [repoUrlInput, setRepoUrlInput] = useState<string>(
-    'https://github.com/acme-inc/payments-service.git',
-  );
+  const [repoUrlInput, setRepoUrlInput] = useState<string>('');
   const [branchInput, setBranchInput] = useState<string>('main');
-  const [isGitHubConnected, setIsGitHubConnected] = useState<boolean>(true);
+  const [isGitHubConnected, setIsGitHubConnected] = useState<boolean>(false);
 
   if (!isOpen) return null;
 
