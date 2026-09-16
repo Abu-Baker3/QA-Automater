@@ -14,6 +14,13 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { GitHubIntegrationService } from './github-integration.service';
 
+interface AuthenticatedRequest {
+  user?: {
+    orgId?: string;
+    [key: string]: unknown;
+  };
+}
+
 export class CallbackDto {
   code?: string;
   installationId?: string;
@@ -31,7 +38,7 @@ export class IntegrationsController {
 
   @Get('status')
   @HttpCode(HttpStatus.OK)
-  async getStatus(@Req() req: any, @Headers('x-org-id') headerOrgId?: string) {
+  async getStatus(@Req() req: AuthenticatedRequest, @Headers('x-org-id') headerOrgId?: string) {
     const orgId = req?.user?.orgId || headerOrgId || 'default_org';
     return this.githubIntegrationService.getIntegrationStatus(orgId);
   }
@@ -39,7 +46,7 @@ export class IntegrationsController {
   @Post('connect')
   @HttpCode(HttpStatus.OK)
   async connectGitHub(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Headers('x-org-id') headerOrgId?: string,
     @Body('orgId') bodyOrgId?: string,
   ) {
@@ -50,7 +57,7 @@ export class IntegrationsController {
   @Post('callback')
   @HttpCode(HttpStatus.OK)
   async handleCallback(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Body() dto: CallbackDto,
     @Headers('x-org-id') headerOrgId?: string,
   ) {
@@ -61,7 +68,7 @@ export class IntegrationsController {
   @Post('validate-scan')
   @HttpCode(HttpStatus.OK)
   async validateScanToken(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Body() dto: ValidateScanDto,
     @Headers('x-org-id') headerOrgId?: string,
   ) {
@@ -76,7 +83,7 @@ export class IntegrationsController {
   @Get('repositories')
   @HttpCode(HttpStatus.OK)
   async listRepositories(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Query('page') pageStr?: string,
     @Query('per_page') perPageStr?: string,
     @Query('search') search?: string,

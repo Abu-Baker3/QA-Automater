@@ -117,7 +117,7 @@ export class AuthService {
           [newUser.id, email, passwordHash, newUser.firstName, newUser.lastName],
         );
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof ConflictException) {
         this.devUsersMap.delete(email);
         this.saveDevUsers();

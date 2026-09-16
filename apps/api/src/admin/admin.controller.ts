@@ -74,7 +74,7 @@ export class AdminController {
 
   @Get('users')
   async getUsers() {
-    let dbUsers: any[] = [];
+    let dbUsers: Record<string, unknown>[] = [];
     try {
       dbUsers = await this.db.withClient(async (client) => {
         const res = await client.query(
@@ -97,13 +97,15 @@ export class AdminController {
     };
 
     // Deduplicate by email
-    const allUsersMap = new Map<string, any>();
+    const allUsersMap = new Map<string, Record<string, unknown>>();
     allUsersMap.set(seedAdmin.email, seedAdmin);
     for (const u of devUsers) {
       allUsersMap.set(u.email, u);
     }
     for (const u of dbUsers) {
-      allUsersMap.set(u.email, u);
+      if (typeof u.email === 'string') {
+        allUsersMap.set(u.email, u);
+      }
     }
 
     return { users: Array.from(allUsersMap.values()) };
@@ -130,7 +132,9 @@ export class AdminController {
   }
 
   @Post('permissions')
-  async updatePermissions(@Body() body: { role: 'ADMIN' | 'MEMBER'; permissions: any }) {
+  async updatePermissions(
+    @Body() body: { role: 'ADMIN' | 'MEMBER'; permissions: Record<string, boolean> },
+  ) {
     if (this.rolePermissions[body.role]) {
       this.rolePermissions[body.role] = { ...this.rolePermissions[body.role], ...body.permissions };
     }
