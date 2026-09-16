@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
-export default function GitHubCallbackPage() {
+function GitHubCallbackContent() {
   const searchParams = useSearchParams();
   const [statusMessage, setStatusMessage] = useState<string>('Processing GitHub Authorization...');
   const [isError, setIsError] = useState<boolean>(false);
@@ -75,10 +76,11 @@ export default function GitHubCallbackPage() {
           window.location.href = '/';
         }, 1500);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to complete GitHub authorization';
       console.error('OAuth Callback Error:', err);
       setIsError(true);
-      setStatusMessage(err?.message || 'Failed to complete GitHub authorization');
+      setStatusMessage(message);
     }
   };
 
@@ -112,7 +114,7 @@ export default function GitHubCallbackPage() {
         </h2>
         <p style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: isError ? '1.25rem' : 0 }}>{statusMessage}</p>
         {isError && (
-          <a
+          <Link
             href="/login"
             style={{
               display: 'inline-block',
@@ -127,9 +129,33 @@ export default function GitHubCallbackPage() {
             }}
           >
             Sign In to QA Automater
-          </a>
+          </Link>
         )}
       </div>
     </div>
+  );
+}
+
+export default function GitHubCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          style={{
+            minHeight: '100vh',
+            background: '#090d16',
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: 'system-ui, sans-serif',
+          }}
+        >
+          <p style={{ fontSize: '0.875rem', color: '#94a3b8' }}>Processing GitHub Authorization...</p>
+        </div>
+      }
+    >
+      <GitHubCallbackContent />
+    </Suspense>
   );
 }

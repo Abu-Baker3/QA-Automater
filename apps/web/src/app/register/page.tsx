@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -44,8 +45,9 @@ export default function RegisterPage() {
           window.location.href = '/';
         }
       }, 1200);
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -166,9 +168,9 @@ export default function RegisterPage() {
 
         <div className="mt-8 text-center text-xs text-slate-400">
           Already have an account?{' '}
-          <a href="/login" className="link font-semibold">
+          <Link href="/login" className="link font-semibold">
             Sign in here
-          </a>
+          </Link>
         </div>
       </div>
     </div>

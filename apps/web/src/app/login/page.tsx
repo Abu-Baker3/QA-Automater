@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -41,8 +42,9 @@ export default function LoginPage() {
           window.location.href = '/';
         }
       }, 1000);
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Login failed';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -141,7 +143,9 @@ export default function LoginPage() {
           <div>
             <div className="flex justify-between items-center mb-1">
               <label className="form-label mb-0">Password</label>
-              <a href="#" className="text-xs text-indigo-400 hover:underline">Forgot password?</a>
+              <button type="button" onClick={fillAdminDemo} className="text-xs text-indigo-400 hover:underline">
+                Fill Admin Demo Credentials
+              </button>
             </div>
             <input
               type="password"
@@ -159,10 +163,10 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-8 text-center text-xs text-slate-400">
-          Don't have an account?{' '}
-          <a href="/register" className="link font-semibold">
+          Don&apos;t have an account?{' '}
+          <Link href="/register" className="link font-semibold">
             Create an account
-          </a>
+          </Link>
         </div>
       </div>
     </div>

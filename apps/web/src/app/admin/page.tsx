@@ -1,12 +1,39 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { UserProfileDropdown } from '../../components/UserProfileDropdown';
 
+interface AdminMetrics {
+  totalUsers?: number;
+  totalOrganizations?: number;
+  totalJobs?: number;
+  workerQueueStatus?: string;
+  monthlyAiTokens?: string;
+}
+
+interface UserRecord {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+  createdAt: string;
+}
+
+interface RolePermissions {
+  [permKey: string]: boolean;
+}
+
+interface PermissionsState {
+  ADMIN: RolePermissions;
+  MEMBER: RolePermissions;
+}
+
 export default function AdminDashboardPage() {
-  const [metrics, setMetrics] = useState<any>(null);
-  const [users, setUsers] = useState<any[]>([]);
-  const [permissions, setPermissions] = useState<any>({
+  const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
+  const [users, setUsers] = useState<UserRecord[]>([]);
+  const [permissions, setPermissions] = useState<PermissionsState>({
     ADMIN: {
       repositories: true,
       scans: true,
@@ -81,7 +108,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleTogglePermission = (role: 'ADMIN' | 'MEMBER', permKey: string) => {
-    setPermissions((prev: any) => ({
+    setPermissions((prev: PermissionsState) => ({
       ...prev,
       [role]: {
         ...prev[role],
@@ -126,9 +153,9 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <a href="/" className="btn-secondary text-xs">
+          <Link href="/" className="btn-secondary text-xs">
             ← Exit to User Dashboard
-          </a>
+          </Link>
           <UserProfileDropdown />
         </div>
       </header>
@@ -322,7 +349,7 @@ export default function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((u: any) => (
+                {users.map((u: UserRecord) => (
                   <tr key={u.id}>
                     <td className="font-mono text-xs text-indigo-400">{u.id}</td>
                     <td className="font-medium text-white">{u.email}</td>
