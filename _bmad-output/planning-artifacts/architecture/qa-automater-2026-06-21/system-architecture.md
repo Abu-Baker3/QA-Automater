@@ -931,7 +931,7 @@ Human override.
 | **Queue** | **Redis 7 + BullMQ** | Simple MVP; upgrade to Temporal when workflow complexity grows (self-healing, multi-step sagas) |
 | **Object storage** | AWS S3 or Cloudflare R2 | Repo snapshots, artifact storage, presigned downloads |
 | **Secrets** | AWS Secrets Manager / Doppler | OAuth tokens, LLM keys |
-| **Auth** | Clerk | Fast SaaS auth; orgs; GitHub social; SSO path in P3 |
+| **Auth** | **In-House Custom Auth** | Self-contained NestJS AuthModule using Argon2id password hashing, short-lived JWT Access Tokens, and HttpOnly Secure Refresh Cookies. Eliminates third-party lock-in and vendor latency. |
 | **Automation output** | Playwright 1.4x + TypeScript 5.x | PRD MVP target; Cypress Handlebars templates in P2 |
 | **IaC** | Terraform + AWS ECS Fargate | Boring, well-understood; EKS when >20 services |
 | **Observability** | OpenTelemetry → Grafana Cloud (or Datadog) | Traces across API → worker → LLM |
@@ -998,15 +998,23 @@ Redis for hot caches; PostgreSQL `content_hash` for embedding dedupe.
 - Clone operations in **ephemeral containers** with no outbound network except GitHub + S3  
 - **No arbitrary code execution** during parse — AST parsers only, no `npm install` in customer repo for MVP  
 
-### 10.2 API Authentication
+### 10.2 In-House Authentication, Admin RBAC & Subscription Quotas
 
 ```
-Client → Clerk JWT → API Gateway validates → extract user_id, org_ids
-       → RBAC middleware (Admin | Member)
-       → Resource handler verifies resource.org_id ∈ user.org_ids
+Client Request → Bearer JWT (Access Token, 15m) + HttpOnly Refresh Cookie (7d)
+               → NestJS JwtAuthGuard (validates signature & expiration)
+               → SubscriptionQuotaGuard (verifies monthly scan/codegen/token limits)
+               → RolesGuard (@Roles(Role.ADMIN) | @Roles(Role.MEMBER))
+               → Resource Handler (verifies resource.org_id ∈ user.org_ids)
 ```
 
-Rate limits: 100 req/min/user; 10 generation jobs/hour on free tier.
+1. **In-House Password Security**: Passwords hashed using Argon2id with unique per-user salts.
+2. **Dual-Token Architecture**: Short-lived JWT access tokens for API requests; long-lived HTTP-only, SameSite=Strict cookies for token refresh. Refresh token hashes stored in PostgreSQL `RefreshToken` table for instant revocation.
+3. **Admin Panel Architecture (`/admin`)**:
+   - Access restricted to `Role.ADMIN` users.
+   - Dedicated `AdminModule` exposing `/admin/users`, `/admin/organizations`, `/admin/metrics`, `/admin/subscriptions`, and `/admin/audit-logs`.
+4. **Subscription Quota Middleware**: Checks PostgreSQL `Subscription` & `UsageTracker` tables prior to job queueing. Enforces hard caps on scans, story generations, and AI token limits per tier (`FREE`, `STARTER`, `TEAM`, `BUSINESS`, `ENTERPRISE`).
+5. **Rate Limiting**: NestJS `@nestjs/throttler` (100 req/min/user; login endpoint throttled to 5 attempts/min per IP/email).
 
 ### 10.3 Data Isolation
 
@@ -1022,7 +1030,7 @@ Rate limits: 100 req/min/user; 10 generation jobs/hour on free tier.
 | GitHub installation tokens | Secrets Manager | Auto-refresh per job |
 | LLM API keys | Secrets Manager | Quarterly |
 | DB credentials | RDS IAM auth / Secrets Manager | Automatic |
-| JWT signing | Clerk managed | N/A |
+| Custom Auth JWT Secret / Keys | AWS Secrets Manager / Doppler | Semi-annual |
 
 ### 10.5 LLM Data Handling
 

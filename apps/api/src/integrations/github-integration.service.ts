@@ -34,9 +34,35 @@ export interface PaginatedRepositoriesResult {
   total: number;
 }
 
+export interface GitHubIntegrationStatus {
+  connected: boolean;
+  accountName?: string;
+  installationId?: string;
+  expiresAt?: string;
+}
+
 @Injectable()
 export class GitHubIntegrationService {
   constructor(private readonly secretsManager: SecretsManagerService) {}
+
+  /**
+   * Get integration status for an organization.
+   */
+  async getIntegrationStatus(orgId: string): Promise<GitHubIntegrationStatus> {
+    const tokenData = await this.secretsManager.getInstallationToken(orgId);
+    if (!tokenData || tokenData.isExpired) {
+      return { connected: false };
+    }
+    const shortId = tokenData.installationId
+      ? tokenData.installationId.replace(/^inst_/, '')
+      : 'qa-admin';
+    return {
+      connected: true,
+      accountName: `@github-org-${shortId.slice(0, 8)}`,
+      installationId: tokenData.installationId,
+      expiresAt: tokenData.expiresAt.toISOString(),
+    };
+  }
 
   /**
    * Initiate GitHub App / OAuth authorization flow.

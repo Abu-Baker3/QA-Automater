@@ -1,16 +1,16 @@
-import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 
-const publishableKey =
-  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-  'pk_test_dGhhbmtmdWwtb29zdGVyLTMyLmNsZXJrLmFjY291bnRzLmRldiQ';
+export const metadata = {
+  title: 'QA Automater — AI Test Generation Platform',
+  description: 'AI-Powered Playwright and Cypress test generation platform from frontend source code and user stories.',
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider publishableKey={publishableKey}>
-      <html lang="en">
-        <body>{children}</body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" className="dark">
+      <body className="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+        {children}
+      </body>
+    </html>
   );
 }

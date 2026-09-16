@@ -1,0 +1,29 @@
+[
+  {
+    "id": "529b2673-c6e7-4264-8702-d354d88ab99d",
+    "email": "contact@dexsof.com",
+    "passwordHash": "$2a$10$5B7BMYQazhf/gkwIjALVgepjmVgEDvF/M9IAD/OnkcjnVR5L8NR42",
+    "firstName": "Contact",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-16T15:47:33.613Z"
+  },
+  {
+    "id": "a59919c0-eeef-4a15-a608-fd752da41793",
+    "email": "newdev_user@dexsof.com",
+    "passwordHash": "$2a$10$3eYV0VTPoO9AwomAGb2PP.Ke/.GnHZaD3Gw13zbo1ioz9yUNKOfv.",
+    "firstName": "New",
+    "lastName": "Dev",
+    "role": "MEMBER",
+    "createdAt": "2026-09-16T15:47:33.996Z"
+  },
+  {
+    "id": "0cac8d22-78f1-410c-ad0d-1e7537fa00e3",
+    "email": "contact1@dexsof.com",
+    "passwordHash": "$2a$10$aHefDsrjAjaCDEzOr9LIP.0oxBAUsi4KAh2fZeYJwBdfh8a5aeUvC",
+    "firstName": "Abu",
+    "lastName": "Baker",
+    "role": "MEMBER",
+    "createdAt": "2026-09-16T15:50:43.139Z"
+  }
+]

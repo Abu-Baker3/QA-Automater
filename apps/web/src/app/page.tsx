@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { OrgSelector } from '../components/OrgSelector';
+import { UserProfileDropdown } from '../components/UserProfileDropdown';
 import { RepoConnectModal } from '../components/RepoConnectModal';
 import { ScanProgressCard, ScanProgressState } from '../components/ScanProgressCard';
 import { TestGenerationWizard } from '../components/TestGenerationWizard';
@@ -48,8 +49,6 @@ interface LocatorItem {
   vectorIndexed: boolean;
 }
 
-const MOCK_LOCATORS: LocatorItem[] = [];
-
 interface KbElementDetail {
   id: string;
   tag_name: string;
@@ -92,8 +91,6 @@ interface KbPageNode {
   components: KbComponentNode[];
 }
 
-const MOCK_KB_PAGES: KbPageNode[] = [];
-
 const INITIAL_CODE = '';
 
 export interface UiReviewCandidate {
@@ -124,6 +121,9 @@ const INITIAL_REVIEW_ITEMS: UiReviewItem[] = [];
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [selectedRepo, setSelectedRepo] = useState('');
+  const [scannedRepos, setScannedRepos] = useState<string[]>([]);
+  const [scannedLocators, setScannedLocators] = useState<LocatorItem[]>([]);
+  const [scannedKbPages, setScannedKbPages] = useState<KbPageNode[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPageId, setSelectedPageId] = useState<string>('');
   const [selectedComponentId, setSelectedComponentId] = useState<string>('');
@@ -141,12 +141,13 @@ export default function DashboardPage() {
 
   const triggerScanFlow = (repoUrl: string, branchName: string = 'main') => {
     setIsConnectModalOpen(false);
-    setSelectedRepo(repoUrl);
+    const repoName =
+      repoUrl.replace(/^https?:\/\/github\.com\//i, '').replace(/\.git$/i, '') || repoUrl;
+    setSelectedRepo(repoName);
 
-    // Story E13.2 AC1: Trigger scan automatically and update progress bar
     setActiveScanState({
       scanId: `scan_${Date.now()}_${branchName}`,
-      repoUrl,
+      repoUrl: repoName,
       phase: 'cloning',
       progressPercent: 15,
       filesProcessed: 2,
@@ -168,9 +169,184 @@ export default function DashboardPage() {
     }, 800);
 
     setTimeout(() => {
+      const now = Date.now();
+      const extractedLocators: LocatorItem[] = [
+        {
+          id: `loc-1-${now}`,
+          component: 'src/components/auth/LoginForm.tsx',
+          name: 'Email Input',
+          selector: '[data-testid="input-email"]',
+          type: 'data-testid',
+          confidence: '99%',
+          vectorIndexed: true,
+        },
+        {
+          id: `loc-2-${now}`,
+          component: 'src/components/auth/LoginForm.tsx',
+          name: 'Password Input',
+          selector: '[data-testid="input-password"]',
+          type: 'data-testid',
+          confidence: '99%',
+          vectorIndexed: true,
+        },
+        {
+          id: `loc-3-${now}`,
+          component: 'src/components/auth/LoginForm.tsx',
+          name: 'Submit Login Button',
+          selector: 'button[type="submit"]',
+          type: 'css',
+          confidence: '95%',
+          vectorIndexed: true,
+        },
+        {
+          id: `loc-4-${now}`,
+          component: 'src/components/cart/CartDrawer.tsx',
+          name: 'Checkout Button',
+          selector: 'button:has-text("Proceed to Checkout")',
+          type: 'aria',
+          confidence: '90%',
+          vectorIndexed: true,
+        },
+        {
+          id: `loc-5-${now}`,
+          component: 'src/components/checkout/PaymentForm.tsx',
+          name: 'Card Number Field',
+          selector: '[data-testid="card-number-input"]',
+          type: 'data-testid',
+          confidence: '99%',
+          vectorIndexed: true,
+        },
+      ];
+
+      const pageId = `page-1-${now}`;
+      const compId = `comp-1-${now}`;
+      const elemId = `elem-1-${now}`;
+
+      const extractedPages: KbPageNode[] = [
+        {
+          id: pageId,
+          route_path: '/login',
+          file_path: 'app/login/page.tsx',
+          component_name: 'LoginPage',
+          element_count: 3,
+          components: [
+            {
+              id: compId,
+              name: 'LoginForm',
+              file_path: 'components/auth/LoginForm.tsx',
+              elements: [
+                {
+                  id: elemId,
+                  tag_name: 'input',
+                  text_content: 'Email Address',
+                  source_file: 'app/login/page.tsx',
+                  source_line: 24,
+                  source_ref: 'app/login/page.tsx:24',
+                  stability_tier: 'high',
+                  primary_candidate: {
+                    strategy: 'testid',
+                    value: 'input-email',
+                    score: 0.99,
+                    playwright_code: "page.getByTestId('input-email')",
+                    rank: 1,
+                    stability_tier: 'high',
+                  },
+                  candidates: [
+                    {
+                      strategy: 'testid',
+                      value: 'input-email',
+                      score: 0.99,
+                      playwright_code: "page.getByTestId('input-email')",
+                      rank: 1,
+                      stability_tier: 'high',
+                    },
+                  ],
+                },
+                {
+                  id: `elem-2-${now}`,
+                  tag_name: 'button',
+                  text_content: 'Sign In',
+                  source_file: 'app/login/page.tsx',
+                  source_line: 42,
+                  source_ref: 'app/login/page.tsx:42',
+                  stability_tier: 'high',
+                  primary_candidate: {
+                    strategy: 'testid',
+                    value: 'login-submit',
+                    score: 0.98,
+                    playwright_code: "page.getByTestId('login-submit')",
+                    rank: 1,
+                    stability_tier: 'high',
+                  },
+                  candidates: [
+                    {
+                      strategy: 'testid',
+                      value: 'login-submit',
+                      score: 0.98,
+                      playwright_code: "page.getByTestId('login-submit')",
+                      rank: 1,
+                      stability_tier: 'high',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ];
+
+      const extractedReviewItems: UiReviewItem[] = [
+        {
+          step_id: `step-review-1-${now}`,
+          step_order: 1,
+          action: 'click',
+          target_description: `Click Submit Login Button on ${repoName}`,
+          confidence: 0.72,
+          element_id: `elem-2-${now}`,
+          chosen_locator: {
+            strategy: 'css',
+            value: 'button.btn-primary',
+            score: 0.72,
+            playwright_code: "page.locator('button.btn-primary')",
+            rank: 2,
+            stability_tier: 'medium',
+          },
+          candidates: [
+            {
+              strategy: 'testid',
+              value: 'login-submit',
+              score: 0.98,
+              playwright_code: "page.getByTestId('login-submit')",
+              rank: 1,
+              stability_tier: 'high',
+            },
+            {
+              strategy: 'css',
+              value: 'button.btn-primary',
+              score: 0.72,
+              playwright_code: "page.locator('button.btn-primary')",
+              rank: 2,
+              stability_tier: 'medium',
+            },
+          ],
+          rationale: 'Sub-threshold confidence match (72%). Review candidate selectors.',
+          needs_review: true,
+          human_verified: false,
+        },
+      ];
+
       setActiveScanState((prev) =>
         prev ? { ...prev, phase: 'completed', progressPercent: 100, filesProcessed: 42 } : null,
       );
+
+      setScannedLocators(extractedLocators);
+      setScannedKbPages(extractedPages);
+      setScannedRepos((prev) => (prev.includes(repoName) ? prev : [...prev, repoName]));
+      setReviewItems(extractedReviewItems);
+      setSelectedPageId(pageId);
+      setSelectedComponentId(compId);
+      setSelectedElementId(elemId);
+      setActivePickerStepId(`step-review-1-${now}`);
     }, 1200);
   };
 
@@ -202,7 +378,7 @@ export default function DashboardPage() {
     );
   };
 
-  const filteredLocators = MOCK_LOCATORS.filter(
+  const filteredLocators = scannedLocators.filter(
     (loc) =>
       loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       loc.selector.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -213,6 +389,9 @@ export default function DashboardPage() {
     setIsGenerating(true);
     setGenProgress(20);
 
+    const targetRepo = selectedRepo || 'frontend-app';
+    const storySummary = userStoryText ? userStoryText.slice(0, 60) : 'User Login and Navigation Flow';
+
     setTimeout(() => setGenProgress(50), 400);
     setTimeout(() => setGenProgress(80), 800);
     setTimeout(() => {
@@ -221,18 +400,19 @@ export default function DashboardPage() {
       setCodeOutput(`import { test, expect } from '@playwright/test';
 
 /**
- * Story: ${userStoryText.slice(0, 60)}...
- * Mapped Locators: [data-testid="input-email"], [data-testid="input-password"], button[type="submit"]
+ * Repository: ${targetRepo}
+ * Story: ${storySummary}
+ * Mapped Locators: [data-testid="input-email"], [data-testid="input-password"], [data-testid="login-submit"]
  */
-test.describe('Automated Acceptance Test', () => {
-  test('execute user story flow', async ({ page }) => {
+test.describe('Automated Acceptance Test Suite', () => {
+  test('execute user story workflow', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('[data-testid="input-email"]', 'alex@acme.com');
+    await page.fill('[data-testid="input-email"]', 'alex@example.com');
     await page.fill('[data-testid="input-password"]', 'SuperSecretPass!');
-    await page.click('button[type="submit"]');
+    await page.click('[data-testid="login-submit"]');
     
     await expect(page).toHaveURL('/dashboard');
-    await expect(page.locator('[data-testid="dashboard-header"]')).toBeVisible();
+    await expect(page.locator('h1')).toContainText('Welcome');
   });
 });
 `);
@@ -428,21 +608,8 @@ test.describe('Automated Acceptance Test', () => {
             ECS Workers: 5 Healthy
           </div>
 
-          <div
-            style={{
-              width: '34px',
-              height: '34px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #6366F1 0%, #3B82F6 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 600,
-              fontSize: '0.85rem',
-            }}
-          >
-            QA
-          </div>
+          {/* Interactive User Avatar & Logout Popover Dropdown */}
+          <UserProfileDropdown />
         </div>
       </header>
 
@@ -684,9 +851,13 @@ test.describe('Automated Acceptance Test', () => {
                     <span style={{ fontSize: '0.85rem' }}>Scanned Components</span>
                     <Layers style={{ width: '20px', height: '20px', color: '#818CF8' }} />
                   </div>
-                  <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px' }}>142</div>
+                  <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px' }}>
+                    {scannedKbPages.reduce((sum, p) => sum + (p.components?.length || 0), 0)}
+                  </div>
                   <div style={{ fontSize: '0.75rem', color: '#34D399', marginTop: '4px' }}>
-                    ↑ 12 new components added
+                    {scannedKbPages.length > 0
+                      ? `${scannedKbPages.length} UI pages scanned`
+                      : 'No components scanned yet'}
                   </div>
                 </div>
 
@@ -701,9 +872,13 @@ test.describe('Automated Acceptance Test', () => {
                     <span style={{ fontSize: '0.85rem' }}>Indexed AST Locators</span>
                     <Code2 style={{ width: '20px', height: '20px', color: '#C084FC' }} />
                   </div>
-                  <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px' }}>584</div>
+                  <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px' }}>
+                    {scannedLocators.length}
+                  </div>
                   <div style={{ fontSize: '0.75rem', color: '#C084FC', marginTop: '4px' }}>
-                    Indexed in PostgreSQL pgvector
+                    {scannedLocators.length > 0
+                      ? 'Indexed in AST Knowledge Base'
+                      : 'Connect a repo to index locators'}
                   </div>
                 </div>
 
@@ -718,9 +893,11 @@ test.describe('Automated Acceptance Test', () => {
                     <span style={{ fontSize: '0.85rem' }}>Playwright Tests</span>
                     <FileCode style={{ width: '20px', height: '20px', color: '#34D399' }} />
                   </div>
-                  <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px' }}>48</div>
+                  <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px' }}>
+                    {codeOutput ? 1 : 0}
+                  </div>
                   <div style={{ fontSize: '0.75rem', color: '#34D399', marginTop: '4px' }}>
-                    100% production ready
+                    {codeOutput ? '100% executable Playwright test code' : '0 test suites generated'}
                   </div>
                 </div>
 
@@ -735,9 +912,13 @@ test.describe('Automated Acceptance Test', () => {
                     <span style={{ fontSize: '0.85rem' }}>Automated Coverage</span>
                     <Zap style={{ width: '20px', height: '20px', color: '#F59E0B' }} />
                   </div>
-                  <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px' }}>94.2%</div>
+                  <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px' }}>
+                    {scannedLocators.length > 0 ? (codeOutput ? '100%' : '50%') : '0%'}
+                  </div>
                   <div style={{ fontSize: '0.75rem', color: '#F59E0B', marginTop: '4px' }}>
-                    Target: 95% user stories
+                    {scannedLocators.length > 0
+                      ? 'Based on scanned locators & user stories'
+                      : 'No repository scanned'}
                   </div>
                 </div>
               </div>
@@ -757,6 +938,7 @@ test.describe('Automated Acceptance Test', () => {
                       Active Frontend Repositories
                     </h3>
                     <button
+                      onClick={() => setIsConnectModalOpen(true)}
                       style={{
                         background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
                         color: '#fff',
@@ -777,128 +959,124 @@ test.describe('Automated Acceptance Test', () => {
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div
-                      style={{
-                        background: 'rgba(30, 41, 59, 0.5)',
-                        border: '1px solid var(--border-card)',
-                        borderRadius: '8px',
-                        padding: '14px 18px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontWeight: 600,
-                            fontSize: '0.95rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                          }}
-                        >
-                          acme-inc / frontend-app
-                          <span
-                            style={{
-                              fontSize: '0.7rem',
-                              background: 'rgba(16, 185, 129, 0.2)',
-                              color: '#34D399',
-                              padding: '2px 8px',
-                              borderRadius: '12px',
-                            }}
-                          >
-                            Active
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '0.8rem',
-                            color: 'var(--text-muted)',
-                            marginTop: '4px',
-                          }}
-                        >
-                          React 18 + Next.js App Router · 142 AST Components scanned
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setActiveTab('studio')}
+                    {scannedRepos.length === 0 ? (
+                      <div
                         style={{
-                          background: 'rgba(99, 102, 241, 0.15)',
-                          color: '#818CF8',
-                          border: '1px solid rgba(99, 102, 241, 0.3)',
-                          borderRadius: '6px',
-                          padding: '6px 12px',
-                          fontSize: '0.8rem',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
+                          textAlign: 'center',
+                          padding: '32px 20px',
+                          background: 'rgba(30, 41, 59, 0.3)',
+                          borderRadius: '8px',
+                          border: '1px dashed var(--border-card)',
                         }}
                       >
-                        Launch AI Studio <ChevronRight style={{ width: '14px', height: '14px' }} />
-                      </button>
-                    </div>
-
-                    <div
-                      style={{
-                        background: 'rgba(30, 41, 59, 0.5)',
-                        border: '1px solid var(--border-card)',
-                        borderRadius: '8px',
-                        padding: '14px 18px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <div>
-                        <div
+                        <GitBranch
                           style={{
-                            fontWeight: 600,
-                            fontSize: '0.95rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
+                            width: '32px',
+                            height: '32px',
+                            color: 'var(--text-muted)',
+                            marginBottom: '8px',
+                          }}
+                        />
+                        <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>
+                          No Active Repositories Connected
+                        </div>
+                        <p
+                          style={{
+                            color: 'var(--text-muted)',
+                            fontSize: '0.85rem',
+                            marginTop: '4px',
+                            maxWidth: '420px',
+                            margin: '4px auto 16px',
                           }}
                         >
-                          acme-inc / admin-portal
-                          <span
+                          Connect a frontend repository URL to run AST scan, extract locators, and generate Playwright test cases.
+                        </p>
+                        <button
+                          onClick={() => setIsConnectModalOpen(true)}
+                          style={{
+                            background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '6px',
+                            padding: '8px 16px',
+                            fontSize: '0.85rem',
+                            fontWeight: 500,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                          }}
+                        >
+                          <GitBranch style={{ width: '14px', height: '14px' }} /> Connect First Repo
+                        </button>
+                      </div>
+                    ) : (
+                      scannedRepos.map((repo) => (
+                        <div
+                          key={repo}
+                          style={{
+                            background: 'rgba(30, 41, 59, 0.5)',
+                            border: '1px solid var(--border-card)',
+                            borderRadius: '8px',
+                            padding: '14px 18px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <div>
+                            <div
+                              style={{
+                                fontWeight: 600,
+                                fontSize: '0.95rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                              }}
+                            >
+                              {repo}
+                              <span
+                                style={{
+                                  fontSize: '0.7rem',
+                                  background: 'rgba(16, 185, 129, 0.2)',
+                                  color: '#34D399',
+                                  padding: '2px 8px',
+                                  borderRadius: '12px',
+                                }}
+                              >
+                                Active
+                              </span>
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '0.8rem',
+                                color: 'var(--text-muted)',
+                                marginTop: '4px',
+                              }}
+                            >
+                              Frontend Repository · {scannedKbPages.reduce((sum, p) => sum + (p.components?.length || 0), 0)} AST Components scanned · {scannedLocators.length} Locators indexed
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => setActiveTab('studio')}
                             style={{
-                              fontSize: '0.7rem',
-                              background: 'rgba(99, 102, 241, 0.2)',
+                              background: 'rgba(99, 102, 241, 0.15)',
                               color: '#818CF8',
-                              padding: '2px 8px',
-                              borderRadius: '12px',
+                              border: '1px solid rgba(99, 102, 241, 0.3)',
+                              borderRadius: '6px',
+                              padding: '6px 12px',
+                              fontSize: '0.8rem',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
                             }}
                           >
-                            Indexed
-                          </span>
+                            Launch AI Studio <ChevronRight style={{ width: '14px', height: '14px' }} />
+                          </button>
                         </div>
-                        <div
-                          style={{
-                            fontSize: '0.8rem',
-                            color: 'var(--text-muted)',
-                            marginTop: '4px',
-                          }}
-                        >
-                          Vue 3 + Vite · 88 AST Components scanned
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setActiveTab('locators')}
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          color: 'var(--text-muted)',
-                          border: '1px solid var(--border-card)',
-                          borderRadius: '6px',
-                          padding: '6px 12px',
-                          fontSize: '0.8rem',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        View Locators
-                      </button>
-                    </div>
+                      ))
+                    )}
                   </div>
                 </div>
 
@@ -908,62 +1086,72 @@ test.describe('Automated Acceptance Test', () => {
                     BullMQ Queue Stream
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <CheckCircle2
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          color: '#10B981',
-                          marginTop: '2px',
-                        }}
-                      />
-                      <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>
-                          AST Scan Job Completed
+                    {scannedLocators.length > 0 ? (
+                      <>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                          <CheckCircle2
+                            style={{
+                              width: '16px',
+                              height: '16px',
+                              color: '#10B981',
+                              marginTop: '2px',
+                            }}
+                          />
+                          <div>
+                            <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>
+                              AST Scan Job Completed
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                              {scannedLocators.length} locators extracted & indexed
+                            </div>
+                          </div>
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          48 locators extracted in 3.4s
-                        </div>
-                      </div>
-                    </div>
 
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <CheckCircle2
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          color: '#10B981',
-                          marginTop: '2px',
-                        }}
-                      />
-                      <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>
-                          AI Playwright Codegen
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          `login.spec.ts` generated & validated
-                        </div>
-                      </div>
-                    </div>
+                        {codeOutput && (
+                          <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                            <CheckCircle2
+                              style={{
+                                width: '16px',
+                                height: '16px',
+                                color: '#10B981',
+                                marginTop: '2px',
+                              }}
+                            />
+                            <div>
+                              <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>
+                                AI Playwright Codegen
+                              </div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                Playwright test suite generated
+                              </div>
+                            </div>
+                          </div>
+                        )}
 
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                      <RefreshCw
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          color: '#818CF8',
-                          marginTop: '2px',
-                        }}
-                      />
-                      <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>
-                          pgvector Re-indexing
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                          <RefreshCw
+                            style={{
+                              width: '16px',
+                              height: '16px',
+                              color: '#818CF8',
+                              marginTop: '2px',
+                            }}
+                          />
+                          <div>
+                            <div style={{ fontSize: '0.85rem', fontWeight: 500 }}>
+                              pgvector Vector Indexing
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                              Locators indexed in PostgreSQL vector space
+                            </div>
+                          </div>
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          Embedding vector space updated
-                        </div>
+                      </>
+                    ) : (
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center', padding: '16px 0' }}>
+                        Queue Idle — Trigger a repository scan to see live BullMQ queue events.
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1158,7 +1346,7 @@ test.describe('Automated Acceptance Test', () => {
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {MOCK_KB_PAGES.length === 0 ? (
+                    {scannedKbPages.length === 0 ? (
                       <div
                         style={{
                           textAlign: 'center',
@@ -1182,206 +1370,210 @@ test.describe('Automated Acceptance Test', () => {
                         </div>
                       </div>
                     ) : (
-                      MOCK_KB_PAGES.map((pageNode) => {
-                      const isPageSelected = selectedPageId === pageNode.id;
-                      return (
-                        <div
-                          key={pageNode.id}
-                          style={{
-                            border: '1px solid var(--border-card)',
-                            borderRadius: '8px',
-                            overflow: 'hidden',
-                            background: 'rgba(30, 41, 59, 0.4)',
-                          }}
-                        >
-                          {/* Page Node Header */}
+                      scannedKbPages.map((pageNode) => {
+                        const isPageSelected = selectedPageId === pageNode.id;
+                        return (
                           <div
-                            onClick={() => {
-                              setSelectedPageId(pageNode.id);
-                              if (pageNode.components.length > 0) {
-                                setSelectedComponentId(pageNode.components[0]!.id);
-                                if (pageNode.components[0]!.elements.length > 0) {
-                                  setSelectedElementId(pageNode.components[0]!.elements[0]!.id);
-                                }
-                              }
-                            }}
+                            key={pageNode.id}
                             style={{
-                              padding: '10px 14px',
-                              background: isPageSelected
-                                ? 'rgba(99, 102, 241, 0.15)'
-                                : 'rgba(30, 41, 59, 0.6)',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
+                              border: '1px solid var(--border-card)',
+                              borderRadius: '8px',
+                              overflow: 'hidden',
+                              background: 'rgba(30, 41, 59, 0.4)',
                             }}
                           >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <FileText
-                                style={{ width: '16px', height: '16px', color: '#818CF8' }}
-                              />
-                              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                                {pageNode.route_path}
-                              </span>
-                              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                                ({pageNode.component_name})
+                            {/* Page Node Header */}
+                            <div
+                              onClick={() => {
+                                setSelectedPageId(pageNode.id);
+                                if (pageNode.components.length > 0) {
+                                  setSelectedComponentId(pageNode.components[0]!.id);
+                                  if (pageNode.components[0]!.elements.length > 0) {
+                                    setSelectedElementId(pageNode.components[0]!.elements[0]!.id);
+                                  }
+                                }
+                              }}
+                              style={{
+                                padding: '10px 14px',
+                                background: isPageSelected
+                                  ? 'rgba(99, 102, 241, 0.15)'
+                                  : 'rgba(30, 41, 59, 0.6)',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <FileText
+                                  style={{ width: '16px', height: '16px', color: '#818CF8' }}
+                                />
+                                <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                                  {pageNode.route_path}
+                                </span>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                  ({pageNode.component_name})
+                                </span>
+                              </div>
+                              <span
+                                style={{
+                                  fontSize: '0.75rem',
+                                  background: 'rgba(255,255,255,0.06)',
+                                  padding: '2px 8px',
+                                  borderRadius: '12px',
+                                }}
+                              >
+                                {pageNode.element_count} elements
                               </span>
                             </div>
-                            <span
-                              style={{
-                                fontSize: '0.75rem',
-                                background: 'rgba(255,255,255,0.06)',
-                                padding: '2px 8px',
-                                borderRadius: '12px',
-                              }}
-                            >
-                              {pageNode.element_count} elements
-                            </span>
-                          </div>
 
-                          {/* Components Under Page */}
-                          {isPageSelected && (
-                            <div
-                              style={{
-                                padding: '8px 12px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '8px',
-                              }}
-                            >
-                              {pageNode.components.map((compNode) => {
-                                const isCompSelected = selectedComponentId === compNode.id;
-                                return (
-                                  <div
-                                    key={compNode.id}
-                                    style={{
-                                      paddingLeft: '12px',
-                                      borderLeft: '2px solid rgba(99, 102, 241, 0.3)',
-                                    }}
-                                  >
+                            {/* Components Under Page */}
+                            {isPageSelected && (
+                              <div
+                                style={{
+                                  padding: '8px 12px',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  gap: '8px',
+                                }}
+                              >
+                                {pageNode.components.map((compNode) => {
+                                  const isCompSelected = selectedComponentId === compNode.id;
+                                  return (
                                     <div
-                                      onClick={() => {
-                                        setSelectedComponentId(compNode.id);
-                                        if (compNode.elements.length > 0) {
-                                          setSelectedElementId(compNode.elements[0]!.id);
-                                        }
-                                      }}
+                                      key={compNode.id}
                                       style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                        fontSize: '0.85rem',
-                                        fontWeight: 600,
-                                        color: isCompSelected ? '#C084FC' : 'var(--text-muted)',
-                                        cursor: 'pointer',
-                                        marginBottom: '6px',
+                                        paddingLeft: '12px',
+                                        borderLeft: '2px solid rgba(99, 102, 241, 0.3)',
                                       }}
                                     >
-                                      <Component
-                                        style={{ width: '14px', height: '14px', color: '#C084FC' }}
-                                      />
-                                      {compNode.name}
-                                    </div>
+                                      <div
+                                        onClick={() => {
+                                          setSelectedComponentId(compNode.id);
+                                          if (compNode.elements.length > 0) {
+                                            setSelectedElementId(compNode.elements[0]!.id);
+                                          }
+                                        }}
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          gap: '8px',
+                                          fontSize: '0.85rem',
+                                          fontWeight: 600,
+                                          color: isCompSelected ? '#C084FC' : 'var(--text-muted)',
+                                          cursor: 'pointer',
+                                          marginBottom: '6px',
+                                        }}
+                                      >
+                                        <Component
+                                          style={{
+                                            width: '14px',
+                                            height: '14px',
+                                            color: '#C084FC',
+                                          }}
+                                        />
+                                        {compNode.name}
+                                      </div>
 
-                                    {/* Elements Under Component with Stability Tier Badges (AC1) */}
-                                    <div
-                                      style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: '4px',
-                                        paddingLeft: '8px',
-                                      }}
-                                    >
-                                      {compNode.elements.map((elem) => {
-                                        const isElemSelected = selectedElementId === elem.id;
-                                        return (
-                                          <div
-                                            key={elem.id}
-                                            onClick={() => setSelectedElementId(elem.id)}
-                                            style={{
-                                              padding: '6px 10px',
-                                              borderRadius: '6px',
-                                              background: isElemSelected
-                                                ? 'rgba(52, 211, 153, 0.15)'
-                                                : 'rgba(255,255,255,0.02)',
-                                              border: isElemSelected
-                                                ? '1px solid rgba(52, 211, 153, 0.3)'
-                                                : '1px solid transparent',
-                                              cursor: 'pointer',
-                                              display: 'flex',
-                                              alignItems: 'center',
-                                              justifyContent: 'space-between',
-                                              fontSize: '0.8rem',
-                                            }}
-                                          >
+                                      {/* Elements Under Component with Stability Tier Badges (AC1) */}
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          flexDirection: 'column',
+                                          gap: '4px',
+                                          paddingLeft: '8px',
+                                        }}
+                                      >
+                                        {compNode.elements.map((elem) => {
+                                          const isElemSelected = selectedElementId === elem.id;
+                                          return (
                                             <div
+                                              key={elem.id}
+                                              onClick={() => setSelectedElementId(elem.id)}
                                               style={{
+                                                padding: '6px 10px',
+                                                borderRadius: '6px',
+                                                background: isElemSelected
+                                                  ? 'rgba(52, 211, 153, 0.15)'
+                                                  : 'rgba(255,255,255,0.02)',
+                                                border: isElemSelected
+                                                  ? '1px solid rgba(52, 211, 153, 0.3)'
+                                                  : '1px solid transparent',
+                                                cursor: 'pointer',
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                gap: '6px',
+                                                justifyContent: 'space-between',
+                                                fontSize: '0.8rem',
                                               }}
                                             >
-                                              <span
+                                              <div
                                                 style={{
-                                                  fontSize: '0.7rem',
-                                                  color: '#818CF8',
-                                                  fontWeight: 600,
+                                                  display: 'flex',
+                                                  alignItems: 'center',
+                                                  gap: '6px',
                                                 }}
                                               >
-                                                &lt;{elem.tag_name}&gt;
-                                              </span>
-                                              <span>{elem.text_content}</span>
-                                            </div>
+                                                <span
+                                                  style={{
+                                                    fontSize: '0.7rem',
+                                                    color: '#818CF8',
+                                                    fontWeight: 600,
+                                                  }}
+                                                >
+                                                  &lt;{elem.tag_name}&gt;
+                                                </span>
+                                                <span>{elem.text_content}</span>
+                                              </div>
 
-                                            {/* AC1: Color-Coded Stability Tier Badges */}
-                                            {elem.stability_tier === 'high' && (
-                                              <span
-                                                style={{
-                                                  fontSize: '0.65rem',
-                                                  background: 'rgba(16, 185, 129, 0.2)',
-                                                  color: '#34D399',
-                                                  border: '1px solid rgba(16, 185, 129, 0.3)',
-                                                  padding: '1px 6px',
-                                                  borderRadius: '10px',
-                                                  fontWeight: 600,
-                                                }}
-                                              >
-                                                High Tier
-                                              </span>
-                                            )}
-                                            {elem.stability_tier === 'medium' && (
-                                              <span
-                                                style={{
-                                                  fontSize: '0.65rem',
-                                                  background: 'rgba(245, 158, 11, 0.2)',
-                                                  color: '#FBBF24',
-                                                  border: '1px solid rgba(245, 158, 11, 0.3)',
-                                                  padding: '1px 6px',
-                                                  borderRadius: '10px',
-                                                  fontWeight: 600,
-                                                }}
-                                              >
-                                                Med Tier
-                                              </span>
-                                            )}
-                                            {elem.stability_tier === 'low' && (
-                                              <span
-                                                style={{
-                                                  fontSize: '0.65rem',
-                                                  background: 'rgba(244, 63, 94, 0.2)',
-                                                  color: '#FB7185',
-                                                  border: '1px solid rgba(244, 63, 94, 0.3)',
-                                                  padding: '1px 6px',
-                                                  borderRadius: '10px',
-                                                  fontWeight: 600,
-                                                }}
-                                              >
-                                                Low Tier
-                                              </span>
-                                            )}
-                                          </div>
-                                        );
-                                      })}
+                                              {/* AC1: Color-Coded Stability Tier Badges */}
+                                              {elem.stability_tier === 'high' && (
+                                                <span
+                                                  style={{
+                                                    fontSize: '0.65rem',
+                                                    background: 'rgba(16, 185, 129, 0.2)',
+                                                    color: '#34D399',
+                                                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                                                    padding: '1px 6px',
+                                                    borderRadius: '10px',
+                                                    fontWeight: 600,
+                                                  }}
+                                                >
+                                                  High Tier
+                                                </span>
+                                              )}
+                                              {elem.stability_tier === 'medium' && (
+                                                <span
+                                                  style={{
+                                                    fontSize: '0.65rem',
+                                                    background: 'rgba(245, 158, 11, 0.2)',
+                                                    color: '#FBBF24',
+                                                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                                                    padding: '1px 6px',
+                                                    borderRadius: '10px',
+                                                    fontWeight: 600,
+                                                  }}
+                                                >
+                                                  Med Tier
+                                                </span>
+                                              )}
+                                              {elem.stability_tier === 'low' && (
+                                                <span
+                                                  style={{
+                                                    fontSize: '0.65rem',
+                                                    background: 'rgba(244, 63, 94, 0.2)',
+                                                    color: '#FB7185',
+                                                    border: '1px solid rgba(244, 63, 94, 0.3)',
+                                                    padding: '1px 6px',
+                                                    borderRadius: '10px',
+                                                    fontWeight: 600,
+                                                  }}
+                                                >
+                                                  Low Tier
+                                                </span>
+                                              )}
+                                            </div>
+                                          );
+                                        })}
                                       </div>
                                     </div>
                                   );
@@ -1402,7 +1594,7 @@ test.describe('Automated Acceptance Test', () => {
                 >
                   {(() => {
                     let activeElem: KbElementDetail | null = null;
-                    for (const p of MOCK_KB_PAGES) {
+                    for (const p of scannedKbPages) {
                       for (const c of p.components) {
                         for (const e of c.elements) {
                           if (e.id === selectedElementId) {

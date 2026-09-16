@@ -234,7 +234,8 @@ Features grouped by product module. `[MVP]` = Phase 1; `[P2]` = Phase 2; `[P3]` 
 | 7 | Review Queue for low-confidence mappings | Quality gate; reduces flaky test reputation risk |
 | 8 | Playwright TypeScript + Page Object export | Industry-standard output; dev teams already use it |
 | 9 | ZIP + GitHub PR export | Fits existing workflows; no vendor runner required |
-| 10 | Org workspace (Admin/Member) | Minimum viable multi-user SaaS |
+| 10 | In-House Auth & Org workspace (Admin/Member) | Self-contained authentication engine (Argon2id + JWT + HttpOnly Cookies) eliminating third-party (Clerk) dependencies, with org tenancy |
+| 11 | Admin Panel & Subscription Engine | Dedicated `/admin` management dashboard for platform metrics, user/org administration, AI token monitoring, and multi-tier subscription quota enforcement |
 
 ### Must NOT Include in MVP
 
@@ -678,15 +679,26 @@ Step 10 MAINTAIN (P2+)
 
 **Expansion:** Enterprise QA orgs (100+ testers), agencies building for clients, platform teams governing test standards.
 
-### Monetization Ideas
+### Monetization & Admin Management Engine
 
-| Tier | Price | Includes |
-|------|-------|----------|
-| **Free** | $0 | 1 repo, 10 stories/mo, ZIP export only, community support |
-| **Starter** | $99/mo | 1 repo, 50 stories, GitHub PR export, 2 seats |
-| **Team** | $499/mo | 5 repos, 300 stories, review workflows, 5 seats |
-| **Business** | $1,499/mo | 20 repos, Jira import, crawler, 15 seats, priority support |
-| **Enterprise** | Custom | SSO, VPC, SLA, unlimited, professional services |
+#### Subscription Tier Structure & Quotas
+
+| Tier | Price | Monthly Scans | Monthly Story Gens | AI Token Limit | Seats | Features |
+|------|-------|---------------|-------------------|----------------|-------|----------|
+| **Free** | $0 | 5 scans | 10 stories | 500k tokens | 1 seat | ZIP export, community support |
+| **Starter** | $99/mo | 25 scans | 50 stories | 2.5M tokens | 3 seats | GitHub PR export, Playwright codegen |
+| **Team** | $499/mo | 100 scans | 300 stories | 15M tokens | 10 seats | Review queue workflows, priority queues |
+| **Business** | $1,499/mo | 500 scans | 1,500 stories | 75M tokens | 30 seats | Jira import, dry-run crawler, dedicated support |
+| **Enterprise** | Custom | Custom | Unlimited | Custom | Unlimited | Custom SLA, dedicated instance, audit logs |
+
+#### Admin Panel Capabilities (`/admin`)
+
+The platform features a dedicated Admin Panel accessible only by users with the `ADMIN` role:
+1. **Platform Metrics & Dashboard**: Real-time overview of ARR, tier distribution, total users, active organizations, monthly scan volumes, and queue health (BullMQ active/failed jobs).
+2. **User & Organization Management**: Search, inspect, suspend, or update roles for any registered user or organization. Ability to manually adjust organization quotas or grant trial extensions.
+3. **AI Token & Cost Monitoring**: Dashboard tracking OpenAI/Anthropic token consumption per tenant and endpoint, with anomaly alerts for sudden spikes.
+4. **Subscription Management**: Manage billing plan assignments, override features, and view subscription status.
+5. **System Audit Logs**: Complete security log capturing sensitive operations (role changes, data purges, quota overrides, admin logins).
 
 **Usage add-ons:**
 - Extra LLM generation credits ($0.50/story)  

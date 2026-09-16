@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { OrgSelector } from './OrgSelector';
+import { UserProfileDropdown } from './UserProfileDropdown';
 
 export type NavTab = 'repositories' | 'generate' | 'settings';
 
@@ -120,7 +121,7 @@ export const NavHeader: React.FC<NavHeaderProps> = ({
       </nav>
 
       {/* User Controls & Status */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
         <div
           style={{
             display: 'flex',
@@ -141,6 +142,9 @@ export const NavHeader: React.FC<NavHeaderProps> = ({
           />
           <span>System Healthy</span>
         </div>
+
+        {/* User Avatar & Logout Popover Dropdown */}
+        <UserProfileDropdown />
       </div>
     </header>
   );

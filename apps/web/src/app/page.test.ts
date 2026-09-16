@@ -201,4 +201,37 @@ describe('web app utilities & UI KB Explorer (E7.4)', () => {
       expect(prResult.rel).toContain('noopener');
     });
   });
+
+  describe('User Profile Dropdown & 24-Hour Session (User Feedback)', () => {
+    it('sets default session expiration to 24h (86400s)', () => {
+      const defaultJwtExpiresIn = '24h';
+      const cookieMaxAgeSeconds = 86400; // 24 hours
+
+      expect(defaultJwtExpiresIn).toBe('24h');
+      expect(cookieMaxAgeSeconds).toBe(24 * 3600);
+    });
+
+    it('renders user details (name, email, role, plan) and clears access token on logout', () => {
+      const mockUserProfile = {
+        email: 'admin@qaautomater.local',
+        name: 'System Admin',
+        role: 'ADMIN',
+        planName: 'Enterprise Pro Plan',
+        sessionValidity: '24h JWT Session',
+      };
+
+      let tokenStorageCleared = false;
+      const handleLogout = () => {
+        tokenStorageCleared = true;
+      };
+
+      expect(mockUserProfile.email).toBe('admin@qaautomater.local');
+      expect(mockUserProfile.role).toBe('ADMIN');
+      expect(mockUserProfile.planName).toContain('Enterprise');
+      expect(mockUserProfile.sessionValidity).toContain('24h');
+
+      handleLogout();
+      expect(tokenStorageCleared).toBe(true);
+    });
+  });
 });

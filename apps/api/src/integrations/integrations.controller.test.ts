@@ -16,12 +16,18 @@ describe('IntegrationsController', () => {
   });
 
   it('should return authorization URL when connectGitHub is called', async () => {
-    const res = await controller.connectGitHub('org_test');
+    const res = await controller.connectGitHub({}, 'org_test');
     expect(res.authorization_url).toContain('https://github.com/apps/');
+  });
+
+  it('should return status disconnected when no token exists', async () => {
+    const res = await controller.getStatus({}, 'org_test');
+    expect(res.connected).toBe(false);
   });
 
   it('should store token in SecretsManager when callback is processed', async () => {
     const res = await controller.handleCallback(
+      {},
       { code: 'code_xyz', installationId: 'inst_777' },
       'org_test',
     );
@@ -32,6 +38,10 @@ describe('IntegrationsController', () => {
     const storedSecret = await secretsManager.getInstallationToken('org_test');
     expect(storedSecret).not.toBeNull();
     expect(storedSecret?.installationId).toBe('inst_777');
+
+    const statusRes = await controller.getStatus({}, 'org_test');
+    expect(statusRes.connected).toBe(true);
+    expect(statusRes.installationId).toBe('inst_777');
   });
 
   it('should throw clear re-auth prompt on validateScanToken when token is expired', async () => {
@@ -42,7 +52,7 @@ describe('IntegrationsController', () => {
       new Date(Date.now() - 10000), // Expired
     );
 
-    await expect(controller.validateScanToken({}, 'org_test')).rejects.toThrow(
+    await expect(controller.validateScanToken({}, {}, 'org_test')).rejects.toThrow(
       'GitHub installation token has expired. Please re-authenticate your GitHub connection.',
     );
   });
@@ -55,7 +65,7 @@ describe('IntegrationsController', () => {
       new Date(Date.now() + 3600 * 1000),
     );
 
-    const res = await controller.listRepositories('1', '2', undefined, 'org_test');
+    const res = await controller.listRepositories({}, '1', '2', undefined, 'org_test');
     expect(res.repositories).toHaveLength(2);
     expect(res.total).toBe(3);
     expect(res.repositories[0]).toEqual(
@@ -67,7 +77,7 @@ describe('IntegrationsController', () => {
   });
 
   it('AC2: should throw ForbiddenException when listing repositories with missing token', async () => {
-    await expect(controller.listRepositories('1', '20', undefined, 'org_no_token')).rejects.toThrow(
+    await expect(controller.listRepositories({}, '1', '20', undefined, 'org_no_token')).rejects.toThrow(
       ForbiddenException,
     );
   });

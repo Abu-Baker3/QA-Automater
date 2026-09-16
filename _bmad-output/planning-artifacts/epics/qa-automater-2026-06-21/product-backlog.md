@@ -67,19 +67,19 @@ Unless a story specifies additional DoD items:
 
 ---
 
-## Epic E2: Authentication, Organizations & RBAC
+## Epic E2: In-House Authentication, Custom UI & RBAC
 
 | Field | Value |
 |-------|-------|
 | **Epic ID** | E2 |
 | **Priority** | Critical |
-| **Business Goal** | Secure multi-tenant access with Admin/Member roles |
-| **Description** | Clerk auth, org creation, invites, RBAC middleware, RLS |
-| **Business Value** | SaaS monetization prerequisite; tenant isolation |
+| **Business Goal** | Secure multi-tenant access with in-house Auth, custom login/signup UI, and RBAC |
+| **Description** | Argon2id password hashing, NestJS JWT access tokens + HttpOnly Refresh Cookies, custom Next.js Sign-In & Sign-Up pages, org creation, invites, RBAC middleware, RLS |
+| **Business Value** | Eliminates third-party auth dependencies; total data ownership & UI control; tenant isolation |
 | **Dependencies** | E1 |
-| **Assumptions** | Clerk for MVP auth |
-| **Risks** | Cross-tenant data leakage |
-| **Success Metrics** | Zero cross-tenant access in security test suite |
+| **Assumptions** | Self-contained NestJS AuthModule + Argon2id + JWT |
+| **Risks** | Password hashing performance, brute-force security, cross-tenant data leakage |
+| **Success Metrics** | Zero cross-tenant access; 100% test coverage on auth endpoints & guards |
 
 **Architecture alignment:** Security §10, API Auth flow
 
@@ -1301,10 +1301,11 @@ Unless a story specifies additional DoD items:
 ## Assumptions
 
 1. Confidence threshold fixed at **0.85** for MVP (PRD open question)
-2. **Clerk** for auth; **GitHub App** for repo access
-3. **One repo per org** initially (PRD MVP); E3.2 allows expansion
-4. **English-only** stories and UI
-5. Default export path **`tests/e2e/`**
+2. **In-House Custom Auth** (Argon2id + JWT + Refresh Cookies) replacing Clerk; **GitHub App** for repo access
+3. **Admin Panel & Subscription Quota Engine** managed via native `/admin` dashboard
+4. **One repo per org** initially (PRD MVP); E3.2 allows expansion
+5. **English-only** stories and UI
+6. Default export path **`tests/e2e/`**
 
 ---
 

@@ -1,11 +1,21 @@
 import { Module } from '@nestjs/common';
-import { ClerkAuthGuard } from './clerk-auth.guard';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
-import { WebhooksController } from './webhooks.controller';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { ClerkAuthGuard } from './clerk-auth.guard';
 
 @Module({
-  controllers: [WebhooksController],
-  providers: [ClerkAuthGuard, RolesGuard],
-  exports: [ClerkAuthGuard, RolesGuard],
+  imports: [
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET || 'qa_automater_jwt_secret_key_2026',
+      signOptions: { expiresIn: '24h' },
+    }),
+  ],
+  controllers: [AuthController],
+  providers: [AuthService, JwtAuthGuard, ClerkAuthGuard, RolesGuard],
+  exports: [AuthService, JwtAuthGuard, ClerkAuthGuard, RolesGuard],
 })
 export class AuthModule {}

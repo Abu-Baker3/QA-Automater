@@ -1,11 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface RepoConnectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConnectAndScan: (repoUrl: string, branchName: string) => void;
+}
+
+interface GitHubRepoItem {
+  id: string;
+  name: string;
+  full_name: string;
+  default_branch: string;
+  private: boolean;
+  html_url: string;
 }
 
 export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
@@ -16,15 +25,140 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
   const [repoUrlInput, setRepoUrlInput] = useState<string>('');
   const [branchInput, setBranchInput] = useState<string>('main');
   const [isGitHubConnected, setIsGitHubConnected] = useState<boolean>(false);
+  const [accountName, setAccountName] = useState<string>('@qa-admin');
+  const [accessibleRepos, setAccessibleRepos] = useState<GitHubRepoItem[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [isLoadingRepos, setIsLoadingRepos] = useState<boolean>(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const getAuthHeaders = () => {
+    let token = typeof window !== 'undefined' ? (localStorage.getItem('access_token') || '') : '';
+    if (!token && typeof document !== 'undefined') {
+      const match = document.cookie.match(/access_token=([^;]+)/);
+      if (match && match[1]) token = match[1];
+    }
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  };
+
+  const fetchStatus = async () => {
+    try {
+      const res = await fetch('http://localhost:3000/integrations/github/status', {
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setIsGitHubConnected(data.connected);
+        if (data.accountName) setAccountName(data.accountName);
+        if (data.connected) {
+          fetchAccessibleRepos();
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch GitHub status:', err);
+    }
+  };
+
+  const fetchAccessibleRepos = async () => {
+    setIsLoadingRepos(true);
+    try {
+      const res = await fetch('http://localhost:3000/integrations/github/repositories', {
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAccessibleRepos(data.repositories || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch repositories:', err);
+    } finally {
+      setIsLoadingRepos(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchStatus();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'GITHUB_OAUTH_SUCCESS') {
+        setIsGitHubConnected(true);
+        if (event.data?.payload?.installationId) {
+          setAccountName(`@github-org-${event.data.payload.installationId.slice(0, 8)}`);
+        }
+        fetchAccessibleRepos();
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (repoUrlInput.trim()) {
-      onConnectAndScan(repoUrlInput.trim(), branchInput.trim() || 'main');
+  const handleConnectGitHub = async () => {
+    try {
+      const res = await fetch('http://localhost:3000/integrations/github/connect', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        credentials: 'include',
+      });
+      let authUrl = '/integrations/github/callback';
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authorization_url && !data.authorization_url.includes('qa-automater-app')) {
+          authUrl = data.authorization_url;
+        }
+      }
+      
+      const width = 600;
+      const height = 700;
+      const left = window.screen.width / 2 - width / 2;
+      const top = window.screen.height / 2 - height / 2;
+
+      window.open(
+        authUrl,
+        'GitHub Authorization',
+        `width=${width},height=${height},top=${top},left=${left}`
+      );
+    } catch (err) {
+      console.error('Failed to initiate GitHub connect:', err);
+      // Fallback popup for local dev
+      window.open('/integrations/github/callback', 'GitHub Authorization', 'width=600,height=700');
     }
   };
+
+  const handleSelectRepo = (repo: GitHubRepoItem) => {
+    setRepoUrlInput(repo.full_name);
+    setBranchInput(repo.default_branch || 'main');
+    setIsDropdownOpen(false);
+    setValidationError(null);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!repoUrlInput.trim()) {
+      setValidationError('Please select or enter a repository name.');
+      return;
+    }
+    
+    onConnectAndScan(repoUrlInput.trim(), branchInput.trim() || 'main');
+  };
+
+  const filteredRepos = accessibleRepos.filter(
+    (repo) =>
+      repo.name.toLowerCase().includes(repoUrlInput.toLowerCase()) ||
+      repo.full_name.toLowerCase().includes(repoUrlInput.toLowerCase())
+  );
 
   return (
     <div
@@ -45,11 +179,12 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
         className="glass-panel"
         style={{
           width: '100%',
-          maxWidth: '520px',
+          maxWidth: '540px',
           padding: '1.75rem',
           background: 'rgba(15, 23, 42, 0.95)',
           borderRadius: '16px',
           boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
+          position: 'relative',
         }}
         data-testid="repo-connect-modal"
       >
@@ -84,7 +219,7 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
           </button>
         </div>
 
-        {/* GitHub Connection Status */}
+        {/* GitHub Connection Status Badge */}
         <div
           style={{
             display: 'flex',
@@ -105,34 +240,60 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
                 style={{
                   fontSize: '0.75rem',
                   color: isGitHubConnected ? '#34d399' : 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
                 }}
               >
-                {isGitHubConnected ? '● Connected as @qa-admin' : 'Not connected'}
+                {isGitHubConnected ? (
+                  <>
+                    <span style={{ color: '#34d399' }}>●</span> Connected as {accountName}
+                  </>
+                ) : (
+                  'Not connected'
+                )}
               </div>
             </div>
           </div>
-          {!isGitHubConnected && (
+          {!isGitHubConnected ? (
             <button
               type="button"
-              onClick={() => setIsGitHubConnected(true)}
+              onClick={handleConnectGitHub}
               style={{
-                padding: '0.35rem 0.75rem',
+                padding: '0.4rem 0.85rem',
                 borderRadius: '6px',
                 border: 'none',
-                background: '#6366f1',
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
                 color: '#fff',
                 fontSize: '0.8125rem',
                 fontWeight: 600,
                 cursor: 'pointer',
+                boxShadow: '0 2px 10px rgba(99, 102, 241, 0.3)',
               }}
             >
               Connect GitHub
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleConnectGitHub}
+              style={{
+                padding: '0.3rem 0.65rem',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#94a3b8',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+              }}
+            >
+              Re-connect
             </button>
           )}
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '1rem' }}>
+          <div style={{ marginBottom: '1rem', position: 'relative' }}>
             <label
               style={{
                 display: 'block',
@@ -146,14 +307,23 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
             <input
               type="text"
               value={repoUrlInput}
-              onChange={(e) => setRepoUrlInput(e.target.value)}
-              placeholder="e.g. acme-inc/web-app or https://github.com/..."
+              onChange={(e) => {
+                setRepoUrlInput(e.target.value);
+                setIsDropdownOpen(true);
+                setValidationError(null);
+              }}
+              onFocus={() => setIsDropdownOpen(true)}
+              placeholder={
+                isGitHubConnected
+                  ? 'Select or search accessible repository...'
+                  : 'Connect GitHub above or enter repo e.g. acme/web-app'
+              }
               style={{
                 width: '100%',
                 padding: '0.625rem 0.875rem',
                 borderRadius: '8px',
                 background: 'rgba(15, 23, 42, 0.8)',
-                border: '1px solid var(--border-card)',
+                border: validationError ? '1px solid #ef4444' : '1px solid var(--border-card)',
                 color: '#fff',
                 fontSize: '0.875rem',
                 outline: 'none',
@@ -161,7 +331,80 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
               data-testid="repo-url-input"
               required
             />
+
+            {/* Dropdown Repository List */}
+            {isDropdownOpen && isGitHubConnected && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  right: 0,
+                  marginTop: '4px',
+                  background: '#0f172a',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '8px',
+                  maxHeight: '200px',
+                  overflowY: 'auto',
+                  zIndex: 200,
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.8)',
+                }}
+              >
+                {isLoadingRepos ? (
+                  <div style={{ padding: '0.75rem', fontSize: '0.8125rem', color: '#94a3b8' }}>
+                    Loading repositories...
+                  </div>
+                ) : filteredRepos.length > 0 ? (
+                  filteredRepos.map((repo) => (
+                    <div
+                      key={repo.id}
+                      onClick={() => handleSelectRepo(repo)}
+                      style={{
+                        padding: '0.625rem 0.875rem',
+                        cursor: 'pointer',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99, 102, 241, 0.15)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <div>
+                        <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#f8fafc' }}>
+                          {repo.full_name}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                          Branch: {repo.default_branch}
+                        </div>
+                      </div>
+                      <span
+                        style={{
+                          fontSize: '0.7rem',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          background: repo.private ? 'rgba(239, 68, 68, 0.2)' : 'rgba(52, 211, 153, 0.2)',
+                          color: repo.private ? '#fca5a5' : '#6ee7b7',
+                        }}
+                      >
+                        {repo.private ? '🔒 Private' : '🌐 Public'}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ padding: '0.75rem', fontSize: '0.8125rem', color: '#94a3b8' }}>
+                    No matching repositories found.
+                  </div>
+                )}
+              </div>
+            )}
           </div>
+
+          {validationError && (
+            <div style={{ color: '#ef4444', fontSize: '0.75rem', marginBottom: '1rem' }}>
+              {validationError}
+            </div>
+          )}
 
           <div style={{ marginBottom: '1.5rem' }}>
             <label

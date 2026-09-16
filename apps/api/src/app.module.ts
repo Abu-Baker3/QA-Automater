@@ -15,6 +15,7 @@ import { ScansModule } from './scans/scans.module';
 import { StorageModule } from './storage/storage.module';
 import { StoriesModule } from './stories/stories.module';
 import { TestsModule } from './tests/tests.module';
+import { AdminController } from './admin/admin.controller';
 
 @Module({
   imports: [
@@ -33,6 +34,6 @@ import { TestsModule } from './tests/tests.module';
     LlmModule,
     RateLimitingModule,
   ],
-  controllers: [AppController, HealthController],
+  controllers: [AppController, HealthController, AdminController],
 })
 export class AppModule {}
