@@ -16,7 +16,7 @@ async function testMemberGitHubFlow() {
   const token = signupData.accessToken;
   const headers = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
+    Authorization: `Bearer ${token}`,
   };
 
   // 2. Check Connect URL as Member
@@ -57,7 +57,11 @@ async function testMemberGitHubFlow() {
     headers,
   });
   const reposData = await reposRes.json();
-  console.log('5. List Repositories (Member):', reposRes.status, `Repos count: ${reposData.repositories?.length}`);
+  console.log(
+    '5. List Repositories (Member):',
+    reposRes.status,
+    `Repos count: ${reposData.repositories?.length}`,
+  );
 
   console.log('--- MEMBER ROLE GITHUB INTEGRATION SUCCESSFUL! ---');
 }

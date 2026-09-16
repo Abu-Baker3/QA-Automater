@@ -26,7 +26,7 @@ function GitHubCallbackContent() {
 
   const completeOAuth = async (code: string, installationId: string) => {
     try {
-      let token = typeof window !== 'undefined' ? (localStorage.getItem('access_token') || '') : '';
+      let token = typeof window !== 'undefined' ? localStorage.getItem('access_token') || '' : '';
       if (!token && typeof document !== 'undefined') {
         const match = document.cookie.match(/access_token=([^;]+)/);
         if (match && match[1]) token = match[1];
@@ -34,13 +34,15 @@ function GitHubCallbackContent() {
 
       if (!token) {
         setIsError(true);
-        setStatusMessage('Authentication required: Please log in at /login before connecting GitHub.');
+        setStatusMessage(
+          'Authentication required: Please log in at /login before connecting GitHub.',
+        );
         return;
       }
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       };
 
       const res = await fetch('http://localhost:3000/integrations/github/callback', {
@@ -66,10 +68,7 @@ function GitHubCallbackContent() {
 
       // Post message to parent window if opened via popup
       if (window.opener) {
-        window.opener.postMessage(
-          { type: 'GITHUB_OAUTH_SUCCESS', payload: data },
-          '*'
-        );
+        window.opener.postMessage({ type: 'GITHUB_OAUTH_SUCCESS', payload: data }, '*');
         setTimeout(() => window.close(), 1200);
       } else {
         setTimeout(() => {
@@ -77,7 +76,8 @@ function GitHubCallbackContent() {
         }, 1500);
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to complete GitHub authorization';
+      const message =
+        err instanceof Error ? err.message : 'Failed to complete GitHub authorization';
       console.error('OAuth Callback Error:', err);
       setIsError(true);
       setStatusMessage(message);
@@ -106,13 +106,15 @@ function GitHubCallbackContent() {
           maxWidth: '420px',
         }}
       >
-        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>
-          {isError ? '⚠️' : '🐙'}
-        </div>
+        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>{isError ? '⚠️' : '🐙'}</div>
         <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>
           {isError ? 'Authorization Error' : 'Connecting to GitHub'}
         </h2>
-        <p style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: isError ? '1.25rem' : 0 }}>{statusMessage}</p>
+        <p
+          style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: isError ? '1.25rem' : 0 }}
+        >
+          {statusMessage}
+        </p>
         {isError && (
           <Link
             href="/login"
@@ -151,7 +153,9 @@ export default function GitHubCallbackPage() {
             fontFamily: 'system-ui, sans-serif',
           }}
         >
-          <p style={{ fontSize: '0.875rem', color: '#94a3b8' }}>Processing GitHub Authorization...</p>
+          <p style={{ fontSize: '0.875rem', color: '#94a3b8' }}>
+            Processing GitHub Authorization...
+          </p>
         </div>
       }
     >

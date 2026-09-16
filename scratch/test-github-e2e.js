@@ -21,7 +21,7 @@ async function request(url, options = {}) {
             resolve({ status: res.statusCode, headers: res.headers, body });
           }
         });
-      }
+      },
     );
     req.on('error', reject);
     if (options.body) {
@@ -82,7 +82,12 @@ async function runE2E() {
   const reposRes = await request('http://localhost:3000/integrations/github/repositories', {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log('Repositories Response Status:', reposRes.status, 'Total Repos:', reposRes.body.total);
+  console.log(
+    'Repositories Response Status:',
+    reposRes.status,
+    'Total Repos:',
+    reposRes.body.total,
+  );
   console.log('Sample Repo:', reposRes.body.repositories?.[0]);
 
   console.log('--- GITHUB INTEGRATION E2E TEST SUCCESSFUL ---');

@@ -8,7 +8,18 @@ import * as path from 'path';
 
 @Injectable()
 export class AuthService {
-  private devUsersMap = new Map<string, { id: string; email: string; passwordHash: string; firstName: string; lastName: string; role?: string; createdAt?: string }>();
+  private devUsersMap = new Map<
+    string,
+    {
+      id: string;
+      email: string;
+      passwordHash: string;
+      firstName: string;
+      lastName: string;
+      role?: string;
+      createdAt?: string;
+    }
+  >();
   private devUsersFilePath = path.join(process.cwd(), '.dev-users.json');
 
   constructor(
@@ -94,7 +105,9 @@ export class AuthService {
     // Also attempt persistent DB insertion
     try {
       await this.db.withClient(async (client) => {
-        const existing = await client.query('SELECT id FROM users WHERE LOWER(email) = LOWER($1)', [email]);
+        const existing = await client.query('SELECT id FROM users WHERE LOWER(email) = LOWER($1)', [
+          email,
+        ]);
         if (existing.rows.length > 0) {
           throw new ConflictException('User with this email already exists');
         }
@@ -128,9 +141,20 @@ export class AuthService {
 
   async login(dto: { email: string; password: string }) {
     const email = dto.email.toLowerCase().trim();
-    let userRecord: { id: string; email: string; passwordHash: string; firstName?: string; lastName?: string; role?: string; orgId?: string } | null = null;
+    let userRecord: {
+      id: string;
+      email: string;
+      passwordHash: string;
+      firstName?: string;
+      lastName?: string;
+      role?: string;
+      orgId?: string;
+    } | null = null;
 
-    if (email === 'admin@qaautomater.local' && (dto.password === 'AdminPassword123!' || dto.password === 'admin')) {
+    if (
+      email === 'admin@qaautomater.local' &&
+      (dto.password === 'AdminPassword123!' || dto.password === 'admin')
+    ) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(dto.password, salt);
       userRecord = {
@@ -169,8 +193,12 @@ export class AuthService {
           const role = email.includes('admin') ? 'ADMIN' : 'MEMBER';
           const localPart = email.split('@')[0] || 'dev';
           const nameParts = localPart.split('.');
-          const firstName = nameParts[0] ? nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1) : 'Dev';
-          const lastName = nameParts[1] ? nameParts[1].charAt(0).toUpperCase() + nameParts[1].slice(1) : 'User';
+          const firstName = nameParts[0]
+            ? nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1)
+            : 'Dev';
+          const lastName = nameParts[1]
+            ? nameParts[1].charAt(0).toUpperCase() + nameParts[1].slice(1)
+            : 'User';
 
           const newDevUser = {
             id: randomUUID(),
@@ -235,4 +263,3 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 }
-

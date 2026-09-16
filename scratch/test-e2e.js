@@ -21,7 +21,7 @@ async function request(url, options = {}) {
             resolve({ status: res.statusCode, headers: res.headers, body });
           }
         });
-      }
+      },
     );
     req.on('error', reject);
     if (options.body) {
@@ -60,7 +60,12 @@ async function runE2E() {
   const metricsRes = await request('http://localhost:3000/admin/metrics', {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log('Admin Metrics Status:', metricsRes.status, 'Total Users:', metricsRes.body.totalUsers);
+  console.log(
+    'Admin Metrics Status:',
+    metricsRes.status,
+    'Total Users:',
+    metricsRes.body.totalUsers,
+  );
 
   // 4. Admin Users Directory
   console.log('4. Testing /admin/users Directory...');

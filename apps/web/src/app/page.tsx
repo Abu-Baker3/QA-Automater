@@ -390,7 +390,9 @@ export default function DashboardPage() {
     setGenProgress(20);
 
     const targetRepo = selectedRepo || 'frontend-app';
-    const storySummary = userStoryText ? userStoryText.slice(0, 60) : 'User Login and Navigation Flow';
+    const storySummary = userStoryText
+      ? userStoryText.slice(0, 60)
+      : 'User Login and Navigation Flow';
 
     setTimeout(() => setGenProgress(50), 400);
     setTimeout(() => setGenProgress(80), 800);
@@ -897,7 +899,9 @@ test.describe('Automated Acceptance Test Suite', () => {
                     {codeOutput ? 1 : 0}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: '#34D399', marginTop: '4px' }}>
-                    {codeOutput ? '100% executable Playwright test code' : '0 test suites generated'}
+                    {codeOutput
+                      ? '100% executable Playwright test code'
+                      : '0 test suites generated'}
                   </div>
                 </div>
 
@@ -989,7 +993,8 @@ test.describe('Automated Acceptance Test Suite', () => {
                             margin: '4px auto 16px',
                           }}
                         >
-                          Connect a frontend repository URL to run AST scan, extract locators, and generate Playwright test cases.
+                          Connect a frontend repository URL to run AST scan, extract locators, and
+                          generate Playwright test cases.
                         </p>
                         <button
                           onClick={() => setIsConnectModalOpen(true)}
@@ -1054,7 +1059,12 @@ test.describe('Automated Acceptance Test Suite', () => {
                                 marginTop: '4px',
                               }}
                             >
-                              Frontend Repository · {scannedKbPages.reduce((sum, p) => sum + (p.components?.length || 0), 0)} AST Components scanned · {scannedLocators.length} Locators indexed
+                              Frontend Repository ·{' '}
+                              {scannedKbPages.reduce(
+                                (sum, p) => sum + (p.components?.length || 0),
+                                0,
+                              )}{' '}
+                              AST Components scanned · {scannedLocators.length} Locators indexed
                             </div>
                           </div>
                           <button
@@ -1072,7 +1082,8 @@ test.describe('Automated Acceptance Test Suite', () => {
                               gap: '6px',
                             }}
                           >
-                            Launch AI Studio <ChevronRight style={{ width: '14px', height: '14px' }} />
+                            Launch AI Studio{' '}
+                            <ChevronRight style={{ width: '14px', height: '14px' }} />
                           </button>
                         </div>
                       ))
@@ -1148,7 +1159,14 @@ test.describe('Automated Acceptance Test Suite', () => {
                         </div>
                       </>
                     ) : (
-                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center', padding: '16px 0' }}>
+                      <div
+                        style={{
+                          fontSize: '0.85rem',
+                          color: 'var(--text-muted)',
+                          textAlign: 'center',
+                          padding: '16px 0',
+                        }}
+                      >
                         Queue Idle — Trigger a repository scan to see live BullMQ queue events.
                       </div>
                     )}

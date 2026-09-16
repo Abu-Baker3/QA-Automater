@@ -32,7 +32,7 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const getAuthHeaders = () => {
-    let token = typeof window !== 'undefined' ? (localStorage.getItem('access_token') || '') : '';
+    let token = typeof window !== 'undefined' ? localStorage.getItem('access_token') || '' : '';
     if (!token && typeof document !== 'undefined') {
       const match = document.cookie.match(/access_token=([^;]+)/);
       if (match && match[1]) token = match[1];
@@ -119,7 +119,7 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
           authUrl = data.authorization_url;
         }
       }
-      
+
       const width = 600;
       const height = 700;
       const left = window.screen.width / 2 - width / 2;
@@ -128,7 +128,7 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
       window.open(
         authUrl,
         'GitHub Authorization',
-        `width=${width},height=${height},top=${top},left=${left}`
+        `width=${width},height=${height},top=${top},left=${left}`,
       );
     } catch (err) {
       console.error('Failed to initiate GitHub connect:', err);
@@ -150,14 +150,14 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
       setValidationError('Please select or enter a repository name.');
       return;
     }
-    
+
     onConnectAndScan(repoUrlInput.trim(), branchInput.trim() || 'main');
   };
 
   const filteredRepos = accessibleRepos.filter(
     (repo) =>
       repo.name.toLowerCase().includes(repoUrlInput.toLowerCase()) ||
-      repo.full_name.toLowerCase().includes(repoUrlInput.toLowerCase())
+      repo.full_name.toLowerCase().includes(repoUrlInput.toLowerCase()),
   );
 
   return (
@@ -367,7 +367,9 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
                         alignItems: 'center',
                         justifyContent: 'space-between',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99, 102, 241, 0.15)')}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = 'rgba(99, 102, 241, 0.15)')
+                      }
                       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
                       <div>
@@ -383,7 +385,9 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
                           fontSize: '0.7rem',
                           padding: '2px 6px',
                           borderRadius: '4px',
-                          background: repo.private ? 'rgba(239, 68, 68, 0.2)' : 'rgba(52, 211, 153, 0.2)',
+                          background: repo.private
+                            ? 'rgba(239, 68, 68, 0.2)'
+                            : 'rgba(52, 211, 153, 0.2)',
                           color: repo.private ? '#fca5a5' : '#6ee7b7',
                         }}
                       >

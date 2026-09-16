@@ -77,8 +77,8 @@ describe('IntegrationsController', () => {
   });
 
   it('AC2: should throw ForbiddenException when listing repositories with missing token', async () => {
-    await expect(controller.listRepositories({}, '1', '20', undefined, 'org_no_token')).rejects.toThrow(
-      ForbiddenException,
-    );
+    await expect(
+      controller.listRepositories({}, '1', '20', undefined, 'org_no_token'),
+    ).rejects.toThrow(ForbiddenException);
   });
 });

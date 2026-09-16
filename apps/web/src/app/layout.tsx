@@ -2,7 +2,8 @@ import './globals.css';
 
 export const metadata = {
   title: 'QA Automater — AI Test Generation Platform',
-  description: 'AI-Powered Playwright and Cypress test generation platform from frontend source code and user stories.',
+  description:
+    'AI-Powered Playwright and Cypress test generation platform from frontend source code and user stories.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

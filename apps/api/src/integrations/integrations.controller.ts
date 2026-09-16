@@ -89,4 +89,3 @@ export class IntegrationsController {
     return this.githubIntegrationService.listAccessibleRepositories(orgId, page, perPage, search);
   }
 }
-

@@ -26,7 +26,7 @@ export const UserProfileDropdown: React.FC = () => {
 
   useEffect(() => {
     try {
-      let token = typeof window !== 'undefined' ? (localStorage.getItem('access_token') || '') : '';
+      let token = typeof window !== 'undefined' ? localStorage.getItem('access_token') || '' : '';
       if (!token && typeof document !== 'undefined') {
         const match = document.cookie.match(/access_token=([^;]+)/);
         if (match && match[1]) token = match[1];
@@ -37,7 +37,8 @@ export const UserProfileDropdown: React.FC = () => {
         if (parts.length === 3 && parts[1]) {
           const payload = JSON.parse(atob(parts[1]));
           const email = payload.email || 'user@qaautomater.local';
-          const role = (payload.role || (email.includes('admin') ? 'ADMIN' : 'MEMBER')) as 'ADMIN' | 'MEMBER';
+          const role = (payload.role || (email.includes('admin') ? 'ADMIN' : 'MEMBER')) as
+            'ADMIN' | 'MEMBER';
           const orgId = payload.orgId || 'org_seed_admin';
 
           let name = email.split('@')[0] || 'User';
@@ -113,9 +114,10 @@ export const UserProfileDropdown: React.FC = () => {
             width: '30px',
             height: '30px',
             borderRadius: '50%',
-            background: profile.role === 'ADMIN'
-              ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-              : 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+            background:
+              profile.role === 'ADMIN'
+                ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
+                : 'linear-gradient(135deg, #3b82f6, #06b6d4)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -188,9 +190,10 @@ export const UserProfileDropdown: React.FC = () => {
                 width: '42px',
                 height: '42px',
                 borderRadius: '50%',
-                background: profile.role === 'ADMIN'
-                  ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-                  : 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+                background:
+                  profile.role === 'ADMIN'
+                    ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
+                    : 'linear-gradient(135deg, #3b82f6, #06b6d4)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -203,17 +206,41 @@ export const UserProfileDropdown: React.FC = () => {
               {getInitials(profile.name)}
             </div>
             <div style={{ overflow: 'hidden' }}>
-              <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#f8fafc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div
+                style={{
+                  fontSize: '0.9375rem',
+                  fontWeight: 700,
+                  color: '#f8fafc',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {profile.name}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  color: '#94a3b8',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {profile.email}
               </div>
             </div>
           </div>
 
           {/* Details & Badges Section */}
-          <div style={{ padding: '0.75rem 0', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div
+            style={{
+              padding: '0.75rem 0',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+            }}
+          >
             {/* Subscription Plan Badge */}
             <div
               style={{
@@ -250,7 +277,8 @@ export const UserProfileDropdown: React.FC = () => {
                   fontSize: '0.7rem',
                   padding: '2px 8px',
                   borderRadius: '4px',
-                  background: profile.role === 'ADMIN' ? 'rgba(234, 179, 8, 0.2)' : 'rgba(59, 130, 246, 0.2)',
+                  background:
+                    profile.role === 'ADMIN' ? 'rgba(234, 179, 8, 0.2)' : 'rgba(59, 130, 246, 0.2)',
                   color: profile.role === 'ADMIN' ? '#fde047' : '#93c5fd',
                   fontWeight: 600,
                 }}
@@ -279,7 +307,13 @@ export const UserProfileDropdown: React.FC = () => {
           </div>
 
           {/* Action Divider */}
-          <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.08)', margin: '0.25rem 0 0.75rem 0' }} />
+          <div
+            style={{
+              height: '1px',
+              background: 'rgba(255, 255, 255, 0.08)',
+              margin: '0.25rem 0 0.75rem 0',
+            }}
+          />
 
           {/* Logout Action Button */}
           <button
@@ -311,7 +345,14 @@ export const UserProfileDropdown: React.FC = () => {
             }}
             data-testid="logout-button"
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />

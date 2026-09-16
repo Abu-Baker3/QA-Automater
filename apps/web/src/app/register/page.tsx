@@ -75,7 +75,8 @@ export default function RegisterPage() {
             Join the Future of Code-Aware QA Engineering
           </h1>
           <p className="text-slate-300 text-base leading-relaxed">
-            Create your account to start scanning React/Next.js codebases, generating Page Objects, and exporting Playwright suites automatically.
+            Create your account to start scanning React/Next.js codebases, generating Page Objects,
+            and exporting Playwright suites automatically.
           </p>
 
           <div className="space-y-3 pt-4">
@@ -83,7 +84,9 @@ export default function RegisterPage() {
               <span className="text-xl">⚡</span>
               <div>
                 <p className="text-sm font-semibold text-white">Instant Setup</p>
-                <p className="text-xs text-slate-400">Zero vendor lock-in — own 100% of your generated test code</p>
+                <p className="text-xs text-slate-400">
+                  Zero vendor lock-in — own 100% of your generated test code
+                </p>
               </div>
             </div>
 
@@ -91,7 +94,9 @@ export default function RegisterPage() {
               <span className="text-xl">📊</span>
               <div>
                 <p className="text-sm font-semibold text-white">Role & Tenant Governance</p>
-                <p className="text-xs text-slate-400">Multi-tenant workspace isolation with role permission management</p>
+                <p className="text-xs text-slate-400">
+                  Multi-tenant workspace isolation with role permission management
+                </p>
               </div>
             </div>
           </div>

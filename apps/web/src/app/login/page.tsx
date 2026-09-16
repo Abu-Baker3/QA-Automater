@@ -82,7 +82,8 @@ export default function LoginPage() {
             AI-Powered Test Generation for React & Next.js
           </h1>
           <p className="text-slate-300 text-base leading-relaxed">
-            Connect your repository, statically analyze frontend components, and map plain-text user stories to production-ready Playwright specs.
+            Connect your repository, statically analyze frontend components, and map plain-text user
+            stories to production-ready Playwright specs.
           </p>
 
           <div className="space-y-3 pt-4">
@@ -90,7 +91,9 @@ export default function LoginPage() {
               <span className="text-xl">🎯</span>
               <div>
                 <p className="text-sm font-semibold text-white">Source-Native Locators</p>
-                <p className="text-xs text-slate-400">Ranks data-testid, ARIA roles, and JSX source lines</p>
+                <p className="text-xs text-slate-400">
+                  Ranks data-testid, ARIA roles, and JSX source lines
+                </p>
               </div>
             </div>
 
@@ -98,15 +101,21 @@ export default function LoginPage() {
               <span className="text-xl">✨</span>
               <div>
                 <p className="text-sm font-semibold text-white">Deterministic Playwright Codegen</p>
-                <p className="text-xs text-slate-400">Clean Page Object Model output exportable via ZIP or GitHub PR</p>
+                <p className="text-xs text-slate-400">
+                  Clean Page Object Model output exportable via ZIP or GitHub PR
+                </p>
               </div>
             </div>
 
             <div className="feature-pill">
               <span className="text-xl">🛡️</span>
               <div>
-                <p className="text-sm font-semibold text-white">Enterprise Role Control & Security</p>
-                <p className="text-xs text-slate-400">In-house authentication engine with Admin Panel oversight</p>
+                <p className="text-sm font-semibold text-white">
+                  Enterprise Role Control & Security
+                </p>
+                <p className="text-xs text-slate-400">
+                  In-house authentication engine with Admin Panel oversight
+                </p>
               </div>
             </div>
           </div>
@@ -121,7 +130,9 @@ export default function LoginPage() {
       <div className="auth-form-section">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-white tracking-tight">Sign In</h2>
-          <p className="text-sm text-slate-400 mt-2">Enter your account credentials to access your workspace</p>
+          <p className="text-sm text-slate-400 mt-2">
+            Enter your account credentials to access your workspace
+          </p>
         </div>
 
         {error && <div className="alert-error mb-6">{error}</div>}
@@ -143,7 +154,11 @@ export default function LoginPage() {
           <div>
             <div className="flex justify-between items-center mb-1">
               <label className="form-label mb-0">Password</label>
-              <button type="button" onClick={fillAdminDemo} className="text-xs text-indigo-400 hover:underline">
+              <button
+                type="button"
+                onClick={fillAdminDemo}
+                className="text-xs text-indigo-400 hover:underline"
+              >
                 Fill Admin Demo Credentials
               </button>
             </div>
