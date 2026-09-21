@@ -383,15 +383,15 @@ export class OrganizationsService {
       organizationId: invite.organizationId,
       organizationName,
       role: invite.role,
-      status: invite.status as any,
+      status: invite.status as 'PENDING' | 'ACCEPTED' | 'EXPIRED',
       expiresAt: invite.expiresAt,
     };
   }
 
   async acceptInviteWithSignup(
     token: string,
-    firstName: string,
-    lastName: string,
+    _firstName: string,
+    _lastName: string,
   ): Promise<{
     status: string;
     organizationId: string;

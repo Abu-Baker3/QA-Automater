@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { GitHubIntegrationService } from './github-integration.service';
 import { SecretsManagerService } from './secrets-manager.service';
-import { BadRequestException } from '@nestjs/common';
 
 describe('GitHubIntegrationService', () => {
   let githubService: GitHubIntegrationService;

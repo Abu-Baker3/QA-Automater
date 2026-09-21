@@ -57,7 +57,7 @@ export class OrganizationsController {
   @Put(':orgId/settings')
   @UseGuards(ClerkAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async updateSettings(@Param('orgId') orgId: string, @Body() dto: any) {
+  async updateSettings(@Param('orgId') orgId: string, @Body() dto: Record<string, unknown>) {
     return this.orgsService.updateWorkspaceSettings(orgId, dto);
   }
 
