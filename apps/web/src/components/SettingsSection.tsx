@@ -1,16 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-  Sliders,
-  Globe,
-  Eye,
-  EyeOff,
-  Bot,
-  Code2,
-  Save,
-  LogOut,
-} from 'lucide-react';
+import { Sliders, Globe, Eye, EyeOff, Bot, Code2, Save, LogOut } from 'lucide-react';
 
 interface SettingsData {
   workspaceName: string;
@@ -141,16 +132,51 @@ export function SettingsSection() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px',
+        maxWidth: '1000px',
+        margin: '0 auto',
+      }}
+    >
       {/* Page Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <h1
+            style={{
+              fontSize: '1.75rem',
+              fontWeight: 700,
+              margin: 0,
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
             <Sliders style={{ width: '24px', height: '24px', color: '#818CF8' }} />
             Workspace & Product Settings
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '4px', margin: 0 }}>
-            {loading ? 'Fetching active workspace settings...' : 'Configure target environments, GitHub AI models, locator conventions, and Playwright execution.'}
+          <p
+            style={{
+              color: 'var(--text-muted)',
+              fontSize: '0.875rem',
+              marginTop: '4px',
+              margin: 0,
+            }}
+          >
+            {loading
+              ? 'Fetching active workspace settings...'
+              : 'Configure target environments, GitHub AI models, locator conventions, and Playwright execution.'}
           </p>
         </div>
 
@@ -185,8 +211,20 @@ export function SettingsSection() {
 
       <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* CARD 1: GENERAL & TARGET ENVIRONMENT */}
-        <div className="glass-panel" style={{ padding: '24px', background: 'rgba(15, 23, 42, 0.85)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderBottom: '1px solid var(--border-card)', paddingBottom: '14px' }}>
+        <div
+          className="glass-panel"
+          style={{ padding: '24px', background: 'rgba(15, 23, 42, 0.85)' }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginBottom: '20px',
+              borderBottom: '1px solid var(--border-card)',
+              paddingBottom: '14px',
+            }}
+          >
             <Globe style={{ width: '20px', height: '20px', color: '#38bdf8' }} />
             <div>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>
@@ -198,7 +236,13 @@ export function SettingsSection() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '20px',
+            }}
+          >
             <div>
               <label className="form-label">Workspace Display Name</label>
               <input
@@ -221,7 +265,14 @@ export function SettingsSection() {
                 className="form-input"
                 placeholder="http://localhost:3000 or https://staging.com"
               />
-              <span style={{ fontSize: '0.725rem', color: 'var(--text-sub)', marginTop: '4px', display: 'block' }}>
+              <span
+                style={{
+                  fontSize: '0.725rem',
+                  color: 'var(--text-sub)',
+                  marginTop: '4px',
+                  display: 'block',
+                }}
+              >
                 Playwright scripts use this as the base URL for page.goto() navigation.
               </span>
             </div>
@@ -230,7 +281,12 @@ export function SettingsSection() {
               <label className="form-label">Default Playwright Browser</label>
               <select
                 value={settings.defaultBrowser}
-                onChange={(e) => setSettings({ ...settings, defaultBrowser: e.target.value as SettingsData['defaultBrowser'] })}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    defaultBrowser: e.target.value as SettingsData['defaultBrowser'],
+                  })
+                }
                 style={{
                   width: '100%',
                   padding: '0.85rem 1.15rem',
@@ -269,7 +325,9 @@ export function SettingsSection() {
                     <Eye style={{ width: '18px', height: '18px', color: '#34d399' }} />
                   )}
                   <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#ffffff' }}>
-                    {settings.headlessMode ? 'Headless Mode (Background)' : 'Visual Window Mode (Headful)'}
+                    {settings.headlessMode
+                      ? 'Headless Mode (Background)'
+                      : 'Visual Window Mode (Headful)'}
                   </span>
                 </div>
 
@@ -285,8 +343,20 @@ export function SettingsSection() {
         </div>
 
         {/* CARD 2: GITHUB & AI MODEL SETTINGS */}
-        <div className="glass-panel" style={{ padding: '24px', background: 'rgba(15, 23, 42, 0.85)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderBottom: '1px solid var(--border-card)', paddingBottom: '14px' }}>
+        <div
+          className="glass-panel"
+          style={{ padding: '24px', background: 'rgba(15, 23, 42, 0.85)' }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginBottom: '20px',
+              borderBottom: '1px solid var(--border-card)',
+              paddingBottom: '14px',
+            }}
+          >
             <Bot style={{ width: '20px', height: '20px', color: '#c084fc' }} />
             <div>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>
@@ -298,20 +368,45 @@ export function SettingsSection() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '20px',
+            }}
+          >
             {/* GitHub Account Identity */}
-            <div style={{ background: 'rgba(2, 6, 23, 0.5)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-card)' }}>
+            <div
+              style={{
+                background: 'rgba(2, 6, 23, 0.5)',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid var(--border-card)',
+              }}
+            >
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
                 GitHub Connected Account
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ fontSize: '1.2rem' }}>🐙</span>
                   <div>
                     <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.9rem' }}>
                       {isGitHubConnected ? connectedAccount : 'Not Connected'}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: isGitHubConnected ? '#34d399' : '#f43f5e' }}>
+                    <div
+                      style={{
+                        fontSize: '0.75rem',
+                        color: isGitHubConnected ? '#34d399' : '#f43f5e',
+                      }}
+                    >
                       {isGitHubConnected ? '● Active App Installation' : '● Disconnected'}
                     </div>
                   </div>
@@ -347,7 +442,9 @@ export function SettingsSection() {
               <label className="form-label">AI Test Generation Model</label>
               <select
                 value={settings.aiModel}
-                onChange={(e) => setSettings({ ...settings, aiModel: e.target.value as SettingsData['aiModel'] })}
+                onChange={(e) =>
+                  setSettings({ ...settings, aiModel: e.target.value as SettingsData['aiModel'] })
+                }
                 style={{
                   width: '100%',
                   padding: '0.85rem 1.15rem',
@@ -361,16 +458,36 @@ export function SettingsSection() {
                 <option value="gemini-1.5-flash">Gemini 1.5 Flash (Super Fast Scanning)</option>
                 <option value="gemini-1.5-pro">Gemini 1.5 Pro (Deep Code Reasoning)</option>
               </select>
-              <span style={{ fontSize: '0.725rem', color: 'var(--text-sub)', marginTop: '4px', display: 'block' }}>
-                Gemini Flash offers instant locator mapping; Gemini Pro writes complex multi-step Playwright scripts.
+              <span
+                style={{
+                  fontSize: '0.725rem',
+                  color: 'var(--text-sub)',
+                  marginTop: '4px',
+                  display: 'block',
+                }}
+              >
+                Gemini Flash offers instant locator mapping; Gemini Pro writes complex multi-step
+                Playwright scripts.
               </span>
             </div>
           </div>
         </div>
 
         {/* CARD 3: PLAYWRIGHT TEST PREFERENCES */}
-        <div className="glass-panel" style={{ padding: '24px', background: 'rgba(15, 23, 42, 0.85)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderBottom: '1px solid var(--border-card)', paddingBottom: '14px' }}>
+        <div
+          className="glass-panel"
+          style={{ padding: '24px', background: 'rgba(15, 23, 42, 0.85)' }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginBottom: '20px',
+              borderBottom: '1px solid var(--border-card)',
+              paddingBottom: '14px',
+            }}
+          >
             <Code2 style={{ width: '20px', height: '20px', color: '#10b981' }} />
             <div>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>
@@ -382,19 +499,35 @@ export function SettingsSection() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '20px',
+            }}
+          >
             <div>
               <label className="form-label">Primary Locator Attribute Name</label>
               <input
                 type="text"
                 required
                 value={settings.customTestIdAttribute}
-                onChange={(e) => setSettings({ ...settings, customTestIdAttribute: e.target.value })}
+                onChange={(e) =>
+                  setSettings({ ...settings, customTestIdAttribute: e.target.value })
+                }
                 className="form-input"
                 placeholder="e.g. data-testid, data-cy, data-qa"
               />
-              <span style={{ fontSize: '0.725rem', color: 'var(--text-sub)', marginTop: '4px', display: 'block' }}>
-                Locators scan will prioritize this attribute (e.g. page.getByTestId(&quot;submit-btn&quot;)).
+              <span
+                style={{
+                  fontSize: '0.725rem',
+                  color: 'var(--text-sub)',
+                  marginTop: '4px',
+                  display: 'block',
+                }}
+              >
+                Locators scan will prioritize this attribute (e.g.
+                page.getByTestId(&quot;submit-btn&quot;)).
               </span>
             </div>
 
@@ -402,7 +535,12 @@ export function SettingsSection() {
               <label className="form-label">Code Export Language Format</label>
               <select
                 value={settings.exportFormat}
-                onChange={(e) => setSettings({ ...settings, exportFormat: e.target.value as SettingsData['exportFormat'] })}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    exportFormat: e.target.value as SettingsData['exportFormat'],
+                  })
+                }
                 style={{
                   width: '100%',
                   padding: '0.85rem 1.15rem',

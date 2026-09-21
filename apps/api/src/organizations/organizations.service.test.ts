@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { ConflictException, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
 
 describe('OrganizationsService', () => {
@@ -83,4 +88,3 @@ describe('OrganizationsService', () => {
     );
   });
 });
-

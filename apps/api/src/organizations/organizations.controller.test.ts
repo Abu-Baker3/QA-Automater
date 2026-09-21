@@ -59,4 +59,3 @@ describe('OrganizationsController', () => {
     expect(acceptResult.role).toBe('MEMBER');
   });
 });
-

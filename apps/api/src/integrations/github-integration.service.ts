@@ -85,7 +85,9 @@ export class GitHubIntegrationService {
       ? tokenData.installationId.replace(/^inst_/, '')
       : 'qa-admin';
     const accountName = tokenData.username
-      ? (tokenData.username.startsWith('@') ? tokenData.username : `@${tokenData.username}`)
+      ? tokenData.username.startsWith('@')
+        ? tokenData.username
+        : `@${tokenData.username}`
       : `@github-org-${shortId.slice(0, 8)}`;
     return {
       connected: true,
@@ -124,22 +126,31 @@ export class GitHubIntegrationService {
   /**
    * Verify if a GitHub user or organization handle actually exists on github.com.
    */
-  async verifyGitHubAccountExists(username: string): Promise<{ exists: boolean; login?: string; avatarUrl?: string }> {
+  async verifyGitHubAccountExists(
+    username: string,
+  ): Promise<{ exists: boolean; login?: string; avatarUrl?: string }> {
     const cleanUsername = username.replace(/^@/, '').trim();
     if (!cleanUsername) {
       return { exists: false };
     }
     // Reserved / mock test handles bypass remote network call for unit tests
-    if (cleanUsername === 'qa-admin' || cleanUsername === 'octocat' || cleanUsername === 'mock-user') {
+    if (
+      cleanUsername === 'qa-admin' ||
+      cleanUsername === 'octocat' ||
+      cleanUsername === 'mock-user'
+    ) {
       return { exists: true, login: `@${cleanUsername}` };
     }
     try {
-      const response = await fetch(`https://api.github.com/users/${encodeURIComponent(cleanUsername)}`, {
-        headers: {
-          'User-Agent': 'QA-Automater-App',
-          Accept: 'application/vnd.github+json',
+      const response = await fetch(
+        `https://api.github.com/users/${encodeURIComponent(cleanUsername)}`,
+        {
+          headers: {
+            'User-Agent': 'QA-Automater-App',
+            Accept: 'application/vnd.github+json',
+          },
         },
-      });
+      );
 
       if (response.status === 404) {
         return { exists: false };
@@ -180,7 +191,11 @@ export class GitHubIntegrationService {
     const clientSecret = process.env.GITHUB_CLIENT_SECRET;
 
     let token = `gho_mock_installation_token_${Date.now()}`;
-    let effectiveUsername = username ? (username.startsWith('@') ? username : `@${username}`) : '@qa-admin';
+    let effectiveUsername = username
+      ? username.startsWith('@')
+        ? username
+        : `@${username}`
+      : '@qa-admin';
 
     // Perform real OAuth code exchange with GitHub if real client credentials exist
     if (code && clientId && clientSecret && !clientSecret.startsWith('XXXXX')) {
@@ -308,13 +323,16 @@ export class GitHubIntegrationService {
     // Attempt 1: Fetch user repositories using OAuth access token
     if (!isTestMode && tokenData.token && !tokenData.token.startsWith('gho_mock_')) {
       try {
-        const response = await fetch('https://api.github.com/user/repos?sort=updated&per_page=100', {
-          headers: {
-            Authorization: `Bearer ${tokenData.token}`,
-            'User-Agent': 'QA-Automater-App',
-            Accept: 'application/vnd.github+json',
+        const response = await fetch(
+          'https://api.github.com/user/repos?sort=updated&per_page=100',
+          {
+            headers: {
+              Authorization: `Bearer ${tokenData.token}`,
+              'User-Agent': 'QA-Automater-App',
+              Accept: 'application/vnd.github+json',
+            },
           },
-        });
+        );
 
         if (response.ok) {
           const rawList = (await response.json()) as Array<{

@@ -147,7 +147,6 @@ export class OrganizationsService {
     return updated;
   }
 
-
   async createOrganization(
     userId: string,
     name: string,
@@ -226,7 +225,10 @@ export class OrganizationsService {
     };
   }
 
-  async upgradeSubscription(orgId: string, tier: 'FREE' | 'PREMIUM'): Promise<{ status: string; tier: 'FREE' | 'PREMIUM' }> {
+  async upgradeSubscription(
+    orgId: string,
+    tier: 'FREE' | 'PREMIUM',
+  ): Promise<{ status: string; tier: 'FREE' | 'PREMIUM' }> {
     let org = this.organizations.get(orgId);
     if (!org) {
       org = {
@@ -439,5 +441,3 @@ export class OrganizationsService {
     return this.members.filter((mem) => mem.organizationId === orgId);
   }
 }
-
-

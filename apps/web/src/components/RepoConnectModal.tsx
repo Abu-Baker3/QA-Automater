@@ -136,7 +136,11 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
       );
     } catch (err) {
       console.error('Failed to initiate GitHub connect:', err);
-      window.open('/integrations/github/callback?mode=dev_oauth', 'GitHub Authorization', 'width=600,height=700');
+      window.open(
+        '/integrations/github/callback?mode=dev_oauth',
+        'GitHub Authorization',
+        'width=600,height=700',
+      );
     }
   };
 

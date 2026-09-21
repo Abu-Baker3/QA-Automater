@@ -44,7 +44,7 @@ export default function LoginPage() {
       window.location.href = finalTarget;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Login failed';
-      
+
       // If network error (backend offline in dev), log in seamlessly using dev tokens
       if (
         process.env.NODE_ENV !== 'production' &&

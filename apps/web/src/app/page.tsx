@@ -36,7 +36,8 @@ import {
   Sliders,
 } from 'lucide-react';
 
-type Tab = 'overview' | 'locators' | 'explorer' | 'studio' | 'review' | 'export' | 'settings' | 'teams';
+type Tab =
+  'overview' | 'locators' | 'explorer' | 'studio' | 'review' | 'export' | 'settings' | 'teams';
 
 interface LocatorItem {
   id: string;
@@ -615,7 +616,15 @@ test.describe('Automated Acceptance Test Suite', () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#070913', color: '#f8fafc' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        background: '#070913',
+        color: '#f8fafc',
+      }}
+    >
       {/* Top Navbar (Sally UX Clean Header) */}
       <header
         style={{
@@ -933,7 +942,15 @@ test.describe('Automated Acceptance Test Suite', () => {
         </aside>
 
         {/* Content Area */}
-        <main style={{ flex: 1, padding: '28px', overflowY: 'auto', background: '#070913', color: '#f8fafc' }}>
+        <main
+          style={{
+            flex: 1,
+            padding: '28px',
+            overflowY: 'auto',
+            background: '#070913',
+            color: '#f8fafc',
+          }}
+        >
           {/* TAB 8: TEAMS */}
           {activeTab === 'teams' && <TeamsSection />}
 

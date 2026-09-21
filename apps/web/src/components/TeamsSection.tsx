@@ -186,7 +186,15 @@ export function TeamsSection() {
   const isFree = summary.subscriptionTier === 'FREE';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px',
+        maxWidth: '1200px',
+        margin: '0 auto',
+      }}
+    >
       {/* Header & Status Banner */}
       <div
         className="glass-panel"
@@ -210,7 +218,9 @@ export function TeamsSection() {
           }}
         >
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}
+            >
               <h1 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>
                 {summary.name}
               </h1>
@@ -265,7 +275,8 @@ export function TeamsSection() {
                   padding: '10px 18px',
                   borderRadius: '10px',
                   border: '1px solid rgba(245, 158, 11, 0.5)',
-                  background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(139, 92, 246, 0.2))',
+                  background:
+                    'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(139, 92, 246, 0.2))',
                   color: '#FBBF24',
                   fontSize: '0.875rem',
                   fontWeight: 600,
@@ -327,9 +338,21 @@ export function TeamsSection() {
               Seats Used
             </div>
             <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ffffff' }}>
-              {summary.usedSeats} <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)', fontWeight: 400 }}>/ {summary.maxSeats}</span>
+              {summary.usedSeats}{' '}
+              <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)', fontWeight: 400 }}>
+                / {summary.maxSeats}
+              </span>
             </div>
-            <div style={{ width: '100%', background: 'rgba(255, 255, 255, 0.1)', height: '6px', borderRadius: '3px', marginTop: '8px', overflow: 'hidden' }}>
+            <div
+              style={{
+                width: '100%',
+                background: 'rgba(255, 255, 255, 0.1)',
+                height: '6px',
+                borderRadius: '3px',
+                marginTop: '8px',
+                overflow: 'hidden',
+              }}
+            >
               <div
                 style={{
                   height: '100%',
@@ -434,8 +457,12 @@ export function TeamsSection() {
                       {member.userId.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <div style={{ fontWeight: 600, color: '#ffffff' }}>User ({member.userId})</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{member.userId}</div>
+                      <div style={{ fontWeight: 600, color: '#ffffff' }}>
+                        User ({member.userId})
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        {member.userId}
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -488,7 +515,9 @@ export function TeamsSection() {
                 <tr key={invite.id}>
                   <td style={{ fontWeight: 600, color: '#ffffff' }}>{invite.email}</td>
                   <td>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{invite.role}</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      {invite.role}
+                    </span>
                   </td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -587,7 +616,9 @@ export function TeamsSection() {
               ×
             </button>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}
+            >
               <div
                 style={{
                   width: '40px',
@@ -613,7 +644,10 @@ export function TeamsSection() {
               </div>
             </div>
 
-            <form onSubmit={handleSendInvite} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <form
+              onSubmit={handleSendInvite}
+              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+            >
               <div>
                 <label className="form-label">Work Email Address</label>
                 <input
@@ -646,7 +680,15 @@ export function TeamsSection() {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  gap: '12px',
+                  marginTop: '8px',
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => setIsInviteModalOpen(false)}
@@ -714,7 +756,9 @@ export function TeamsSection() {
               ×
             </button>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}
+            >
               <div
                 style={{
                   width: '48px',
@@ -731,7 +775,15 @@ export function TeamsSection() {
                 <Crown style={{ width: '24px', height: '24px' }} />
               </div>
               <div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    color: '#fbbf24',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
                   Premium Feature
                 </span>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: '#ffffff' }}>
@@ -740,21 +792,65 @@ export function TeamsSection() {
               </div>
             </div>
 
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '20px' }}>
+            <p
+              style={{
+                fontSize: '0.875rem',
+                color: 'var(--text-muted)',
+                lineHeight: '1.6',
+                marginBottom: '20px',
+              }}
+            >
               Team members cannot be invited on the Standard (Free) plan. Upgrade your workspace to{' '}
-              <strong style={{ color: '#fbbf24' }}>Premium</strong> to invite up to 4 additional team members (5 total seats) and collaborate on shared locators, repos, and test scripts.
+              <strong style={{ color: '#fbbf24' }}>Premium</strong> to invite up to 4 additional
+              team members (5 total seats) and collaborate on shared locators, repos, and test
+              scripts.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: 'rgba(2, 6, 23, 0.6)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-card)', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.8rem', color: '#e2e8f0' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+                background: 'rgba(2, 6, 23, 0.6)',
+                padding: '16px',
+                borderRadius: '12px',
+                border: '1px solid var(--border-card)',
+                marginBottom: '24px',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.8rem',
+                  color: '#e2e8f0',
+                }}
+              >
                 <CheckCircle2 style={{ width: '16px', height: '16px', color: '#fbbf24' }} />
                 <span>Invite up to 4 Team Members (QA Leads, Developers, SQEs)</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.8rem', color: '#e2e8f0' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.8rem',
+                  color: '#e2e8f0',
+                }}
+              >
                 <CheckCircle2 style={{ width: '16px', height: '16px', color: '#fbbf24' }} />
                 <span>Shared Locators KB & Vector Codebase Index</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.8rem', color: '#e2e8f0' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '0.8rem',
+                  color: '#e2e8f0',
+                }}
+              >
                 <CheckCircle2 style={{ width: '16px', height: '16px', color: '#fbbf24' }} />
                 <span>Collaborative Playwright Code Export & Audit Logs</span>
               </div>
@@ -763,7 +859,9 @@ export function TeamsSection() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff' }}>$49</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>per month / 5 seats</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  per month / 5 seats
+                </div>
               </div>
 
               <button

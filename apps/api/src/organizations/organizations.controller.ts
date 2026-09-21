@@ -111,5 +111,3 @@ export class OrganizationsController {
     return this.orgsService.acceptInvite(userId, dto.token);
   }
 }
-
-

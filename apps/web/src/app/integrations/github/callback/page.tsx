@@ -79,7 +79,9 @@ function GitHubCallbackContent() {
       setIsDevMode(false);
       setIsError(false);
       setErrorMessage(null);
-      setStatusMessage(`Successfully authorized as ${data.username || usernameInput}! Closing window...`);
+      setStatusMessage(
+        `Successfully authorized as ${data.username || usernameInput}! Closing window...`,
+      );
 
       // Post message to parent window if opened via popup
       if (window.opener) {
@@ -133,21 +135,31 @@ function GitHubCallbackContent() {
         }}
       >
         <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>{isError ? '⚠️' : '🐙'}</div>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: '#ffffff' }}>
+        <h2
+          style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: '#ffffff' }}
+        >
           {isDevMode
             ? 'GitHub OAuth Authorization'
             : isError
-            ? 'Authorization Error'
-            : 'Connecting to GitHub'}
+              ? 'Authorization Error'
+              : 'Connecting to GitHub'}
         </h2>
         <p
-          style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: '1.25rem', margin: '0 0 1.25rem 0' }}
+          style={{
+            fontSize: '0.875rem',
+            color: '#94a3b8',
+            marginBottom: '1.25rem',
+            margin: '0 0 1.25rem 0',
+          }}
         >
           {statusMessage}
         </p>
 
         {isDevMode && !isError && (
-          <form onSubmit={handleDevAuthorize} style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
+          <form
+            onSubmit={handleDevAuthorize}
+            style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}
+          >
             <div
               style={{
                 background: 'rgba(99, 102, 241, 0.1)',
@@ -161,12 +173,23 @@ function GitHubCallbackContent() {
             >
               <strong>⚙️ Local Dev OAuth Simulator</strong>
               <div style={{ marginTop: '4px', color: '#94a3b8', fontSize: '0.7rem' }}>
-                In Production, clicking Connect GitHub opens <code>github.com/login/oauth/authorize</code> where GitHub authenticates your password & 2FA directly. Third-party apps never collect GitHub passwords.
+                In Production, clicking Connect GitHub opens{' '}
+                <code>github.com/login/oauth/authorize</code> where GitHub authenticates your
+                password & 2FA directly. Third-party apps never collect GitHub passwords.
               </div>
             </div>
 
             <div>
-              <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', display: 'block', marginBottom: '6px', textTransform: 'uppercase' }}>
+              <label
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  color: '#94a3b8',
+                  display: 'block',
+                  marginBottom: '6px',
+                  textTransform: 'uppercase',
+                }}
+              >
                 GitHub Username / Organization Handle
               </label>
               <input
@@ -183,7 +206,9 @@ function GitHubCallbackContent() {
                   padding: '0.85rem 1rem',
                   borderRadius: '8px',
                   background: '#020617',
-                  border: errorMessage ? '1px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.15)',
+                  border: errorMessage
+                    ? '1px solid #ef4444'
+                    : '1px solid rgba(255, 255, 255, 0.15)',
                   color: '#ffffff',
                   fontSize: '0.9rem',
                   outline: 'none',
@@ -223,7 +248,9 @@ function GitHubCallbackContent() {
                 boxShadow: '0 0 15px rgba(99, 102, 241, 0.4)',
               }}
             >
-              {isSubmitting ? 'Verifying & Authorizing...' : 'Authorize QA Automater & Connect Account'}
+              {isSubmitting
+                ? 'Verifying & Authorizing...'
+                : 'Authorize QA Automater & Connect Account'}
             </button>
           </form>
         )}

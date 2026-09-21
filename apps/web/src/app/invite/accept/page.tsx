@@ -2,14 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import {
-  Sparkles,
-  Users,
-  CheckCircle2,
-  AlertCircle,
-  ArrowRight,
-  Mail,
-} from 'lucide-react';
+import { Sparkles, Users, CheckCircle2, AlertCircle, ArrowRight, Mail } from 'lucide-react';
 
 function AcceptInviteContent() {
   const searchParams = useSearchParams();
@@ -42,7 +35,9 @@ function AcceptInviteContent() {
 
     const fetchDetails = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/v1/organizations/invites/details?token=${token}`);
+        const res = await fetch(
+          `http://localhost:3000/v1/organizations/invites/details?token=${token}`,
+        );
         if (!res.ok) {
           setErrorMsg('Invitation not found or expired.');
         } else {
@@ -144,9 +139,12 @@ function AcceptInviteContent() {
             <div className="w-12 h-12 rounded-full bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 mx-auto mb-3">
               <Users className="w-6 h-6" />
             </div>
-            <h2 className="text-lg font-bold text-white mb-1">Join {inviteDetails.organizationName}</h2>
+            <h2 className="text-lg font-bold text-white mb-1">
+              Join {inviteDetails.organizationName}
+            </h2>
             <p className="text-xs text-slate-400 mb-3">
-              You have been invited as a <strong className="text-purple-300">{inviteDetails.role}</strong>
+              You have been invited as a{' '}
+              <strong className="text-purple-300">{inviteDetails.role}</strong>
             </p>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-800 text-slate-300">
               <Mail className="w-3.5 h-3.5 text-slate-400" />
@@ -175,7 +173,9 @@ function AcceptInviteContent() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">First Name</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  First Name
+                </label>
                 <input
                   type="text"
                   required
@@ -199,7 +199,9 @@ function AcceptInviteContent() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Create Password</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
+                Create Password
+              </label>
               <input
                 type="password"
                 required
@@ -211,7 +213,9 @@ function AcceptInviteContent() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Confirm Password</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">
+                Confirm Password
+              </label>
               <input
                 type="password"
                 required
@@ -239,7 +243,13 @@ function AcceptInviteContent() {
 
 export default function AcceptInvitePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#090C15] flex items-center justify-center text-white">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#090C15] flex items-center justify-center text-white">
+          Loading...
+        </div>
+      }
+    >
       <AcceptInviteContent />
     </Suspense>
   );

@@ -11,7 +11,11 @@ describe('AuthService (Authentication & Security)', () => {
 
   beforeEach(() => {
     mockDbService = {
-      withClient: async (cb: (client: { query: (sql: string, params?: unknown[]) => Promise<{ rows: unknown[] }> }) => unknown) => {
+      withClient: async (
+        cb: (client: {
+          query: (sql: string, params?: unknown[]) => Promise<{ rows: unknown[] }>;
+        }) => unknown,
+      ) => {
         return cb({
           query: async () => ({ rows: [] }),
         });
