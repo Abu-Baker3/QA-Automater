@@ -21,7 +21,7 @@ export class JwtAuthGuard implements CanActivate {
         request.user = {
           userId: 'user_dev_fallback',
           email: 'dev@qaautomater.local',
-          orgId: 'org_seed_admin',
+          orgId: 'org_default',
           role: 'ADMIN',
         };
         return true;
@@ -41,6 +41,15 @@ export class JwtAuthGuard implements CanActivate {
       };
       return true;
     } catch (err: unknown) {
+      if (process.env.DEV_AUTH_BYPASS === 'true') {
+        request.user = {
+          userId: 'user_dev_fallback',
+          email: 'dev@qaautomater.local',
+          orgId: 'org_default',
+          role: 'ADMIN',
+        };
+        return true;
+      }
       const message = err instanceof Error ? err.message : 'Invalid token';
       throw new UnauthorizedException(`Unauthorized: ${message}`);
     }

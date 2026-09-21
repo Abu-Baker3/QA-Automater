@@ -5,6 +5,7 @@ export interface StoredToken {
   token: string;
   expiresAt: Date;
   installationId: string;
+  username?: string;
 }
 
 export interface EncryptedSecretPayload {
@@ -13,6 +14,7 @@ export interface EncryptedSecretPayload {
   authTag: string;
   expiresAt: string;
   installationId: string;
+  username?: string;
 }
 
 @Injectable()
@@ -61,6 +63,7 @@ export class SecretsManagerService {
     installationId: string,
     token: string,
     expiresAt: Date,
+    username?: string,
   ): Promise<void> {
     const secretKey = this.getSecretKey(orgId);
     const encrypted = this.encrypt(token);
@@ -71,6 +74,7 @@ export class SecretsManagerService {
       authTag: encrypted.authTag,
       expiresAt: expiresAt.toISOString(),
       installationId,
+      username,
     });
 
     this.logger.log(
@@ -85,6 +89,7 @@ export class SecretsManagerService {
     token: string;
     expiresAt: Date;
     installationId: string;
+    username?: string;
     isExpired: boolean;
   } | null> {
     const secretKey = this.getSecretKey(orgId);
@@ -102,6 +107,7 @@ export class SecretsManagerService {
       token,
       expiresAt,
       installationId: stored.installationId,
+      username: stored.username,
       isExpired,
     };
   }

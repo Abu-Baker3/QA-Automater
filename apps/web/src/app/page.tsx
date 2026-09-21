@@ -6,6 +6,8 @@ import { UserProfileDropdown } from '../components/UserProfileDropdown';
 import { RepoConnectModal } from '../components/RepoConnectModal';
 import { ScanProgressCard, ScanProgressState } from '../components/ScanProgressCard';
 import { TestGenerationWizard } from '../components/TestGenerationWizard';
+import { TeamsSection } from '../components/TeamsSection';
+import { SettingsSection } from '../components/SettingsSection';
 import { ExportActionsCard } from '../components/ExportActionsCard';
 import {
   Sparkles,
@@ -21,10 +23,6 @@ import {
   RefreshCw,
   Zap,
   Activity,
-  Server,
-  Database,
-  Cpu,
-  Terminal,
   ChevronRight,
   Bot,
   FolderTree,
@@ -34,10 +32,11 @@ import {
   AlertCircle,
   CheckSquare,
   ShieldCheck,
+  Users,
   Sliders,
 } from 'lucide-react';
 
-type Tab = 'overview' | 'locators' | 'explorer' | 'studio' | 'review' | 'export' | 'settings';
+type Tab = 'overview' | 'locators' | 'explorer' | 'studio' | 'review' | 'export' | 'settings' | 'teams';
 
 interface LocatorItem {
   id: string;
@@ -116,25 +115,213 @@ export interface UiReviewItem {
   human_verified: boolean;
 }
 
-const INITIAL_REVIEW_ITEMS: UiReviewItem[] = [];
+const DEFAULT_LOCATORS: LocatorItem[] = [
+  {
+    id: 'loc-1',
+    component: 'src/components/auth/LoginForm.tsx',
+    name: 'Email Input',
+    selector: '[data-testid="input-email"]',
+    type: 'data-testid',
+    confidence: '99%',
+    vectorIndexed: true,
+  },
+  {
+    id: 'loc-2',
+    component: 'src/components/auth/LoginForm.tsx',
+    name: 'Password Input',
+    selector: '[data-testid="input-password"]',
+    type: 'data-testid',
+    confidence: '99%',
+    vectorIndexed: true,
+  },
+  {
+    id: 'loc-3',
+    component: 'src/components/auth/LoginForm.tsx',
+    name: 'Submit Login Button',
+    selector: '[data-testid="login-submit"]',
+    type: 'data-testid',
+    confidence: '99%',
+    vectorIndexed: true,
+  },
+  {
+    id: 'loc-4',
+    component: 'src/components/cart/CartDrawer.tsx',
+    name: 'Checkout Button',
+    selector: 'button:has-text("Proceed to Checkout")',
+    type: 'aria',
+    confidence: '90%',
+    vectorIndexed: true,
+  },
+  {
+    id: 'loc-5',
+    component: 'src/components/checkout/PaymentForm.tsx',
+    name: 'Card Number Field',
+    selector: '[data-testid="card-number-input"]',
+    type: 'data-testid',
+    confidence: '99%',
+    vectorIndexed: true,
+  },
+];
+
+const DEFAULT_PAGES: KbPageNode[] = [
+  {
+    id: 'page-login-1',
+    route_path: '/login',
+    file_path: 'app/login/page.tsx',
+    component_name: 'LoginPage',
+    element_count: 3,
+    components: [
+      {
+        id: 'comp-login-form-1',
+        name: 'LoginForm',
+        file_path: 'components/auth/LoginForm.tsx',
+        elements: [
+          {
+            id: 'elem-email-1',
+            tag_name: 'input',
+            text_content: 'Email Address',
+            source_file: 'app/login/page.tsx',
+            source_line: 24,
+            source_ref: 'app/login/page.tsx:24',
+            stability_tier: 'high',
+            primary_candidate: {
+              strategy: 'testid',
+              value: 'input-email',
+              score: 0.99,
+              playwright_code: "page.getByTestId('input-email')",
+              rank: 1,
+              stability_tier: 'high',
+            },
+            candidates: [
+              {
+                strategy: 'testid',
+                value: 'input-email',
+                score: 0.99,
+                playwright_code: "page.getByTestId('input-email')",
+                rank: 1,
+                stability_tier: 'high',
+              },
+            ],
+          },
+          {
+            id: 'elem-pass-1',
+            tag_name: 'input',
+            text_content: 'Password',
+            source_file: 'app/login/page.tsx',
+            source_line: 35,
+            source_ref: 'app/login/page.tsx:35',
+            stability_tier: 'high',
+            primary_candidate: {
+              strategy: 'testid',
+              value: 'input-password',
+              score: 0.99,
+              playwright_code: "page.getByTestId('input-password')",
+              rank: 1,
+              stability_tier: 'high',
+            },
+            candidates: [
+              {
+                strategy: 'testid',
+                value: 'input-password',
+                score: 0.99,
+                playwright_code: "page.getByTestId('input-password')",
+                rank: 1,
+                stability_tier: 'high',
+              },
+            ],
+          },
+          {
+            id: 'elem-submit-1',
+            tag_name: 'button',
+            text_content: 'Sign In',
+            source_file: 'app/login/page.tsx',
+            source_line: 48,
+            source_ref: 'app/login/page.tsx:48',
+            stability_tier: 'high',
+            primary_candidate: {
+              strategy: 'testid',
+              value: 'login-submit',
+              score: 0.98,
+              playwright_code: "page.getByTestId('login-submit')",
+              rank: 1,
+              stability_tier: 'high',
+            },
+            candidates: [
+              {
+                strategy: 'testid',
+                value: 'login-submit',
+                score: 0.98,
+                playwright_code: "page.getByTestId('login-submit')",
+                rank: 1,
+                stability_tier: 'high',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const DEFAULT_REVIEW_ITEMS: UiReviewItem[] = [
+  {
+    step_id: 'step-review-1',
+    step_order: 1,
+    action: 'click',
+    target_description: 'Click Submit Login Button on acme/web-app',
+    confidence: 0.72,
+    element_id: 'elem-submit-1',
+    chosen_locator: {
+      strategy: 'css',
+      value: 'button.btn-primary',
+      score: 0.72,
+      playwright_code: "page.locator('button.btn-primary')",
+      rank: 2,
+      stability_tier: 'medium',
+    },
+    candidates: [
+      {
+        strategy: 'testid',
+        value: 'login-submit',
+        score: 0.98,
+        playwright_code: "page.getByTestId('login-submit')",
+        rank: 1,
+        stability_tier: 'high',
+      },
+      {
+        strategy: 'css',
+        value: 'button.btn-primary',
+        score: 0.72,
+        playwright_code: "page.locator('button.btn-primary')",
+        rank: 2,
+        stability_tier: 'medium',
+      },
+    ],
+    rationale: 'Sub-threshold confidence match (72%). Review candidate selectors.',
+    needs_review: true,
+    human_verified: false,
+  },
+];
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
-  const [selectedRepo, setSelectedRepo] = useState('');
-  const [scannedRepos, setScannedRepos] = useState<string[]>([]);
-  const [scannedLocators, setScannedLocators] = useState<LocatorItem[]>([]);
-  const [scannedKbPages, setScannedKbPages] = useState<KbPageNode[]>([]);
+  const [selectedRepo, setSelectedRepo] = useState('acme/web-app');
+  const [scannedRepos, setScannedRepos] = useState<string[]>(['acme/web-app']);
+  const [scannedLocators, setScannedLocators] = useState<LocatorItem[]>(DEFAULT_LOCATORS);
+  const [scannedKbPages, setScannedKbPages] = useState<KbPageNode[]>(DEFAULT_PAGES);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedPageId, setSelectedPageId] = useState<string>('');
-  const [selectedComponentId, setSelectedComponentId] = useState<string>('');
-  const [selectedElementId, setSelectedElementId] = useState<string>('');
-  const [userStoryText, setUserStoryText] = useState('');
+  const [selectedPageId, setSelectedPageId] = useState<string>('page-login-1');
+  const [selectedComponentId, setSelectedComponentId] = useState<string>('comp-login-form-1');
+  const [selectedElementId, setSelectedElementId] = useState<string>('elem-email-1');
+  const [userStoryText, setUserStoryText] = useState(
+    'As a user, I want to enter my email and password on the login page and click sign in so that I get authenticated and navigated to dashboard.',
+  );
   const [isGenerating, setIsGenerating] = useState(false);
   const [genProgress, setGenProgress] = useState(0);
   const [codeOutput, setCodeOutput] = useState(INITIAL_CODE);
   const [copied, setCopied] = useState(false);
-  const [reviewItems, setReviewItems] = useState<UiReviewItem[]>(INITIAL_REVIEW_ITEMS);
-  const [activePickerStepId, setActivePickerStepId] = useState<string | null>(null);
+  const [reviewItems, setReviewItems] = useState<UiReviewItem[]>(DEFAULT_REVIEW_ITEMS);
+  const [activePickerStepId, setActivePickerStepId] = useState<string | null>('step-review-1');
   const [customSelectorInput, setCustomSelectorInput] = useState<string>('');
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
   const [activeScanState, setActiveScanState] = useState<ScanProgressState | null>(null);
@@ -428,8 +615,8 @@ test.describe('Automated Acceptance Test Suite', () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Top Navbar */}
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#070913', color: '#f8fafc' }}>
+      {/* Top Navbar (Sally UX Clean Header) */}
       <header
         style={{
           height: '64px',
@@ -445,6 +632,7 @@ test.describe('Automated Acceptance Test Suite', () => {
           zIndex: 50,
         }}
       >
+        {/* Left: Brand Logo + Workspace Selector */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div
             style={{
@@ -472,9 +660,6 @@ test.describe('Automated Acceptance Test Suite', () => {
             <span className="gradient-text">QA Automater</span>
           </div>
 
-          {/* Story E13.1 AC1: Organization Selector */}
-          <OrgSelector />
-
           <div
             style={{
               height: '20px',
@@ -484,77 +669,22 @@ test.describe('Automated Acceptance Test Suite', () => {
             }}
           />
 
-          {/* Story E13.1 AC1: Navigation Links */}
-          <nav
-            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-            data-testid="nav-links"
-          >
-            <button
-              onClick={() => setActiveTab('locators')}
-              className={`nav-link ${activeTab === 'locators' || activeTab === 'explorer' ? 'active' : ''}`}
-              data-testid="nav-repositories"
-              style={{ border: 'none', background: 'transparent' }}
-            >
-              <GitBranch style={{ width: '16px', height: '16px' }} />
-              <span>Repositories</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('studio')}
-              className={`nav-link ${activeTab === 'studio' || activeTab === 'overview' ? 'active' : ''}`}
-              data-testid="nav-generate"
-              style={{ border: 'none', background: 'transparent' }}
-            >
-              <Sparkles style={{ width: '16px', height: '16px' }} />
-              <span>Generate</span>
-              <span className="nav-badge">AI</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`nav-link ${activeTab === 'settings' ? 'active' : ''}`}
-              data-testid="nav-settings"
-              style={{ border: 'none', background: 'transparent' }}
-            >
-              <Sliders style={{ width: '16px', height: '16px' }} />
-              <span>Settings</span>
-            </button>
-          </nav>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Repo:</span>
-            <select
-              value={selectedRepo}
-              onChange={(e) => setSelectedRepo(e.target.value)}
-              style={{
-                background: 'rgba(30, 41, 59, 0.6)',
-                color: '#fff',
-                border: '1px solid var(--border-card)',
-                borderRadius: '6px',
-                padding: '4px 10px',
-                fontSize: '0.85rem',
-                cursor: 'pointer',
-                outline: 'none',
-              }}
-            >
-              <option value="">-- Connect or Select Repository --</option>
-              {selectedRepo && <option value={selectedRepo}>{selectedRepo}</option>}
-            </select>
-          </div>
+          {/* Organization / Workspace Selector */}
+          <OrgSelector />
         </div>
 
+        {/* Right: + Connect Repo CTA + User Profile */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {/* Story E13.2 AC1: Guided Repo Connect Button */}
           <button
             type="button"
             onClick={() => setIsConnectModalOpen(true)}
             style={{
-              padding: '0.4rem 0.875rem',
+              padding: '0.5rem 1rem',
               borderRadius: '8px',
               border: 'none',
               background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
               color: '#ffffff',
-              fontSize: '0.8125rem',
+              fontSize: '0.85rem',
               fontWeight: 600,
               cursor: 'pointer',
               display: 'flex',
@@ -567,62 +697,20 @@ test.describe('Automated Acceptance Test Suite', () => {
             <span>+ Connect Repo</span>
           </button>
 
-          {/* Health Status Badges */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: 'rgba(16, 185, 129, 0.1)',
-              border: '1px solid rgba(16, 185, 129, 0.25)',
-              borderRadius: '20px',
-              padding: '4px 12px',
-              fontSize: '0.75rem',
-              color: '#34D399',
-            }}
-          >
-            <span
-              style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                background: '#10B981',
-                boxShadow: '0 0 8px #10B981',
-              }}
-            />
-            pgvector RAG: Connected
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: 'rgba(99, 102, 241, 0.1)',
-              border: '1px solid rgba(99, 102, 241, 0.25)',
-              borderRadius: '20px',
-              padding: '4px 12px',
-              fontSize: '0.75rem',
-              color: '#818CF8',
-            }}
-          >
-            <Cpu style={{ width: '12px', height: '12px' }} />
-            ECS Workers: 5 Healthy
-          </div>
-
-          {/* Interactive User Avatar & Logout Popover Dropdown */}
+          {/* User Avatar & Profile Dropdown */}
           <UserProfileDropdown />
         </div>
       </header>
 
       {/* Main Container */}
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={{ display: 'flex', flex: 1, background: '#070913' }}>
         {/* Sidebar Navigation */}
         <aside
           style={{
             width: '240px',
             borderRight: '1px solid var(--border-card)',
-            background: 'rgba(15, 23, 42, 0.4)',
+            background: 'rgba(15, 23, 42, 0.85)',
+            backdropFilter: 'blur(16px)',
             padding: '20px 12px',
             display: 'flex',
             flexDirection: 'column',
@@ -799,6 +887,28 @@ test.describe('Automated Acceptance Test Suite', () => {
           </button>
 
           <button
+            onClick={() => setActiveTab('teams')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              border: 'none',
+              background: activeTab === 'teams' ? 'rgba(168, 85, 247, 0.15)' : 'transparent',
+              color: activeTab === 'teams' ? '#C084FC' : 'var(--text-muted)',
+              fontSize: '0.9rem',
+              fontWeight: activeTab === 'teams' ? 600 : 400,
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.2s',
+            }}
+          >
+            <Users style={{ width: '18px', height: '18px' }} />
+            Teams & Members
+          </button>
+
+          <button
             onClick={() => setActiveTab('settings')}
             style={{
               display: 'flex',
@@ -817,13 +927,16 @@ test.describe('Automated Acceptance Test Suite', () => {
               marginTop: 'auto',
             }}
           >
-            <Server style={{ width: '18px', height: '18px' }} />
-            Infra & Ops
+            <Sliders style={{ width: '18px', height: '18px' }} />
+            Settings
           </button>
         </aside>
 
         {/* Content Area */}
-        <main style={{ flex: 1, padding: '28px', overflowY: 'auto' }}>
+        <main style={{ flex: 1, padding: '28px', overflowY: 'auto', background: '#070913', color: '#f8fafc' }}>
+          {/* TAB 8: TEAMS */}
+          {activeTab === 'teams' && <TeamsSection />}
+
           {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -2698,85 +2811,8 @@ test.describe('Automated Acceptance Test Suite', () => {
             </div>
           )}
 
-          {/* TAB 5: INFRASTRUCTURE & OPS */}
-          {activeTab === 'settings' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: 700 }}>
-                  Infrastructure & Operations Baseline
-                </h1>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
-                  Platform foundation telemetry, Docker containers, and OpenTelemetry distributed
-                  tracing
-                </p>
-              </div>
-
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                  gap: '16px',
-                }}
-              >
-                <div className="glass-panel" style={{ padding: '20px' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      marginBottom: '12px',
-                    }}
-                  >
-                    <Database style={{ color: '#34D399' }} />
-                    <h4 style={{ fontWeight: 600 }}>PostgreSQL 16 + pgvector</h4>
-                  </div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Direct Migrate Port: 5432 <br />
-                    PgBouncer Pool Port: 6432 (Transaction Mode) <br />
-                    Vector Dimension: 1536 (OpenAI Embeddings)
-                  </div>
-                </div>
-
-                <div className="glass-panel" style={{ padding: '20px' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      marginBottom: '12px',
-                    }}
-                  >
-                    <Server style={{ color: '#818CF8' }} />
-                    <h4 style={{ fontWeight: 600 }}>Redis & BullMQ Queues</h4>
-                  </div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Redis Host: localhost:6379 <br />
-                    Scan Queue (`scan-jobs`): Active <br />
-                    AI Queue (`ai-jobs`): Active
-                  </div>
-                </div>
-
-                <div className="glass-panel" style={{ padding: '20px' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      marginBottom: '12px',
-                    }}
-                  >
-                    <Terminal style={{ color: '#C084FC' }} />
-                    <h4 style={{ fontWeight: 600 }}>OpenTelemetry (E1.5)</h4>
-                  </div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Tracer: `qa-api` → `queue` → `workers` <br />
-                    Trace Provider: W3C Context Propagation <br />
-                    Metrics: Duration Histograms & Queue Counters
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* TAB 5: SETTINGS */}
+          {activeTab === 'settings' && <SettingsSection />}
 
           {/* Story E13.2 AC1 & AC2: Active Scan Progress Floating Card */}
           {activeScanState && (

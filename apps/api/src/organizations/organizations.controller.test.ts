@@ -23,8 +23,9 @@ describe('OrganizationsController', () => {
     expect(result.role).toBe('ADMIN');
   });
 
-  it('should allow Admin to invite member and list invites (AC1)', async () => {
+  it('should allow Admin to invite member on PREMIUM plan and list invites (AC1)', async () => {
     const org = await service.createOrganization('user_test', 'Stark Industries', 'stark-ind');
+    await service.upgradeSubscription(org.id, 'PREMIUM');
 
     const inviteResult = await controller.inviteMember(
       org.id,
@@ -43,6 +44,8 @@ describe('OrganizationsController', () => {
 
   it('should accept invite token for authenticated user (AC1)', async () => {
     const org = await service.createOrganization('user_test', 'Stark Industries', 'stark-ind');
+    await service.upgradeSubscription(org.id, 'PREMIUM');
+
     const invite = await service.inviteMember(org.id, 'user_test', 'rhodey@stark.com', 'MEMBER');
 
     const acceptResult = await controller.acceptInvite(
@@ -56,3 +59,4 @@ describe('OrganizationsController', () => {
     expect(acceptResult.role).toBe('MEMBER');
   });
 });
+

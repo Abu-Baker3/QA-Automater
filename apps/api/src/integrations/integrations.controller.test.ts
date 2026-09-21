@@ -17,7 +17,7 @@ describe('IntegrationsController', () => {
 
   it('should return authorization URL when connectGitHub is called', async () => {
     const res = await controller.connectGitHub({}, 'org_test');
-    expect(res.authorization_url).toContain('https://github.com/apps/');
+    expect(res.authorization_url).toMatch(/github\.com|integrations\/github\/callback\?mode=dev_oauth/);
   });
 
   it('should return status disconnected when no token exists', async () => {

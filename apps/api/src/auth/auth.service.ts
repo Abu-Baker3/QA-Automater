@@ -186,36 +186,6 @@ export class AuthService {
         const devUser = this.devUsersMap.get(email);
         if (devUser) {
           userRecord = { ...devUser, orgId: 'org_dev_default' };
-        } else {
-          // Dev mode auto-provision fallback so unpersisted dev users log in seamlessly
-          const salt = await bcrypt.genSalt(10);
-          const hash = await bcrypt.hash(dto.password, salt);
-          const role = email.includes('admin') ? 'ADMIN' : 'MEMBER';
-          const localPart = email.split('@')[0] || 'dev';
-          const nameParts = localPart.split('.');
-          const firstName = nameParts[0]
-            ? nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1)
-            : 'Dev';
-          const lastName = nameParts[1]
-            ? nameParts[1].charAt(0).toUpperCase() + nameParts[1].slice(1)
-            : 'User';
-
-          const newDevUser = {
-            id: randomUUID(),
-            email,
-            passwordHash: hash,
-            firstName,
-            lastName,
-            role,
-            createdAt: new Date().toISOString(),
-          };
-          this.devUsersMap.set(email, newDevUser);
-          this.saveDevUsers();
-
-          userRecord = {
-            ...newDevUser,
-            orgId: 'org_dev_default',
-          };
         }
       }
     }

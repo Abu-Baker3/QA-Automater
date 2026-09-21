@@ -87,13 +87,16 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
     if (isOpen) {
       fetchStatus();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'GITHUB_OAUTH_SUCCESS') {
         setIsGitHubConnected(true);
-        if (event.data?.payload?.installationId) {
+        if (event.data?.payload?.username) {
+          setAccountName(event.data.payload.username);
+        } else if (event.data?.payload?.installationId) {
           setAccountName(`@github-org-${event.data.payload.installationId.slice(0, 8)}`);
         }
         fetchAccessibleRepos();
@@ -101,6 +104,7 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
     };
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isOpen) return null;
@@ -112,10 +116,10 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
         headers: getAuthHeaders(),
         credentials: 'include',
       });
-      let authUrl = '/integrations/github/callback';
+      let authUrl = '/integrations/github/callback?mode=dev_oauth';
       if (res.ok) {
         const data = await res.json();
-        if (data.authorization_url && !data.authorization_url.includes('qa-automater-app')) {
+        if (data.authorization_url) {
           authUrl = data.authorization_url;
         }
       }
@@ -132,8 +136,7 @@ export const RepoConnectModal: React.FC<RepoConnectModalProps> = ({
       );
     } catch (err) {
       console.error('Failed to initiate GitHub connect:', err);
-      // Fallback popup for local dev
-      window.open('/integrations/github/callback', 'GitHub Authorization', 'width=600,height=700');
+      window.open('/integrations/github/callback?mode=dev_oauth', 'GitHub Authorization', 'width=600,height=700');
     }
   };
 

@@ -20,10 +20,586 @@
   {
     "id": "0cac8d22-78f1-410c-ad0d-1e7537fa00e3",
     "email": "contact1@dexsof.com",
-    "passwordHash": "$2a$10$aHefDsrjAjaCDEzOr9LIP.0oxBAUsi4KAh2fZeYJwBdfh8a5aeUvC",
+    "passwordHash": "$2a$10$iji3HHaEPZA/oHWCFdrm8uXPNsE9RFxYT6W6OzTsjKzGT5K0gkwH.",
     "firstName": "Abu",
     "lastName": "Baker",
     "role": "MEMBER",
     "createdAt": "2026-09-16T15:50:43.139Z"
+  },
+  {
+    "id": "2215f653-1401-44a0-a998-3657df0e4b9d",
+    "email": "testuser@qaautomater.local",
+    "passwordHash": "$2a$10$AJiGrL/RPF66Ran9GXgrPegEJlsRbwe.sb5fMbtYen8DI5kz2ZXfO",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T08:10:09.243Z"
+  },
+  {
+    "id": "6da12d01-8fd3-4474-a4d0-8c693a1e1c87",
+    "email": "testuser2@qaautomater.local",
+    "passwordHash": "$2a$10$zxU8YzOusr8PsgrEprEVee.g1cl12wtNuJKNOpHuBtwsdG1rD5RKW",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T08:10:10.172Z"
+  },
+  {
+    "id": "86dd14b1-52b1-483c-8842-92848970fd6b",
+    "email": "duplicate@qaautomater.local",
+    "passwordHash": "$2a$10$402ZtU22l7OnBBc6tmBiserw3EizoTSmEq//otqDiK.ogbUxPcb7W",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T08:10:10.779Z"
+  },
+  {
+    "id": "991343b1-1fd8-4fd8-a336-1cc2792decbd",
+    "email": "testuser_1789805583861_31ac20j@qaautomater.local",
+    "passwordHash": "$2a$10$21vx9DIQsoecoXJqL831ae512EAf6iHCHTUTtRKcZ4mPfUZMKy0hC",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T08:13:04.103Z"
+  },
+  {
+    "id": "55b9f337-9a2f-4882-9029-3725924ae52f",
+    "email": "testuser2_1789805584262_w5tvz@qaautomater.local",
+    "passwordHash": "$2a$10$i5a8nPagJA5z.F5yKwhOq.24yaX2YPIVOYf.p60t/jECKjA9PzsTa",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T08:13:04.399Z"
+  },
+  {
+    "id": "41009196-cc93-4ea8-90e4-3c095d96c62c",
+    "email": "duplicate_1789805584591_958gj8@qaautomater.local",
+    "passwordHash": "$2a$10$ETU222tpwf9SAZzRYKvqDeeoFwaLa64fZwYwS7dD2XdxksFhGz/9i",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T08:13:04.771Z"
+  },
+  {
+    "id": "5e7a96d0-47b0-4676-a2eb-7a3d6f10eb7a",
+    "email": "testuser_1789805646804_o6mw9@qaautomater.local",
+    "passwordHash": "$2a$10$fJlsW1fDzkmtjYWfiiVst.oryd/EAjtmt/41ib77BUu1RXIYW3vCC",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T08:14:06.988Z"
+  },
+  {
+    "id": "c5bc0266-6fbd-4074-8082-8e8b5fbeb1ad",
+    "email": "testuser2_1789805647200_tddqc@qaautomater.local",
+    "passwordHash": "$2a$10$dJsKWqgqxx2MmbRwPYhilOshWiVthcCgyMD4YZB0U3tNT1HJRVS9a",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T08:14:07.394Z"
+  },
+  {
+    "id": "e2dd10fd-39c1-41d1-b8fe-5df9647cb61a",
+    "email": "duplicate_1789805647735_jvifo@qaautomater.local",
+    "passwordHash": "$2a$10$1bQAW9ix1dsXuqdxHnoAA.MgnjS2Tp0.vMecQuB6OZ74/f1al3gjW",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T08:14:07.917Z"
+  },
+  {
+    "id": "c3867592-6bad-444e-ba03-e5b5a0c0c294",
+    "email": "user@company.com",
+    "passwordHash": "$2a$10$WphgbiSIPw0FKow3b2stkuXHwDGtDUDFZVxlstP.ExFkbo7t5psb6",
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T09:09:51.529Z"
+  },
+  {
+    "id": "913d6054-bc3c-4269-8832-f9757756b1b9",
+    "email": "contact2@dexsof.com",
+    "passwordHash": "$2a$10$2ARd0MCnJivl7vsisrIbVu3cQ4wlT7FRzxyzjwBBvNcDCHzjj61i2",
+    "firstName": "Abu",
+    "lastName": "Baker",
+    "role": "MEMBER",
+    "createdAt": "2026-09-19T09:19:18.141Z"
+  },
+  {
+    "id": "84aa4f43-8856-4efe-9d4e-77f6dad2861f",
+    "email": "testuser_1789899153158_57l6f8@qaautomater.local",
+    "passwordHash": "$2a$10$XTOhHfzAt821UpPezHZx5OEaBe7CpGWp1tv5wY.RJpp8UYOZyIpRi",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T10:12:33.421Z"
+  },
+  {
+    "id": "f75e16a3-4da0-4472-b6cd-95a455d6b5b3",
+    "email": "testuser2_1789899153765_mk3m5k@qaautomater.local",
+    "passwordHash": "$2a$10$2TGmxsXhimuWgFxNCdbdzuO/8zTo/hsldiMbMb5h3ioo2y1rM0JWu",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T10:12:34.003Z"
+  },
+  {
+    "id": "113c6ee3-d7d2-428c-b3d6-c69f92fe52f2",
+    "email": "duplicate_1789899154281_9e90z@qaautomater.local",
+    "passwordHash": "$2a$10$oK1KeRsWtbLu564ZV6NVxubc0iTtoE6u8/BmafAwNL7kXOAyv5RKy",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T10:12:34.537Z"
+  },
+  {
+    "id": "638f8a7b-bfd2-4eff-b7c3-1c6afe9f22c7",
+    "email": "testuser_1789899305218_jmc6js@qaautomater.local",
+    "passwordHash": "$2a$10$h8yKy7JBCGzN90LdtEtSqOhnCldsWTgmlFNZf764yxkLZJgbJtEta",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T10:15:05.457Z"
+  },
+  {
+    "id": "0387c82d-3306-4678-8d44-21059092e93a",
+    "email": "testuser2_1789899305727_ssuixm@qaautomater.local",
+    "passwordHash": "$2a$10$8LCKbTxqADSmlZUUPY/Lzu4IFM1CYGWpD8HWdHSHIpFDtufCTV/RS",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T10:15:05.963Z"
+  },
+  {
+    "id": "da74b5d0-f209-4a67-974f-89231dd7a950",
+    "email": "duplicate_1789899306210_arr7a@qaautomater.local",
+    "passwordHash": "$2a$10$hhmaXgAVYYALZrK8S80LPua7xLgMel9FIzG0j2bwIrf8DVaXIb/FK",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T10:15:06.435Z"
+  },
+  {
+    "id": "bf22e11f-c48c-4731-80ab-ae2ee79cd23a",
+    "email": "testuser_1789921029376_voy8z@qaautomater.local",
+    "passwordHash": "$2a$10$d062iRxfH8yHl1FVw/8sT.JaH7OeFnuHMhEDmICPN5ClPcGwpavve",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T16:17:09.633Z"
+  },
+  {
+    "id": "69ddba36-c9d7-4e42-8ac3-d7063a113f45",
+    "email": "testuser2_1789921029912_3pzdrh@qaautomater.local",
+    "passwordHash": "$2a$10$XZ5JX1CVZ37JYWNCRtrVlevTHQi2RSnTJRxhOgaXbQ3Dy1HhqSDFC",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T16:17:10.185Z"
+  },
+  {
+    "id": "b26ce06e-30c5-4606-a3a8-5a59a4362dce",
+    "email": "duplicate_1789921030471_w58s9@qaautomater.local",
+    "passwordHash": "$2a$10$iL2/n2LmSc0WA1gQCsn2Q.MszLI6UUBj/UocpVlrFZhoNBQjtDMR2",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T16:17:10.717Z"
+  },
+  {
+    "id": "b4a55da3-67fd-4024-843a-4ec2b37af2cd",
+    "email": "testuser_1789924292050_le68os@qaautomater.local",
+    "passwordHash": "$2a$10$gDF/fiWMtbzC3ItLfkhyqu90hVHnLTjap.f5F7hjHUwH45K8htvY6",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T17:11:32.578Z"
+  },
+  {
+    "id": "7255dc5b-4b99-4719-9c26-94238c84ad8f",
+    "email": "testuser2_1789924292943_i4gp3l@qaautomater.local",
+    "passwordHash": "$2a$10$mooRw/8/E0Fs0Ek1zjxPXeoAjhWCKJDJU7KelQ45d27xZhNjLSR7u",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T17:11:33.208Z"
+  },
+  {
+    "id": "e3fc2071-8ecb-4359-b065-1fa0bf1e79ea",
+    "email": "duplicate_1789924293508_omiuwb@qaautomater.local",
+    "passwordHash": "$2a$10$RHRWZNFk/Ap/YO7evIohG.A7ECOSLAD3SCRFPoxsdEQLmNu9kukUW",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-20T17:11:33.769Z"
+  },
+  {
+    "id": "13b755d8-59d8-4c60-8de3-6a28a80ec01a",
+    "email": "testuser_1789974688730_hhcwud@qaautomater.local",
+    "passwordHash": "$2a$10$M3kYCk9lRe/KlS2gYcoczu786zWwannYawx/oulvAQHjKHMYJm0ci",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T07:11:28.935Z"
+  },
+  {
+    "id": "e0b08f02-8a60-4888-a7d0-e984b0613ebf",
+    "email": "testuser2_1789974689162_r76cgi@qaautomater.local",
+    "passwordHash": "$2a$10$VOHKwqfHgxVbKhhs57UgFeCfTMNjwo.96v0Ks1qIUa4z6eX/uGTlK",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T07:11:29.341Z"
+  },
+  {
+    "id": "ceb8d159-38ff-4d58-ae62-9660aeb66d4d",
+    "email": "duplicate_1789974689574_3wd4v7@qaautomater.local",
+    "passwordHash": "$2a$10$RZS/K2lkb3XjeEEVzr/UDezyhn0Xb7Lr46NNj5KsyOGpDWBzLFdFS",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T07:11:29.792Z"
+  },
+  {
+    "id": "f621d540-4cdc-4d51-9ee6-98e399a91b76",
+    "email": "testuser_1789979136635_28e0pt@qaautomater.local",
+    "passwordHash": "$2a$10$Ht4oQE5Yo0xAdKIQ7t5m9.ov48Q5izucF79lmdTGT5kpUqlK1uWH.",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T08:25:37.026Z"
+  },
+  {
+    "id": "11d6cfec-2139-4940-9a90-03fbe2285a7e",
+    "email": "testuser2_1789979137549_67uiim@qaautomater.local",
+    "passwordHash": "$2a$10$gHBushdsinGpg/nZpa9G8OFUspk5LvJcBn7LvZdh0zoSVFK8Trbhu",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T08:25:37.876Z"
+  },
+  {
+    "id": "59713c7f-6a80-487c-9d36-3fa79b8b7038",
+    "email": "duplicate_1789979138311_foy6kj@qaautomater.local",
+    "passwordHash": "$2a$10$zsqeDRNc3BqLLxj33f0OnuchkbOBzLHczZYvemJHiK59UoytZMXMO",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T08:25:38.810Z"
+  },
+  {
+    "id": "fed9cc9c-e45d-4fc7-ab04-c683416f76ce",
+    "email": "testuser_1789982697649_o6i2m8@qaautomater.local",
+    "passwordHash": "$2a$10$SUZPzKP8lcmHf0d6vqaQCe1COMlzcHl/Mhgqd0AdLbXU847lAT1xa",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T09:24:57.921Z"
+  },
+  {
+    "id": "edf400d9-a6e6-4399-a70b-f4f933b5bcd7",
+    "email": "testuser2_1789982698257_m3h60tl@qaautomater.local",
+    "passwordHash": "$2a$10$OiQVZllm0cQznspGKyMfgunYdv6765TGnqD2/51rx8VilaK1UnHD2",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T09:24:58.553Z"
+  },
+  {
+    "id": "9c2e78ff-2817-473b-912b-52f7ed5d7230",
+    "email": "duplicate_1789982698819_4nqo6c@qaautomater.local",
+    "passwordHash": "$2a$10$NU2ghoiJb4i64umGqMYgTuul3CZa9tN9gm/0B6RtErB.HA9lAPE9G",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T09:24:59.074Z"
+  },
+  {
+    "id": "881ca534-d8ac-4d51-84f2-22d7514cb8a7",
+    "email": "testuser_1789982841844_r8suwq@qaautomater.local",
+    "passwordHash": "$2a$10$RKwzh8I0DQgKLN2QZxV74.SGD0mW12P8EU4/15oGtz1Hx9iqbfq3a",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T09:27:22.099Z"
+  },
+  {
+    "id": "445a6883-6571-42d6-b8f4-2fffb9e3a00f",
+    "email": "testuser2_1789982842381_arsxh@qaautomater.local",
+    "passwordHash": "$2a$10$LVjffPf/owB6Ha5W6tyWOO5j6bKyGtP5d.iDjsajMa4mtrYE.C/4a",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T09:27:22.609Z"
+  },
+  {
+    "id": "7a615184-bc0a-477d-bd36-919834ad4554",
+    "email": "duplicate_1789982842849_jy29rv@qaautomater.local",
+    "passwordHash": "$2a$10$LofQAoaRSGW6UQ8so9.C7uBDPPrSzAr5icpoMcNAwah4ULUYJVEwS",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T09:27:23.085Z"
+  },
+  {
+    "id": "b57a9c55-2626-46ae-80c9-b9e5840bb285",
+    "email": "testuser_1789984711158_k8t44m@qaautomater.local",
+    "passwordHash": "$2a$10$D5Ss19Adn2P6g/5XzwhKBebz/eXhq8eilWq4Cfkomczkoai/NC9b2",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T09:58:31.475Z"
+  },
+  {
+    "id": "d0aa79c0-aef5-4daa-935e-8730d6347cc6",
+    "email": "testuser2_1789984711911_n33sms@qaautomater.local",
+    "passwordHash": "$2a$10$joBtpZMfLrt9XA65uXJm2u0GweSdDsWqVeE5/NOo232xCzYZdkESS",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T09:58:32.278Z"
+  },
+  {
+    "id": "36bb22cf-ab6b-41f0-9f46-651d651416f5",
+    "email": "duplicate_1789984712612_dlp0w@qaautomater.local",
+    "passwordHash": "$2a$10$FtR8R7J2L9NoubXP1kD8EOLnSMw0kJbCJYn84lNXzVupyDeR2vlEu",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T09:58:32.872Z"
+  },
+  {
+    "id": "69b21a20-4335-485c-99a5-b2572d0c75b9",
+    "email": "testuser_1789984875860_pk2s@qaautomater.local",
+    "passwordHash": "$2a$10$m/eaTv/BIpbLqJGaDuIAE.FRxMGrbWX5pMvxBTcrlqrQlCVQNJS3S",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T10:01:16.165Z"
+  },
+  {
+    "id": "1e8f751c-3bce-44cc-ae67-92b731040f55",
+    "email": "testuser2_1789984876468_9zqdp@qaautomater.local",
+    "passwordHash": "$2a$10$Ea1ffVUoYzEJD49pbuYxbOccjFHQV27Eggjzxc28MoflCksdeaprm",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T10:01:16.702Z"
+  },
+  {
+    "id": "8b9aae89-3748-4ea3-84e2-0d38ba4b133f",
+    "email": "duplicate_1789984876977_0bn29e@qaautomater.local",
+    "passwordHash": "$2a$10$j4NNGIriqdxcdmky6/i1OO.1jY4YycKefee.JXIOsjcVpz7sm1ttG",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T10:01:17.198Z"
+  },
+  {
+    "id": "34753bb4-c1db-4660-8aab-21d7882de567",
+    "email": "testuser_1789985671398_jbl0m@qaautomater.local",
+    "passwordHash": "$2a$10$TJTLPIMzuv7v/oO5geFA6OL27edVReh7Bmtj.29nJ9SUYhWyp8YGS",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T10:14:31.529Z"
+  },
+  {
+    "id": "3d087fd5-af59-4d18-b78b-088b746b6efe",
+    "email": "testuser2_1789985671695_mc01r@qaautomater.local",
+    "passwordHash": "$2a$10$StD5UtsKJAUbhK8tblbLWeqpUexV3BqiqDBfst1PMVU0gO/9CCMGS",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T10:14:31.851Z"
+  },
+  {
+    "id": "3a3a16bf-0543-429f-b2b4-784b20b4dcfc",
+    "email": "duplicate_1789985671976_dp4576@qaautomater.local",
+    "passwordHash": "$2a$10$4sQOC/kCRjpDYijSklnrO.YwBkytXDBe4/7ayTYfVybAXefE73i.m",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T10:14:32.088Z"
+  },
+  {
+    "id": "466caa9d-e8c5-47e1-9d70-d649cab623b9",
+    "email": "testuser_1789987082939_vo944s@qaautomater.local",
+    "passwordHash": "$2a$10$BT9uZ6jhhBBSoPAk5v7Q0ObGxenVT0LZeepyLptjwACERCzatnwOq",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T10:38:03.139Z"
+  },
+  {
+    "id": "69fbb45a-5ee6-4aab-b51b-ac6461cfd8b8",
+    "email": "testuser2_1789987083369_4gsp36@qaautomater.local",
+    "passwordHash": "$2a$10$vI3hY5SH9uoR7ojgcmW0TO5pyJv1owBNSdSnTfixrbwjWXC44qzL6",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T10:38:03.552Z"
+  },
+  {
+    "id": "9fd93fc2-10fa-4303-ab12-0442394ebc30",
+    "email": "duplicate_1789987083780_gibtf6@qaautomater.local",
+    "passwordHash": "$2a$10$4xfj9wcaT84xG6Ph9CqizuZEsZd2bZDft2y3qaG4Fd5cLaQcVlOAe",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T10:38:03.997Z"
+  },
+  {
+    "id": "a8fc0bdc-1eff-45aa-a81b-f3edc3d9b605",
+    "email": "test_admin@qa.local",
+    "passwordHash": "$2a$10$Dl8qNdn53pi5yBA51fbp6OSni9EyF4LxJh4kKrP6fKmkQhJ7s9z3O",
+    "firstName": "Admin",
+    "lastName": "User",
+    "role": "ADMIN",
+    "createdAt": "2026-09-21T11:38:44.721Z"
+  },
+  {
+    "id": "a2385716-4fc7-454c-b87b-c66a07e42978",
+    "email": "testuser_1789990864024_c8bei@qaautomater.local",
+    "passwordHash": "$2a$10$BjDcwfk5CxOnSuDZ96MgieqTFnYDaZMfMP95HrOeo791hjS503mD.",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T11:41:04.323Z"
+  },
+  {
+    "id": "9bab6b43-883b-493f-9396-5a3bf965a4b1",
+    "email": "testuser2_1789990864647_k4tnoq@qaautomater.local",
+    "passwordHash": "$2a$10$I8sUBJ2eVBOEUo03m2UVD.pFIXkrQzq26IvBoNDOw1JTB8pTwIEPm",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T11:41:04.898Z"
+  },
+  {
+    "id": "b354e747-7cdf-4539-91a5-d3ebe8d550f7",
+    "email": "duplicate_1789990865155_mqc5ze@qaautomater.local",
+    "passwordHash": "$2a$10$P7.RezBeSlAhz1Ri7m/vu.7ECaCqAnTD3J93OJXd/aebn2MC5pxAC",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T11:41:05.415Z"
+  },
+  {
+    "id": "dab8baaf-d6d8-4e18-8e0e-68248c96ce05",
+    "email": "admin_test_oauth@qa.local",
+    "passwordHash": "$2a$10$g0qd9VpLNN16DhmNMKog8.cmcQsNujN0oI8QSLC6b5W4Rux5cFDAu",
+    "firstName": "OAuth",
+    "lastName": "Admin",
+    "role": "ADMIN",
+    "createdAt": "2026-09-21T11:45:57.550Z"
+  },
+  {
+    "id": "22e9a96e-e092-44c2-aff2-ca6c92f47846",
+    "email": "testuser_1789991712089_ozqfkk@qaautomater.local",
+    "passwordHash": "$2a$10$VXOD/zFNMCcjoGp/rMmYiOUcsnVdZMkWjDKa2wObKyC5gIvqZXb6K",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T11:55:12.327Z"
+  },
+  {
+    "id": "22e63ddf-7e94-461d-934f-a714d41a734b",
+    "email": "testuser2_1789991712586_hmgqj5@qaautomater.local",
+    "passwordHash": "$2a$10$H3kJ6rAFh5W05MTZRT/CP.5SUCfM6zL/424AinNNQJhD0hZMtJ/Ly",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T11:55:12.798Z"
+  },
+  {
+    "id": "be9cd803-c5e6-4629-85b9-314de1941f83",
+    "email": "duplicate_1789991713010_izvbdj@qaautomater.local",
+    "passwordHash": "$2a$10$dtlpFT4b2iDcS1zuhD1fA.VYiQucvFLsLgtsrTDZr7k3Qr1OT2JGC",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T11:55:13.217Z"
+  },
+  {
+    "id": "b5b5a021-9e22-4701-883a-57295c9220f6",
+    "email": "testuser_1789991852126_d8c49t@qaautomater.local",
+    "passwordHash": "$2a$10$3Z7pQHzzFrMPREoGu501ReecNNE4FlHGm2zlrMADwFjRq8eL0CphS",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T11:57:32.370Z"
+  },
+  {
+    "id": "5fddcdbd-3ba7-44d2-b2ed-a37532c9bdb7",
+    "email": "testuser2_1789991852655_93tog@qaautomater.local",
+    "passwordHash": "$2a$10$Mn2IiF3h1.htFHnr4m2xe.XEjos4zhGmJPrpFP.V.2pIzKoKoiVs6",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T11:57:32.903Z"
+  },
+  {
+    "id": "e623e9dd-e8d1-46b8-a79f-9f241dc84c72",
+    "email": "duplicate_1789991853197_06wsaa@qaautomater.local",
+    "passwordHash": "$2a$10$p7mu6oh5rQul/U2Sr83yvOmbnIdt4daqu4Iiwbse5MfjLPsBJOlRW",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T11:57:33.411Z"
+  },
+  {
+    "id": "fceb72f1-7916-4693-a4b0-840fa8aad971",
+    "email": "testuser_1789992023253_ymtmah@qaautomater.local",
+    "passwordHash": "$2a$10$iCtxPLAUkc0aOTkTYDahWeeXPE/FYzmQi8aW3NO5IBPCfdQxXcNza",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T12:00:23.511Z"
+  },
+  {
+    "id": "0b00f21d-1b22-421c-8680-fef7727bb689",
+    "email": "testuser2_1789992023752_ohs9cf@qaautomater.local",
+    "passwordHash": "$2a$10$KKApDL1BLoih1HoDxcrB1eF8Dv5fXyeTwNJncVLpn8cQHjqkPXqVi",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T12:00:24.001Z"
+  },
+  {
+    "id": "0c91ccce-f20a-44b6-972c-e78273d5a8f8",
+    "email": "duplicate_1789992024256_u6ef9t@qaautomater.local",
+    "passwordHash": "$2a$10$96O27dRlez6a0Qi88izBZuoX2l35a7QTf9ZetfDnVFvKsph1N556y",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T12:00:24.498Z"
+  },
+  {
+    "id": "9b01b910-b68b-4a12-82eb-6702620ba3b6",
+    "email": "testuser_1789993079633_peslh@qaautomater.local",
+    "passwordHash": "$2a$10$RTBXPWcf44RbzHfv4T5D7u7UWAIimbQuX4bwGHE2pybFmSiipmelq",
+    "firstName": "Test",
+    "lastName": "User",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T12:17:59.922Z"
+  },
+  {
+    "id": "e54bd8d7-e55c-45b9-8edf-1dee8601f668",
+    "email": "testuser2_1789993080182_00o3ak@qaautomater.local",
+    "passwordHash": "$2a$10$wKG1X7ElFqiibBRZmgDmietBEkfjufkIw5yjINQ2aIx1tTELdT/Ki",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T12:18:00.431Z"
+  },
+  {
+    "id": "d953c331-50d5-4078-95da-4e018a97bd63",
+    "email": "duplicate_1789993080713_z9gdhl@qaautomater.local",
+    "passwordHash": "$2a$10$LoC9y5SdjeEJVFTJWyzlFudtCsn/OsSw8/F4Hcqyd22wdhdpjrrZq",
+    "firstName": "",
+    "lastName": "",
+    "role": "MEMBER",
+    "createdAt": "2026-09-21T12:18:00.948Z"
   }
 ]

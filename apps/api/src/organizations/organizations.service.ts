@@ -3,6 +3,7 @@ import {
   ConflictException,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 
 export interface OrganizationRecord {
@@ -12,6 +13,7 @@ export interface OrganizationRecord {
   createdAt: Date;
   updatedAt: Date;
   role: 'ADMIN' | 'MEMBER';
+  subscriptionTier: 'FREE' | 'PREMIUM';
 }
 
 export interface OrganizationInviteRecord {
@@ -34,15 +36,117 @@ export interface OrganizationMemberRecord {
   createdAt: Date;
 }
 
+export interface WorkspaceSummary {
+  organizationId: string;
+  name: string;
+  subscriptionTier: 'FREE' | 'PREMIUM';
+  usedSeats: number;
+  maxSeats: number;
+  members: OrganizationMemberRecord[];
+  pendingInvites: OrganizationInviteRecord[];
+}
+
+export interface WorkspaceSettings {
+  workspaceName: string;
+  targetBaseUrl: string;
+  defaultBrowser: 'chromium' | 'firefox' | 'webkit';
+  headlessMode: boolean;
+  aiModel: 'gemini-1.5-flash' | 'gemini-1.5-pro';
+  customTestIdAttribute: string;
+  exportFormat: 'typescript' | 'javascript';
+}
+
 @Injectable()
 export class OrganizationsService {
   private organizations = new Map<
     string,
-    { id: string; name: string; slug: string; userId: string; role: 'ADMIN' }
+    {
+      id: string;
+      name: string;
+      slug: string;
+      userId: string;
+      role: 'ADMIN';
+      subscriptionTier: 'FREE' | 'PREMIUM';
+      createdAt: Date;
+      updatedAt: Date;
+    }
   >();
 
+  private settingsMap = new Map<string, WorkspaceSettings>();
   private invites = new Map<string, OrganizationInviteRecord>();
   private members: OrganizationMemberRecord[] = [];
+
+  constructor() {
+    // Initialize default demo workspace for easy development testing
+    const defaultOrgId = 'org_default';
+    this.organizations.set(defaultOrgId, {
+      id: defaultOrgId,
+      name: 'Default Workspace',
+      slug: 'default-workspace',
+      userId: 'user_admin',
+      role: 'ADMIN',
+      subscriptionTier: 'FREE',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    this.members.push({
+      id: 'mem_admin',
+      organizationId: defaultOrgId,
+      userId: 'user_admin',
+      role: 'ADMIN',
+      createdAt: new Date(),
+    });
+    this.settingsMap.set(defaultOrgId, {
+      workspaceName: 'Default Workspace',
+      targetBaseUrl: 'http://localhost:3000',
+      defaultBrowser: 'chromium',
+      headlessMode: true,
+      aiModel: 'gemini-1.5-flash',
+      customTestIdAttribute: 'data-testid',
+      exportFormat: 'typescript',
+    });
+  }
+
+  async getWorkspaceSettings(orgId: string): Promise<WorkspaceSettings> {
+    const existing = this.settingsMap.get(orgId);
+    if (existing) return existing;
+
+    const org = this.organizations.get(orgId);
+    const defaultSettings: WorkspaceSettings = {
+      workspaceName: org ? org.name : 'My Workspace',
+      targetBaseUrl: 'http://localhost:3000',
+      defaultBrowser: 'chromium',
+      headlessMode: true,
+      aiModel: 'gemini-1.5-flash',
+      customTestIdAttribute: 'data-testid',
+      exportFormat: 'typescript',
+    };
+
+    this.settingsMap.set(orgId, defaultSettings);
+    return defaultSettings;
+  }
+
+  async updateWorkspaceSettings(
+    orgId: string,
+    dto: Partial<WorkspaceSettings>,
+  ): Promise<WorkspaceSettings> {
+    const current = await this.getWorkspaceSettings(orgId);
+    const updated: WorkspaceSettings = {
+      ...current,
+      ...dto,
+    };
+
+    this.settingsMap.set(orgId, updated);
+
+    // Update organization name if workspaceName changed
+    const org = this.organizations.get(orgId);
+    if (org && dto.workspaceName) {
+      org.name = dto.workspaceName;
+    }
+
+    return updated;
+  }
+
 
   async createOrganization(
     userId: string,
@@ -71,6 +175,7 @@ export class OrganizationsService {
       slug,
       userId,
       role: 'ADMIN' as const,
+      subscriptionTier: 'FREE' as const,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -93,6 +198,56 @@ export class OrganizationsService {
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
       role: 'ADMIN',
+      subscriptionTier: 'FREE',
+    };
+  }
+
+  async getWorkspaceSummary(orgId: string): Promise<WorkspaceSummary> {
+    const org = this.organizations.get(orgId) || {
+      id: orgId,
+      name: 'Acme QA Team',
+      slug: orgId,
+      subscriptionTier: 'FREE' as const,
+    };
+
+    const activeMembers = this.getMembers(orgId);
+    const pendingInvites = (await this.getInvites(orgId)).filter((inv) => inv.status === 'PENDING');
+    const usedSeats = activeMembers.length + pendingInvites.length;
+    const maxSeats = org.subscriptionTier === 'PREMIUM' ? 5 : 1;
+
+    return {
+      organizationId: orgId,
+      name: org.name,
+      subscriptionTier: org.subscriptionTier,
+      usedSeats,
+      maxSeats,
+      members: activeMembers,
+      pendingInvites,
+    };
+  }
+
+  async upgradeSubscription(orgId: string, tier: 'FREE' | 'PREMIUM'): Promise<{ status: string; tier: 'FREE' | 'PREMIUM' }> {
+    let org = this.organizations.get(orgId);
+    if (!org) {
+      org = {
+        id: orgId,
+        name: 'Workspace',
+        slug: orgId,
+        userId: 'admin_user',
+        role: 'ADMIN',
+        subscriptionTier: tier,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      this.organizations.set(orgId, org);
+    } else {
+      org.subscriptionTier = tier;
+      org.updatedAt = new Date();
+    }
+
+    return {
+      status: 'upgraded',
+      tier: org.subscriptionTier,
     };
   }
 
@@ -106,9 +261,39 @@ export class OrganizationsService {
       throw new BadRequestException('Invalid email address provided for invitation');
     }
 
-    const org = this.organizations.get(orgId);
+    let org = this.organizations.get(orgId);
     if (!org) {
-      throw new NotFoundException(`Organization with ID "${orgId}" not found`);
+      // Create lazy org record if not found in memory map
+      org = {
+        id: orgId,
+        name: 'Workspace',
+        slug: orgId,
+        userId: invitedBy,
+        role: 'ADMIN',
+        subscriptionTier: 'FREE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      this.organizations.set(orgId, org);
+    }
+
+    // Rule 1: Check Subscription Plan. Free plan does NOT allow team invites.
+    if (org.subscriptionTier === 'FREE') {
+      throw new ForbiddenException(
+        'Team collaboration requires a Premium Subscription plan. Please upgrade your workspace to Premium to invite team members.',
+      );
+    }
+
+    // Rule 2: Seat Limit Enforcement (Max 5 seats on Premium Plan)
+    const activeMembers = this.getMembers(orgId);
+    const pendingInvites = (await this.getInvites(orgId)).filter((inv) => inv.status === 'PENDING');
+    const totalSeatsUsed = activeMembers.length + pendingInvites.length;
+    const maxSeats = 5;
+
+    if (totalSeatsUsed >= maxSeats) {
+      throw new BadRequestException(
+        `Workspace seat limit reached (${totalSeatsUsed}/${maxSeats} seats used). Maximum 5 members allowed per Premium workspace.`,
+      );
     }
 
     const existingPending = Array.from(this.invites.values()).find(
@@ -175,11 +360,84 @@ export class OrganizationsService {
     };
   }
 
+  async getInviteByToken(token: string): Promise<{
+    token: string;
+    email: string;
+    organizationId: string;
+    organizationName: string;
+    role: 'ADMIN' | 'MEMBER';
+    status: 'PENDING' | 'ACCEPTED' | 'EXPIRED';
+    expiresAt: Date;
+  }> {
+    const invite = this.invites.get(token);
+    if (!invite) {
+      throw new NotFoundException('Invitation token not found');
+    }
+
+    const org = this.organizations.get(invite.organizationId);
+    const organizationName = org ? org.name : 'Acme Workspace';
+
+    return {
+      token: invite.token,
+      email: invite.email,
+      organizationId: invite.organizationId,
+      organizationName,
+      role: invite.role,
+      status: invite.status as any,
+      expiresAt: invite.expiresAt,
+    };
+  }
+
+  async acceptInviteWithSignup(
+    token: string,
+    firstName: string,
+    lastName: string,
+  ): Promise<{
+    status: string;
+    organizationId: string;
+    userId: string;
+    email: string;
+    role: 'ADMIN' | 'MEMBER';
+  }> {
+    const invite = this.invites.get(token);
+    if (!invite || invite.status !== 'PENDING') {
+      throw new NotFoundException('Invitation not found or no longer active');
+    }
+
+    if (new Date() > invite.expiresAt) {
+      invite.status = 'EXPIRED';
+      throw new BadRequestException('Invitation has expired');
+    }
+
+    const userId = `user_${Date.now()}`;
+    invite.status = 'ACCEPTED';
+
+    const memberRecord: OrganizationMemberRecord = {
+      id: `mem_${Date.now()}`,
+      organizationId: invite.organizationId,
+      userId,
+      role: invite.role,
+      createdAt: new Date(),
+    };
+
+    this.members.push(memberRecord);
+
+    return {
+      status: 'accepted',
+      organizationId: invite.organizationId,
+      userId,
+      email: invite.email,
+      role: invite.role,
+    };
+  }
+
   async getInvites(orgId: string): Promise<OrganizationInviteRecord[]> {
     return Array.from(this.invites.values()).filter((inv) => inv.organizationId === orgId);
   }
 
-  async getMembers(orgId: string): Promise<OrganizationMemberRecord[]> {
+  getMembers(orgId: string): OrganizationMemberRecord[] {
     return this.members.filter((mem) => mem.organizationId === orgId);
   }
 }
+
+

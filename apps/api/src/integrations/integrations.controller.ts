@@ -24,6 +24,7 @@ interface AuthenticatedRequest {
 export class CallbackDto {
   code?: string;
   installationId?: string;
+  username?: string;
   orgId?: string;
 }
 
@@ -62,7 +63,24 @@ export class IntegrationsController {
     @Headers('x-org-id') headerOrgId?: string,
   ) {
     const orgId = dto.orgId || req?.user?.orgId || headerOrgId || 'default_org';
-    return this.githubIntegrationService.handleCallback(orgId, dto.code || '', dto.installationId);
+    return this.githubIntegrationService.handleCallback(
+      orgId,
+      dto.code || '',
+      dto.installationId,
+      dto.username,
+    );
+  }
+
+  @Post('disconnect')
+  @HttpCode(HttpStatus.OK)
+  async disconnectGitHub(
+    @Req() req: AuthenticatedRequest,
+    @Headers('x-org-id') headerOrgId?: string,
+    @Body('orgId') bodyOrgId?: string,
+  ) {
+    const orgId = req?.user?.orgId || headerOrgId || bodyOrgId || 'default_org';
+    await this.githubIntegrationService.disconnect(orgId);
+    return { status: 'disconnected', orgId };
   }
 
   @Post('validate-scan')

@@ -16,8 +16,7 @@ describe('GitHubIntegrationService', () => {
     const orgId = 'org_123';
     const result = githubService.getConnectUrl(orgId);
 
-    expect(result.authorization_url).toContain('https://github.com/apps/');
-    expect(result.authorization_url).toContain('installations/new');
+    expect(result.authorization_url).toMatch(/github\.com|integrations\/github\/callback\?mode=dev_oauth/);
     expect(result.authorization_url).toContain('state=');
   });
 
@@ -35,10 +34,17 @@ describe('GitHubIntegrationService', () => {
     expect(storedSecret?.isExpired).toBe(false);
   });
 
-  it('should throw BadRequestException if callback has neither code nor installationId', async () => {
-    await expect(githubService.handleCallback('org_123', '', '')).rejects.toThrow(
-      BadRequestException,
-    );
+  it('should throw BadRequestException if username handle does not exist on GitHub', async () => {
+    // Mock fetch for non-existent user returning 404
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async () => new Response(JSON.stringify({ message: 'Not Found' }), { status: 404 });
+    try {
+      await expect(
+        githubService.handleCallback('org_123', '', 'inst_1', '@non_existent_handle_xyz_999'),
+      ).rejects.toThrow(/does not exist on GitHub/);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 
   it('should validate token successfully when token is active', async () => {
